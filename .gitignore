@@ -1,4 +1,4 @@
 *
-!bubb_spell_menu_extended/*
-!override/UI.MENU
+!/bubb_spell_menu_extended/*.*
+!/override/UI.MENU
 !setup-bubb_spell_menu_extended.exe

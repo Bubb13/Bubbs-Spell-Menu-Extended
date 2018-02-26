@@ -10,6 +10,214 @@ listMetaInfo = {}
 
 currentPanelID = 0
 
+-- BUBB EDIT DEBUG DUMP START
+
+function alphanumericSortEntries(o)
+   local function conv(s)
+      local res, dot = "", ""
+      for n, m, c in tostring(s):gmatch"(0*(%d*))(.?)" do
+         if n == "" then
+            dot, c = "", dot..c
+         else
+            res = res..(dot == "" and ("%03d%s"):format(#m, m)
+                                  or "."..n)
+            dot, c = c:match"(%.?)(.*)"
+         end
+         res = res..c:gsub(".", "\0%0")
+      end
+      return res
+   end
+   table.sort(o,
+      function (a, b)
+         local ca, cb = conv(a.string), conv(b.string)
+         return ca < cb or ca == cb and a.string < b.string
+      end)
+   return o
+end
+
+function fillDumpLevel(tableName, levelTable, levelToFill, levelTableKey)
+
+	local tableKey, tableValue = next(levelTable, levelTableKey)
+	while tableValue ~= nil do
+
+		local tableValueType = type(tableValue)
+
+		if tableValueType == 'string' or tableValueType == 'number' or tableValueType == 'boolean' then
+
+			local entry = {}
+			entry.string = tableValueType..' '..tableKey..' = '
+			entry.value = tableValue
+			table.insert(levelToFill, entry)
+
+		elseif tableValueType == 'table' then
+
+			if tableKey ~= '_G' then
+
+				local entry = {}
+				entry.string = tableValueType..' '..tableKey..':\n'
+				entry.value = {} --entry.value is a levelToFill
+
+				entry.value.previous = {}
+				entry.value.previous.tableName = tableName
+				entry.value.previous.levelTable = levelTable
+				entry.value.previous.levelToFill = levelToFill
+				entry.value.previous.levelTableKey = tableKey
+
+				table.insert(levelToFill, entry)
+
+				return fillDumpLevel(tableKey, tableValue, entry.value)
+			end
+		elseif tableValueType == 'userdata' then
+
+			metatable = getmetatable(tableValue)
+			local entry = {}
+
+			if metatable ~= nil then
+
+				entry.string = tableValueType..' '..tableKey..':\n'
+				entry.value = {} --entry.value is a levelToFill
+
+				entry.value.previous = {}
+				entry.value.previous.tableName = tableName
+				entry.value.previous.levelTable = levelTable
+				entry.value.previous.levelToFill = levelToFill
+				entry.value.previous.levelTableKey = tableKey
+
+				table.insert(levelToFill, entry)
+
+				return fillDumpLevel(tableKey, metatable, entry.value)
+			else
+
+				entry.string = tableValueType..' '..tableKey..' = '
+				entry.value = 'nil'
+				table.insert(levelToFill, entry)
+			end
+		else
+
+			local entry = {}
+			entry.string = tableValueType..' '..tableKey
+			entry.value = nil
+			table.insert(levelToFill, entry)
+		end
+
+		--Iteration
+		tableKey, tableValue = next(levelTable, tableKey)
+		--Iteration
+	end
+
+	--Sort the now finished level
+	alphanumericSortEntries(levelToFill)
+	--Sort the now finished level
+
+	local previous = levelToFill.previous
+
+	if previous ~= nil then
+
+		--Clear out "previous" metadata, as it is no longer needed.
+		local previousTableName = previous.tableName
+		local previousLevelTable = previous.levelTable
+		local previousLevelToFill = previous.levelToFill
+		local previousLevelTableKey = previous.levelTableKey
+		levelToFill.previous = nil
+		--Clear out "previous" metadata, as it is no longer needed.
+
+		return fillDumpLevel(previousTableName, previousLevelTable,
+							 previousLevelToFill, previousLevelTableKey)
+	else
+		return levelToFill
+	end
+end
+
+function printEntries(entriesTable, indentLevel, indentStrings, previousState, levelTableKey)
+
+	tableEntryKey, tableEntry = next(entriesTable, levelTableKey)
+	while(tableEntry ~= nil) do
+
+		tableEntryString = tableEntry.string
+		tableEntryValue = tableEntry.value
+		indentString = indentStrings[indentLevel]
+
+		if tableEntryValue ~= nil then
+
+			if type(tableEntryValue) ~= 'table' then
+
+				valueToPrint = string.gsub(tostring(tableEntryValue), '\n', '\\n')
+				print(indentString..tableEntryString..valueToPrint)
+			else
+	
+				print(indentString..tableEntryString)
+				print(indentString..'{')
+
+				local previous = {}
+				previous.entriesTable = entriesTable
+				previous.indentLevel = indentLevel
+				previous.levelTableKey = tableEntryKey
+				previous.previousState = previousState
+
+				indentLevel = indentLevel + 1
+
+				indentStringsSize = #indentStrings
+				if indentLevel > indentStringsSize then
+					indentStrings[indentStringsSize + 1] = indentStrings[indentStringsSize]..'\t'
+				end
+
+				return printEntries(tableEntryValue, indentLevel, indentStrings, previous)
+			end
+		else
+			print(indentString..tableEntryString)
+		end
+
+		--Increment
+		tableEntryKey, tableEntry = next(entriesTable, tableEntryKey)
+		--Increment
+	end
+
+	print(indentStrings[indentLevel - 1]..'}')
+
+	--Finish previous levels
+	if previousState ~= nil then
+
+		return printEntries(previousState.entriesTable, previousState.indentLevel, indentStrings,
+							previousState.previousState, previousState.levelTableKey)
+	end
+end
+
+function dump(key, valueToDump)
+
+	valueToDumpType = type(valueToDump)
+
+	if valueToDumpType == 'string' or valueToDumpType == 'number' or valueToDumpType == 'boolean' then
+
+		print(valueToDumpType..' '..key..' = '..valueToDump)
+
+	elseif valueToDumpType == 'table' then
+
+		print(valueToDumpType..' '..key..':')
+		entries = fillDumpLevel(key, valueToDump, {})
+		printEntries(entries, 1, {[0] = '', [1] = '\t'})
+
+	elseif valueToDumpType == 'userdata' then
+
+		metatable = getmetatable(valueToDump)
+
+		if metatable ~= nil then
+
+			print(valueToDumpType..' '..key..':')
+			print('{')
+			entries = fillDumpLevel(key, metatable, {})
+			printEntries(entries, 1, {[0] = '', [1] = '\t'})
+		else
+
+			print(valueToDumpType..' '..key..' = nil')
+		end
+	else
+
+		print(valueToDumpType..' '..key)
+	end
+end
+
+-- BUBB EDIT DEBUG DUMP END
+
 --BUBB EDIT MESSAGE BOX START
 
 worldMessageBoxTextOverride = ""
@@ -222,6 +430,10 @@ function getTooltipContents(string)
 	return string.sub(string, firstIndex + 2, #string)
 end
 
+function isFirstTooltipTalk()
+	return getTooltipContents(actionBarTooltip[0]) == Infinity_FetchString(4933) --Talk tooltip
+end
+
 function resolveTooltip(index)
 	tooltip = actionBarTooltip[index]
 	tooltip = replaceSpellUUIDs(tooltip)
@@ -240,7 +452,14 @@ function isTooltipSpecial(tooltip)
 end
 
 function isTooltipSpell(tooltip)
-	return not isTooltipSpecial(tooltip)
+	return not isTooltipSpecial(tooltip) and getSpellUUID(tooltip) ~= nil
+end
+
+function isTooltipQuickSpell(tooltip)
+	return 
+			isFirstTooltipTalk()
+			and (getTooltipContents(tooltip) == Infinity_FetchString(4938) --Quick cast tooltip
+		   	or isTooltipSpell(tooltip))
 end
 
 function resetSpellHotbar()
@@ -591,6 +810,27 @@ function filterSpellListInfoCleric()
 	end
 	initializeSlots()
 end
+
+function launchSpellMenu(slot, leftClick)
+
+	if leftClick then
+		buttonArray:OnLButtonPressed(slot)
+	else
+		buttonArray:OnRButtonPressed(slot)
+	end
+
+	if not isFirstTooltipTalk() then
+
+		if not worldScreen:CheckIfPaused() then
+			pausedOnOpen = false
+			worldScreen:TogglePauseGame(true)
+		else
+			pausedOnOpen = true
+		end
+		Infinity_PushMenu('BUBB_SPELL_MENU_SLOTS')
+	end
+end
+
 `
 menu
 {
@@ -610,7 +850,7 @@ menu
 			"
 
 	onclose "
-				if not (actionBarTooltip[0] == 'F1 : '..Infinity_FetchString(4933)) then
+				if not isFirstTooltipTalk() then
 					Infinity_PressKeyboardButton('escape')
 				end
 
@@ -7219,7 +7459,7 @@ menu
 				-- BUBB EDIT SPELL START
 
 				--text		lua " otherlist[rowNumber][2]"
-				text lua "replaceSpellUUIDs(otherlist[rowNumber][2])"
+				text lua "replaceSpellUUIDs(otherlist [rowNumber][2])"
 
 				-- BUBB EDIT SPELL END
 
@@ -14797,12 +15037,12 @@ menu
 			{
 				area		0 0 -1 -1
 
-				--BUBB EDIT SPELL START
+				-- BUBB EDIT SPELL START
 
 				--text lua "Infinity_FetchString(characters[id].priestSpells[currentSpellLevel][rowNumber].name)"
 				text lua "replaceSpellUUIDs(Infinity_FetchString(characters[id].priestSpells[currentSpellLevel][rowNumber].name))"
 				
-				--BUBB EDIT SPELL END
+				-- BUBB EDIT SPELL END
 
 				text style "normal_parchment"
 				text align left center
@@ -16545,7 +16785,14 @@ menu
 			label
 			{
 				area 80 0 150 60
-				text lua "Infinity_FetchString(store.healingSpells[rowNumber].name)"
+				
+				-- BUBB EDIT SPELL START
+				
+				--text lua "Infinity_FetchString(store.healingSpells[rowNumber].name)"
+				text lua "replaceSpellUUIDs(Infinity_FetchString(store.healingSpells[rowNumber].name))"
+				
+				-- BUBB EDIT SPELL END
+				
 				text style "normal"
 				text align left center
 			}
@@ -17020,10 +17267,21 @@ menu
 		--tooltip lua "actionBarTooltip[3]"
 		tooltip lua "resolveTooltip(3)"
 
+		action "buttonArray:OnLButtonPressed(3)"
+
+		--actionAlt "buttonArray:OnRButtonPressed(3)"
+		actionAlt 	"
+						if isTooltipQuickSpell(actionBarTooltip[3])
+						   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
+						then
+							launchSpellMenu(3, false)
+						else
+							buttonArray:OnRButtonPressed(3)
+						end
+					"
+
 		-- BUBB EDIT SPELL END
 
-		action "buttonArray:OnLButtonPressed(3)"
-		actionAlt "buttonArray:OnRButtonPressed(3)"
 	}
 	button
 	{
@@ -17039,10 +17297,21 @@ menu
 		--tooltip lua "actionBarTooltip[4]"
 		tooltip lua "resolveTooltip(4)"
 
+		action "buttonArray:OnLButtonPressed(4)"
+
+		--actionAlt "buttonArray:OnRButtonPressed(4)"
+		actionAlt 	"
+						if isTooltipQuickSpell(actionBarTooltip[4])
+						   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
+						then
+							launchSpellMenu(4, false)
+						else
+							buttonArray:OnRButtonPressed(4)
+						end
+					"
+
 		-- BUBB EDIT SPELL END
 
-		action "buttonArray:OnLButtonPressed(4)"
-		actionAlt "buttonArray:OnRButtonPressed(4)"
 	}
 	button
 	{
@@ -17057,10 +17326,21 @@ menu
 		--tooltip lua "actionBarTooltip[5]"
 		tooltip lua "resolveTooltip(5)"
 
+		action "buttonArray:OnLButtonPressed(5)"
+
+		--actionAlt "buttonArray:OnRButtonPressed(5)"
+		actionAlt 	"
+						if isTooltipQuickSpell(actionBarTooltip[5])
+						   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
+						then
+							launchSpellMenu(5, false)
+						else
+							buttonArray:OnRButtonPressed(5)
+						end
+					"
+
 		-- BUBB EDIT SPELL END
 
-		action "buttonArray:OnLButtonPressed(5)"
-		actionAlt "buttonArray:OnRButtonPressed(5)"
 	}
 	button
 	{
@@ -17077,20 +17357,12 @@ menu
 
 		--action "buttonArray:OnLButtonPressed(6)"
 		action	"
-					buttonArray:OnLButtonPressed(6)
-
-					if not (actionBarTooltip[0] == 'F1 : '..Infinity_FetchString(4933)) then
-
-						if not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS') then
-
-							if not worldScreen:CheckIfPaused() then
-								pausedOnOpen = false
-								worldScreen:TogglePauseGame(true)
-							else
-								pausedOnOpen = true
-							end
-							Infinity_PushMenu('BUBB_SPELL_MENU_SLOTS')
-						end
+					if isFirstTooltipTalk()
+					   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
+					then
+						launchSpellMenu(6, true)
+					else
+						buttonArray:OnLButtonPressed(6)
 					end
 				"
 
@@ -17186,20 +17458,12 @@ menu
 
 		--action "buttonArray:OnLButtonPressed(11)"
 		action "
-					buttonArray:OnLButtonPressed(11)
-
-					if not (actionBarTooltip[0] == 'F1 : '..Infinity_FetchString(4933)) then
-
-						if not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS') then
-
-							if not worldScreen:CheckIfPaused() then
-								pausedOnOpen = false
-								worldScreen:TogglePauseGame(true)
-							else
-								pausedOnOpen = true
-							end
-							Infinity_PushMenu('BUBB_SPELL_MENU_SLOTS')
-						end
+					if isFirstTooltipTalk()
+					   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
+					then
+						launchSpellMenu(11, true)
+					else
+						buttonArray:OnLButtonPressed(11)
 					end
 				"
 		

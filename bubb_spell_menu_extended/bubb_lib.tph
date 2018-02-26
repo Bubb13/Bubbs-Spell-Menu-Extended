@@ -1,0 +1,365 @@
+	/**
+	 * Patch function. Converts any decimal number into a hexadecimal number.
+	 * INT_VAR value      The decimal number to convert.
+	 * INT_VAR minDigits  Minimum number of digits for the returned hex value. (default: 1)
+	 * INT_VAR prefix     A flag that indicates whether the returned number will be prefixed with "0x". (default: 0)
+	 * RET hexNumber      The converted hexadecimal number as string.
+	 */
+	DEFINE_PATCH_FUNCTION TO_HEX_NUMBER
+	INT_VAR
+	  value     = 0
+	  minDigits = 1
+	  prefix    = 0
+	RET
+	  hexNumber
+	BEGIN
+	  SET minDigits = (minDigits < 1) ? 1 : minDigits
+	  SET minDigits = (minDigits > 8) ? 8 : minDigits
+	  TEXT_SPRINT hexNumber ~~
+	  PATCH_DEFINE_ARRAY digit BEGIN ~0~ ~1~ ~2~ ~3~ ~4~ ~5~ ~6~ ~7~ ~8~ ~9~ ~a~ ~b~ ~c~ ~d~ ~e~ ~f~ END
+
+	  PATCH_IF (value < 0) BEGIN
+		SET signed = 1
+		SET value = 0 - value
+	  END ELSE BEGIN
+		SET signed = 0
+	  END
+
+	  WHILE (value != 0) BEGIN
+		SET curDigit = value BAND 0xf
+		SET value = value BLSR 4
+		TEXT_SPRINT hexDigit $EVAL digit(~%curDigit%~)
+		TEXT_SPRINT hexNumber ~%hexDigit%%hexNumber%~
+	  END
+
+	  WHILE (STRING_LENGTH ~%hexNumber%~ < minDigits) BEGIN
+		TEXT_SPRINT hexNumber ~0%hexNumber%~
+	  END
+
+	  PATCH_IF (prefix) BEGIN
+		TEXT_SPRINT hexNumber ~0x%hexNumber%~
+	  END
+
+	  PATCH_IF (signed) BEGIN
+		TEXT_SPRINT hexNumber ~-%hexNumber%~
+	  END
+	END
+
+	// Action version of TO_HEX_NUMBER
+	DEFINE_ACTION_FUNCTION TO_HEX_NUMBER
+	INT_VAR
+	  value     = 0
+	  minDigits = 1
+	  prefix    = 0
+	RET
+	  hexNumber
+	BEGIN
+	  OUTER_PATCH ~~ BEGIN
+		LPF TO_HEX_NUMBER INT_VAR value = value minDigits = minDigits prefix = prefix RET hexNumber END
+	  END
+	END
+
+	/**
+	 * Patch function. Checks if an array key exists, and returns the value associated with said key. 
+	 * INT_VAR key         The key to check for.
+	 * STR_VAR array_name  The name of the array to check.
+	 * RET result          1 if array contains key, 0 if array doesn't contain key.
+	 */
+	DEFINE_PATCH_FUNCTION ARRAY_GET_VALUE
+	INT_VAR
+		key = 0
+	STR_VAR
+		array_name = ~~
+	RET
+		exists
+		value
+	BEGIN
+		PATCH_IF VARIABLE_IS_SET $~%array_name%~(~%key%~) BEGIN
+			exists = 1
+			PATCH_IF IS_AN_INT $~%array_name%~(~%key%~) BEGIN
+				SET value = $~%array_name%~(~%key%~)
+			END ELSE BEGIN
+				TEXT_SPRINT value $~%array_name%~(~%key%~)
+			END
+		END ELSE BEGIN
+			exists = 0
+			value = 0
+		END
+	END
+	
+	// Action version of ARRAY_GET_VALUE
+	DEFINE_ACTION_FUNCTION ARRAY_GET_VALUE
+	INT_VAR
+		key   = 0
+	STR_VAR
+		array_name = ~~
+	RET
+		exists
+		value
+	BEGIN
+		OUTER_PATCH ~~ BEGIN
+			LPF ARRAY_GET_VALUE INT_VAR key = key STR_VAR array_name = EVAL ~%array_name%~ RET exists value END
+		END
+	END
+	
+	// STRING_REPLACE
+	DEFINE_PATCH_FUNCTION STRING_REPLACE
+	STR_VAR
+		string = ~~
+		to_replace = ~~
+		with = ~~
+	RET
+		replaced_string
+	BEGIN
+
+		TEXT_SPRINT replaced_string ~~
+		SET to_replace_length = STRING_LENGTH ~%to_replace%~
+		SET last_found_index = (0 - to_replace_length)
+		SET found_index = INDEX (EXACT_MATCH ~%to_replace%~ ~%string%~)
+		
+		WHILE (found_index != (0 - 1)) BEGIN
+		
+			PATCH_IF (found_index > 0) BEGIN
+			
+				SET before_substring_start = last_found_index + to_replace_length
+				SET before_substring_length = found_index - last_found_index - to_replace_length
+				LPF SUBSTRING INT_VAR start = before_substring_start length = before_substring_length STR_VAR string = EVAL ~%string%~ RET before_substring = substring END
+				TEXT_SPRINT replaced_string ~%replaced_string%%before_substring%~
+			END
+		
+			TEXT_SPRINT replaced_string ~%replaced_string%%with%~
+			SET last_found_index = found_index
+			SET found_index = INDEX (EXACT_MATCH ~%to_replace%~ ~%string%~ found_index + 1)
+		END
+	
+		SET string_length = STRING_LENGTH ~%string%~
+		SET after_substring_start = last_found_index + to_replace_length
+		SET after_substring_length = string_length - last_found_index - to_replace_length
+		LPF SUBSTRING INT_VAR start = after_substring_start length = after_substring_length STR_VAR string = EVAL ~%string%~ RET after_substring = substring END
+		TEXT_SPRINT replaced_string ~%replaced_string%%after_substring%~
+	END
+	
+	// Action version of STRING_REPLACE
+	DEFINE_ACTION_FUNCTION STRING_REPLACE
+	STR_VAR
+		string = ~~
+		to_replace = ~~
+		with = ~~
+	RET
+		replaced_string
+	BEGIN
+		OUTER_PATCH ~~ BEGIN
+			LPF STRING_REPLACE STR_VAR string = EVAL ~%string%~ to_replace = EVAL ~%to_replace%~ with = EVAL ~%with%~ RET replaced_string END
+		END
+	END
+	
+	DEFINE_ACTION_MACRO findInUIMenu BEGIN
+	//findInUIMenu.to_find
+	//findInUIMenu.results_array_name
+	LOCAL_SET index = 0
+	LOCAL_SET insertion_index = 0
+	
+		COPY_EXISTING_REGEXP ~UI.MENU~ ~override~
+	
+			SET index = INDEX_BUFFER (CASE_INSENSITIVE EVALUATE_REGEXP ~%findInUIMenu.to_find%~)
+			SET insertion_index = 0
+			WHILE index != 0 - 1 BEGIN
+				SET $~%findInUIMenu.array%~(~%insertion_index%~) = index
+				SET index = INDEX_BUFFER (CASE_INSENSITIVE EVALUATE_REGEXP ~%findInUIMenu.to_find%~ index + 1)
+				SET insertion_index += 1
+			END
+		
+		BUT_ONLY_IF_IT_CHANGES
+	END
+	
+	DEFINE_ACTION_MACRO getInUIMenu BEGIN
+	//getInUIMenu.to_find
+	//getInUIMenu.results_array_name
+	LOCAL_SET insertion_index = 0
+
+		COPY_EXISTING_REGEXP ~UI.MENU~ ~override~
+	
+			REPLACE_EVALUATE ~%getInUIMenu.to_find%~ BEGIN
+				SPRINT $~%getInUIMenu.array%~(~%insertion_index%~) ~%MATCH0%~
+				SET insertion_index += 1
+			END
+			~%MATCH0%~
+		
+		BUT_ONLY_IF_IT_CHANGES
+	END
+	
+	DEFINE_PATCH_FUNCTION OFFSET_BUFFER
+	INT_VAR
+		offset = 0
+	RET
+		substring
+	BEGIN
+		READ_ASCII offset substring (BUFFER_LENGTH) 
+	END
+	
+	DEFINE_ACTION_MACRO getRegexpInString BEGIN
+	/**
+	 *	Arguments:
+	 *		VAR_STR getRegexpInString.string
+	 *		VAR_STR getRegexpInString.to_find
+	 *		VAR_STR getRegexpInString.match_length_limit
+	 *	
+	 *		VAR_STR getRegexpInString.indexes_array
+	 *		VAR_STR getRegexpInString.values_array
+	 */
+
+	LOCAL_SET index = 0
+	LOCAL_SET insertion_index = 0
+	LOCAL_SET inner_loop_count = 0
+	LOCAL_SPRINT after_index ~~
+	
+	//Enforce default value for getRegexpInString.match_length_limit
+	ACTION_IF (NOT VARIABLE_IS_SET getRegexpInString.match_length_limit) OR (NOT IS_AN_INT getRegexpInString.match_length_limit) BEGIN
+		OUTER_SET getRegexpInString.match_length_limit = STRING_LENGTH ~%getRegexpInString.to_find%~
+	END
+	
+		OUTER_PATCH ~%getRegexpInString.string%~ BEGIN
+		
+			SET index = INDEX_BUFFER (CASE_INSENSITIVE EVALUATE_REGEXP ~%getRegexpInString.to_find%~)
+			
+			WHILE index != 0 - 1 BEGIN
+			
+				PATCH_IF VARIABLE_IS_SET getRegexpInString.indexes_array AND NOT IS_AN_INT getRegexpInString.indexes_array BEGIN
+					SET $~%getRegexpInString.indexes_array%~(~%insertion_index%~) = index
+				END
+			
+				PATCH_IF VARIABLE_IS_SET getRegexpInString.values_array AND NOT IS_AN_INT getRegexpInString.values_array BEGIN
+				
+					READ_ASCII index after_index (getRegexpInString.match_length_limit)
+					SET inner_loop_count = 0
+					
+					INNER_PATCH ~%after_index%~ BEGIN
+					
+						REPLACE_EVALUATE CASE_INSENSITIVE ~%getRegexpInString.to_find%~ BEGIN
+						
+							PATCH_IF inner_loop_count == 0 BEGIN
+							
+								SPRINT $~%getRegexpInString.values_array%~(~%insertion_index%~) ~%MATCH0%~
+								SET inner_loop_count += 1
+							END
+						END
+						~%MATCH0%~
+					END
+				END
+				SET index = INDEX_BUFFER (CASE_INSENSITIVE EVALUATE_REGEXP ~%getRegexpInString.to_find%~ index + 1)
+				SET insertion_index += 1
+			END
+		END
+		//Set variables to opposite value types so the macro knows they are uninitialized next call.
+		OUTER_SET getRegexpInString.indexes_array = 0 - 1
+		OUTER_SET getRegexpInString.values_array = 0 - 1
+		OUTER_SPRINT getRegexpInString.match_length_limit ~~
+	END
+	
+	
+	
+	
+	DEFINE_PATCH_MACRO getRegexpInBuffer BEGIN
+	/**
+	 *	Arguments:
+	 *		VAR_STR getRegexpInBuffer.to_find
+	 *		VAR_STR getRegexpInBuffer.match_length_limit
+	 *	
+	 *		VAR_STR getRegexpInBuffer.indexes_array
+	 *		VAR_STR getRegexpInBuffer.values_array
+	 */
+
+	LOCAL_SET index = 0
+	LOCAL_SET insertion_index = 0
+	LOCAL_SET inner_loop_count = 0
+	LOCAL_SPRINT after_index ~~
+	
+	//Enforce default value for getRegexpInBuffer.match_length_limit
+	PATCH_IF (NOT VARIABLE_IS_SET getRegexpInBuffer.match_length_limit) OR (NOT IS_AN_INT getRegexpInBuffer.match_length_limit) BEGIN
+		SET getRegexpInBuffer.match_length_limit = STRING_LENGTH ~%getRegexpInBuffer.to_find%~
+	END
+	
+		SET index = INDEX_BUFFER (CASE_INSENSITIVE EVALUATE_REGEXP ~%getRegexpInBuffer.to_find%~)
+		
+		WHILE index != 0 - 1 BEGIN
+		
+			PATCH_IF VARIABLE_IS_SET getRegexpInBuffer.indexes_array AND NOT IS_AN_INT getRegexpInBuffer.indexes_array BEGIN
+				SET $~%getRegexpInBuffer.indexes_array%~(~%insertion_index%~) = index
+			END
+		
+			PATCH_IF VARIABLE_IS_SET getRegexpInBuffer.values_array AND NOT IS_AN_INT getRegexpInBuffer.values_array BEGIN
+			
+				READ_ASCII index after_index (getRegexpInBuffer.match_length_limit)
+				SET inner_loop_count = 0
+				
+				INNER_PATCH ~%after_index%~ BEGIN
+				
+					REPLACE_EVALUATE CASE_INSENSITIVE ~%getRegexpInBuffer.to_find%~ BEGIN
+					
+						PATCH_IF inner_loop_count == 0 BEGIN
+						
+							SPRINT $~%getRegexpInBuffer.values_array%~(~%insertion_index%~) ~%MATCH0%~
+							SET inner_loop_count += 1
+						END
+					END
+					~%MATCH0%~
+				END
+			END
+			SET index = INDEX_BUFFER (CASE_INSENSITIVE EVALUATE_REGEXP ~%getRegexpInBuffer.to_find%~ index + 1)
+			SET insertion_index += 1
+		END
+
+		//Set variables to opposite value types so the macro knows they are uninitialized next call.
+		SET getRegexpInBuffer.indexes_array = 0 - 1
+		SET getRegexpInBuffer.values_array = 0 - 1
+		SPRINT getRegexpInBuffer.match_length_limit ~~
+	END
+	
+	
+	
+	
+	DEFINE_PATCH_FUNCTION FIND_ENDING_BRACKET
+	INT_VAR
+		starting_bracket_offset = 0
+	RET
+		ending_bracket_offset
+	BEGIN
+		
+		SET level = 0
+		SET index = starting_bracket_offset + 1
+		SET looping = 1
+		WHILE looping BEGIN
+			READ_ASCII index read_character (1)
+			PATCH_IF ~%read_character%~ STRING_EQUAL ~(~ BEGIN
+				SET level += 1
+			END ELSE BEGIN PATCH_IF ~%read_character%~ STRING_EQUAL ~)~ BEGIN
+				PATCH_IF level == 0 BEGIN
+					SET ending_bracket_offset = index
+					SET looping = 0
+				END ELSE BEGIN
+					SET level -= 1
+				END
+			END END
+			SET index += 1
+		END
+	END
+	
+	
+	DEFINE_PATCH_FUNCTION SUBSTRING_BUFFER
+	INT_VAR
+		offset = 0
+		length = 0
+	RET
+		substring
+	BEGIN
+		READ_ASCII offset substring (length) 
+	END
+	
+	
+	
+	
+	
+	
+	
+	
+	

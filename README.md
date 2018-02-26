@@ -3,5 +3,8 @@ This mod seeks to replace the standard hotbar spell selection with a more powerf
 
 # Links:
 Download normal version: https://github.com/Bubb13/Bubbs-Spell-Menu/archive/normal.zip
+
 Download light version: https://github.com/Bubb13/Bubbs-Spell-Menu/archive/light.zip
+
 Download extended version: https://github.com/Bubb13/Bubbs-Spell-Menu/archive/extended.zip
+

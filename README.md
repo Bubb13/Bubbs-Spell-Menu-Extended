@@ -1,10 +1,2 @@
 # Overview:
-This mod seeks to replace the standard hotbar spell selection with a more powerful version. The set of enhancements over the default spell selection includes a searchable spell list, and the ability to sort spells based on name, primary type, and level.
-
-# Links:
-Download normal version: https://github.com/Bubb13/Bubbs-Spell-Menu/archive/normal.zip
-
-Download light version: https://github.com/Bubb13/Bubbs-Spell-Menu/archive/light.zip
-
-Download extended version: https://github.com/Bubb13/Bubbs-Spell-Menu/archive/extended.zip
-
+If the list view from the normal version of this mod doesn't strike your fancy, this version very well might. This version emulates the slots from the default spell selection, and arranges them in such a way that all spells will be visible at once. This is useful for players who are irritated by the lack of visibility in the default spell selection.

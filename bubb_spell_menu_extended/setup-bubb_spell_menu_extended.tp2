@@ -1,6 +1,6 @@
 BACKUP ~bubb_spell_menu_extended/backup~
 AUTHOR ~Bubb~
-VERSION 1.3
+VERSION 1.4
 AUTO_TRA ~bubb_spell_menu_extended/%s~
 
 BEGIN ~Bubb's Spell Menu Extended~

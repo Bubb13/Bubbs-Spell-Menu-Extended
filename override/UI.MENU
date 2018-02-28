@@ -398,6 +398,9 @@ slotsAvailable = nil
 hotbarButtonsDisabled = false
 pausedOnOpen = false
 
+oldSpellSearchEdit = ''
+spellSearchEdit = ''
+
 function replaceSpellUUIDs(string)
 
 	toReturn = string
@@ -651,6 +654,13 @@ function fillSpellListInfo()
 	resetSpellHotbar()
 end
 
+function getFirstSpellUUID()
+	for level = 1, 9, 1 do
+		spellLevel = filteredSpellListInfo[level]
+		if #spellLevel > 0 then return spellLevel[1].spellUUID end
+	end
+end
+
 function decrementRowOffset(slot_row)
 	local rowOffset = slotRowOffsets[slot_row] - slotsAvailable + 2
 	if rowOffset < 0 then rowOffset = 0 end
@@ -659,18 +669,50 @@ end
 
 function incrementRowOffset(slot_row)
 	local rowOffset = slotRowOffsets[slot_row] + slotsAvailable - 2
-	local maxOffset = #filteredSpellListInfo[slot_row] - slotsAvailable + 1
+	local maxOffset = #filteredSpellListInfo[slot_row] - slotsAvailable + 2
 	if rowOffset > maxOffset then rowOffset = maxOffset end
 	slotRowOffsets[slot_row] = rowOffset
 end
 
-function getSlotIsArrow(slot_row, slot_column)
-	endsAreArrows = #filteredSpellListInfo[slot_row] > slotsAvailable
-	return endsAreArrows and (slot_column == 1 or slot_column == slotsAvailable)
+function isSlotFirst(slot_row, slot_column)
+	if slotRowOffsets[slot_row] + slot_column == 1 then
+		for checkingSlotRow = slot_row - 1, 1, -1 do
+			if getSlotEnabled(checkingSlotRow, 1) then return false end
+		end
+		return true
+	else
+		return false
+	end
 end
+
+function getSlotEndsAreArrows(slot_row)
+	return #filteredSpellListInfo[slot_row] > slotsAvailable
+end
+
+function getSlotInfoOffset(slot_row, slot_column)
+	if getSlotEndsAreArrows(slot_row) then
+		return slotRowOffsets[slot_row] + slot_column - 1
+	else
+		return slotRowOffsets[slot_row] + slot_column
+	end
+end
+
+function getSpellForSlot(slot_row, slot_column)
+	return filteredSpellListInfo[slot_row][getSlotInfoOffset(slot_row, slot_column)]
+end
+
+function getSlotIsArrow(slot_row, slot_column)
+	return getSlotEndsAreArrows(slot_row) and (slot_column == 1 or slot_column == slotsAvailable)
+end
+
+-- BUBB EDIT Slot Functions START
 
 function getSlotEnabled(slot_row, slot_column)
 	return slot_column <= slotsAvailable and #filteredSpellListInfo[slot_row] >= slot_column
+end
+
+function getIconEnabledForSlot(slot_row, slot_column)
+	return not getSlotIsArrow(slot_row, slot_column)
 end
 
 function getBamForSlot(slot_row, slot_column)
@@ -689,27 +731,27 @@ function getFrameForSlot(slot_row, slot_column)
 			return 66
 		end
 	else
-		return 0
+		if isSlotFirst(slot_row, slot_column) then
+			return 3
+		else
+			return 0
+		end
 	end
 end
 
-function getIconEnabledForSlot(slot_row, slot_column)
-	return not getSlotIsArrow(slot_row, slot_column)
-end
-
 function getIconForSlot(slot_row, slot_column)
-	local spell = filteredSpellListInfo[slot_row][slotRowOffsets[slot_row] + slot_column]
+	local spell = getSpellForSlot(slot_row, slot_column)
 	if spell ~= nil then return spell.spellIcon else return nil end
 end
 
 function getCountForSlot(slot_row, slot_column)
-	local spell = filteredSpellListInfo[slot_row][slotRowOffsets[slot_row] + slot_column]
+	local spell = getSpellForSlot(slot_row, slot_column)
 	if spell ~= nil then return spell.spellCastableCount else return nil end
 end
 
 function getTooltipForSlot(slot_row, slot_column)
 	if not getSlotIsArrow(slot_row, slot_column) then
-		local spell = filteredSpellListInfo[slot_row][slotRowOffsets[slot_row] + slot_column]
+		local spell = getSpellForSlot(slot_row, slot_column)
 		if spell ~= nil then return spell.spellName else return nil end
 	else
 		return nil
@@ -717,7 +759,6 @@ function getTooltipForSlot(slot_row, slot_column)
 end
 
 function doActionForSlot(slot_row, slot_column)
-
 	if getSlotIsArrow(slot_row, slot_column) then
 		if slot_column == 1 then
 			decrementRowOffset(slot_row)
@@ -725,13 +766,15 @@ function doActionForSlot(slot_row, slot_column)
 			incrementRowOffset(slot_row)
 		end
 	else
-		local spell = filteredSpellListInfo[slot_row][slotRowOffsets[slot_row] + slot_column]
+		local spell = getSpellForSlot(slot_row, slot_column)
 		if spell ~= nil then
 			selectSpellWithUUID(spell.spellUUID)
 			Infinity_PopMenu('BUBB_SPELL_MENU_SLOTS')
 		end
 	end
 end
+
+-- BUBB EDIT Slot Functions END
 
 function getLongestSpellCount()
 	local maxLength = #filteredSpellListInfo[1]
@@ -783,11 +826,21 @@ function initializeSlots()
 	local currentYOffset = verticalMarginSpace / 2
 
 	if alignCenter then
+
+		local x, y, bubbSpellMenuBackgroundWidth, h = Infinity_GetArea('bubbSpellMenuSearchBackground')
+		bubbSpellMenuXPos = Infinity_GetScreenSize() / 2 - bubbSpellMenuBackgroundWidth / 2
+		Infinity_SetArea('bubbSpellMenuSearchBackground', bubbSpellMenuXPos, nil, nil, nil)
+		Infinity_SetArea('bubbSpellMenuSearch', bubbSpellMenuXPos, nil, nil, nil)
+
 		Infinity_SetArea('bubbMoveSlotsLeft',     (screenWidth / 2) - 130, nil, nil, nil)
 		Infinity_SetArea('bubbFilterSlotsMage',   (screenWidth / 2) - 78,  nil, nil, nil)
 		Infinity_SetArea('bubbFilterSlotsAll',    (screenWidth / 2) - 26,  nil, nil, nil)
 		Infinity_SetArea('bubbFilterSlotsCleric', (screenWidth / 2) + 26,  nil, nil, nil)
 	else
+
+		Infinity_SetArea('bubbSpellMenuSearchBackground', sidebarWidth, nil, nil, nil)
+		Infinity_SetArea('bubbSpellMenuSearch', sidebarWidth, nil, nil, nil)
+
 		Infinity_SetArea('bubbFilterSlotsMage',   sidebarWidth,       nil, nil, nil)
 		Infinity_SetArea('bubbFilterSlotsAll',    sidebarWidth + 52,  nil, nil, nil)
 		Infinity_SetArea('bubbFilterSlotsCleric', sidebarWidth + 104, nil, nil, nil)
@@ -844,6 +897,34 @@ function filterSpellListInfoCleric()
 	initializeSlots()
 end
 
+function filterSpellListInfoSearch()
+	filteredSpellListInfo = {}
+	for i = 1, 9, 1 do
+		local spellLevel = spellListInfo[i]
+		local currentLevel = {}
+		for j = 1, #spellLevel, 1 do
+			local spell = spellLevel[j]
+			if string.find(string.lower(spell.spellName), string.lower(spellSearchEdit)) ~= nil then
+				table.insert(currentLevel, spell)
+			end
+		end
+		table.insert(filteredSpellListInfo, currentLevel)
+	end
+	initializeSlots()
+end
+
+function customSpellMenuWatchdog()
+	if spellSearchEdit ~= oldSpellSearchEdit then
+		startingWithSize = #filteredSpellListInfo
+		if spellSearchEdit ~= '' then
+			filterSpellListInfoSearch()
+		else
+			filterSpellListInfoAll()
+		end
+		oldSpellSearchEdit = spellSearchEdit
+	end
+end
+
 function launchSpellMenu(slot, leftClick)
 
 	if leftClick then
@@ -875,6 +956,10 @@ menu
 				local screenWidth, screenHeight = Infinity_GetScreenSize()
 				Infinity_SetArea('bubbExitBackground', nil, nil, screenWidth, screenHeight)
 
+				oldSpellSearchEdit = ''
+				spellSearchEdit = ''
+				Infinity_FocusTextEdit('bubbSpellMenuSearch');
+
 				slotRowOffsets = {[1] = 0, [2] = 0, [3] = 0, [4] = 0, [5] = 0,
 								  [6] = 0, [7] = 0, [8] = 0, [9] = 0}
 
@@ -893,6 +978,11 @@ menu
 					worldScreen:TogglePauseGame(true)
 				end
 			"
+	label
+	{
+		area 0 0 -1 -1
+		text lua "customSpellMenuWatchdog()"
+	}
 
 	text
 	{
@@ -900,6 +990,35 @@ menu
 		area 0 0 0 0
 		greyscale 1
 		action "Infinity_PopMenu('BUBB_SPELL_MENU_SLOTS')"
+	}
+
+	label
+	{
+		name "bubbSpellMenuSearchBackground"
+		area 0 57 410 24
+		rectangle 1
+		opacity 1000
+	}
+	edit
+	{
+		name "bubbSpellMenuSearch"
+		area 0 59 410 24
+		var spellSearchEdit
+		text style "edit"
+		align center bottom
+		maxlines 1
+		action
+		"
+			if key_pressed == 27 then
+				Infinity_PopMenu('BUBB_SPELL_MENU_SLOTS')
+			elseif key_pressed == 13 then
+				selectSpellWithUUID(getFirstSpellUUID())
+				Infinity_PopMenu('BUBB_SPELL_MENU_SLOTS')
+				return 0
+			else
+				return 1
+			end
+		"
 	}
 
 	button
@@ -910,7 +1029,12 @@ menu
 		bam GUIBTACT
 		frame 68
 		tooltip "Mage Spells"
-		action "filterSpellListInfoMage()"
+		action 	"
+					filterSpellListInfoMage()
+					oldSpellSearchEdit = ''
+					spellSearchEdit = ''
+					Infinity_FocusTextEdit('bubbSpellMenuSearch')
+				"
 	}
 
 	button
@@ -921,7 +1045,12 @@ menu
 		bam GUIBTACT
 		frame 12
 		tooltip "All Spells"
-		action "filterSpellListInfoAll()"
+		action 	"
+					filterSpellListInfoAll()
+					oldSpellSearchEdit = ''
+					spellSearchEdit = ''
+					Infinity_FocusTextEdit('bubbSpellMenuSearch')
+				"
 	}
 
 	button
@@ -932,7 +1061,12 @@ menu
 		bam GUIBTACT
 		frame 70
 		tooltip "Cleric Spells"
-		action "filterSpellListInfoCleric()"
+		action 	"
+					filterSpellListInfoCleric()
+					oldSpellSearchEdit = ''
+					spellSearchEdit = ''
+					Infinity_FocusTextEdit('bubbSpellMenuSearch')
+				"
 	}
 
 	button
@@ -943,9 +1077,11 @@ menu
 		align center center
 		bam GUIBTACT
 		frame 64
+		tooltip "Align Left"
 		action 	"
 					alignCenter = false
 					initializeSlots()
+					Infinity_FocusTextEdit('bubbSpellMenuSearch');
 				"
 	}
 
@@ -957,9 +1093,11 @@ menu
 		align center center
 		bam GUIBTACT
 		frame 66
+		tooltip "Align Center"
 		action 	"
 					alignCenter = true
 					initializeSlots()
+					Infinity_FocusTextEdit('bubbSpellMenuSearch');
 				"
 	}
 

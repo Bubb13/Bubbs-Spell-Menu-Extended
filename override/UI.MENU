@@ -675,7 +675,9 @@ function incrementRowOffset(slot_row)
 end
 
 function isSlotFirst(slot_row, slot_column)
-	if slotRowOffsets[slot_row] + slot_column == 1 then
+	if (not getSlotEndsAreArrows(slot_row) and slotRowOffsets[slot_row] + slot_column == 1)
+	    or (getSlotEndsAreArrows(slot_row) and slotRowOffsets[slot_row] + slot_column == 2)
+	then
 		for checkingSlotRow = slot_row - 1, 1, -1 do
 			if getSlotEnabled(checkingSlotRow, 1) then return false end
 		end

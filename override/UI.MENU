@@ -943,6 +943,7 @@ menu
 		align center center
 		bam GUIBTACT
 		frame 64
+		tooltip "Align Left"
 		action 	"
 					alignCenter = false
 					initializeSlots()
@@ -957,6 +958,7 @@ menu
 		align center center
 		bam GUIBTACT
 		frame 66
+		tooltip "Align Center"
 		action 	"
 					alignCenter = true
 					initializeSlots()

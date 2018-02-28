@@ -1,145 +1,106 @@
 BACKUP ~bubb_spell_menu_extended/backup~
 AUTHOR ~Bubb~
-VERSION 1.3
+VERSION 1.5
 AUTO_TRA ~bubb_spell_menu_extended/%s~
 
-BEGIN ~Bubb Spell Menu Core~
-NO_LOG_RECORD
-INSTALL_BY_DEFAULT
-
-	INCLUDE ~bubb_spell_menu_extended/bubb_lib.tph~ 
-
-	//INCLUDE ~bubb_spell_menu_extended/ui_menu_lib.tph~ 
-	
-	
-	//LAF INIT END
-	
-	
-	/*COPY_EXISTING ~UI.MENU~ ~override~
-	
-
-		READ_ASCII 0 getRegexpInBuffer.string (BUFFER_LENGTH)
-		SPRINT getRegexpInBuffer.to_find ~replaceSpellUUIDs([^]]+)~
-		SET getRegexpInBuffer.match_length_limit = 50
-		
-		SPRINT getRegexpInBuffer.indexes_array ~index_results~
-		SPRINT getRegexpInBuffer.values_array ~value_results~
-		
-		LPM getRegexpInBuffer
-	
-		PHP_EACH value_results AS value_index => matched BEGIN
-		
-			SET match_index = $index_results(~%value_index%~)
-			
-			
-			LPF FIND_ENDING_BRACKET INT_VAR starting_bracket_offset = match_index + 17 RET ending_bracket_offset END
-			
-			READ_ASCII match_index + 18 contents (ending_bracket_offset - match_index - 18)
-			
-			PATCH_PRINT ~%match_index%: "%matched%", contents: "%contents%"~
-		END
-	
-	
-	BUT_ONLY_IF_IT_CHANGES*/
-	
-	
 BEGIN ~Bubb's Spell Menu Extended~
-	
+
+	INCLUDE ~bubb_spell_menu_extended/bubb_lib.tph~
+
 	OUTER_SET spell_count = 0
 	APPEND ~BGEE.LUA~ ~spellInfo =~
 	APPEND ~BGEE.LUA~ ~{~
-	
+
 	COPY_EXISTING_REGEXP ~.*\.SPL~ ~override~
-	
+
 		LPF TO_HEX_NUMBER INT_VAR value = spell_count minDigits = 3 RET hex_uuid = hexNumber END
-		
+
 		READ_LONG 0x0008 unidentified_name_strref
 
 		PATCH_IF (unidentified_name_strref != (0 - 1)) BEGIN
-		
+
 			GET_STRREF unidentified_name_strref unidentified_name
 
 			LPF ARRAY_GET_VALUE INT_VAR key = unidentified_name_strref STR_VAR array_name = ~processed_strrefs~ RET already_processed = exists original_value = value END
-		
+
 			PATCH_IF (already_processed == 0) BEGIN
-			
+
 				TEXT_SPRINT unidentified_name_altered ~SPELL_UUID:%hex_uuid%~
-				
+
 				READ_SHORT 0x001c spell_type
 				READ_LONG 0x0034 spell_level
 				READ_ASCII 0x003a spell_icon
-				
+
 				INNER_ACTION BEGIN
 
 					STRING_SET_EVALUATE unidentified_name_strref ~%unidentified_name_altered%~
-					
+
 					LAF STRING_REPLACE STR_VAR string = EVAL ~%unidentified_name%~ to_replace = ~'~ with = ~\'~ RET unidentified_name_escaped = replaced_string END
-					
+
 					APPEND ~BGEE.LUA~ ~%TAB%['%hex_uuid%'] =~
 					APPEND ~BGEE.LUA~ ~%TAB%{~
-					
+
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['resref'] = '%SOURCE_RES%',~
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['name'] = '%unidentified_name_escaped%',~
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellType'] = %spell_type%,~
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellLevel'] = %spell_level%,~
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellIcon'] = '%spell_icon%',~
-					
+
 					APPEND ~BGEE.LUA~ ~%TAB%},~
 				END
-			
+
 				TEXT_SPRINT $processed_strrefs(~%unidentified_name_strref%~) ~%unidentified_name%~
-			
+
 			END ELSE BEGIN
-			
+
 				TEXT_SPRINT unidentified_name_altered ~SPELL_UUID:%hex_uuid%~
-	
+
 				SET inserted_strref = RESOLVE_STR_REF (~%unidentified_name_altered%~)
 				WRITE_LONG 0x0008 inserted_strref
-				
+
 				READ_SHORT 0x001c spell_type
 				READ_LONG 0x0034 spell_level
 				READ_ASCII 0x003a spell_icon
-				
+
 				INNER_ACTION BEGIN
-				
-					STRING_SET_EVALUATE unidentified_name_strref ~%unidentified_name_altered%~
+
 					LAF STRING_REPLACE STR_VAR string = EVAL ~%original_value%~ to_replace = ~'~ with = ~\'~ RET original_value_escaped = replaced_string END
-					
+
 					APPEND ~BGEE.LUA~ ~%TAB%['%hex_uuid%'] =~
 					APPEND ~BGEE.LUA~ ~%TAB%{~
-					
+
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['resref'] = '%SOURCE_RES%',~
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['name'] = '%original_value_escaped%',~
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellType'] = %spell_type%,~
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellLevel'] = %spell_level%,~
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellIcon'] = '%spell_icon%',~
-	
+
 					APPEND ~BGEE.LUA~ ~%TAB%},~
 				END
-				
+
 				TEXT_SPRINT $processed_strrefs(~%inserted_strref%~) ~%original_value%~
 			END
 		END
-		
+
 		SET %spell_count% += 1
-		
+
 	BUT_ONLY_IF_IT_CHANGES
 
 	ACTION_GET_STRREF 11555 identify_string
 	ACTION_GET_STRREF 63205 jump_to_cleric
 	ACTION_GET_STRREF 63206 jump_to_mage
-	
+
 	LAF STRING_REPLACE STR_VAR string = EVAL ~%identify_string%~ to_replace = ~'~ with = ~\'~ RET identify_string = replaced_string END
 	LAF STRING_REPLACE STR_VAR string = EVAL ~%jump_to_cleric%~ to_replace = ~'~ with = ~\'~ RET jump_to_cleric = replaced_string END
 	LAF STRING_REPLACE STR_VAR string = EVAL ~%jump_to_mage%~ to_replace = ~'~ with = ~\'~ RET jump_to_mage = replaced_string END
-	
+
 	APPEND ~BGEE.LUA~ ~%TAB%["specialTooltips"] =~
 	APPEND ~BGEE.LUA~ ~%TAB%{~
 	APPEND ~BGEE.LUA~ ~%TAB%%TAB%['%identify_string%'] = 1,~
 	APPEND ~BGEE.LUA~ ~%TAB%%TAB%['%jump_to_cleric%'] = 1,~
 	APPEND ~BGEE.LUA~ ~%TAB%%TAB%['%jump_to_mage%'] = 1,~
 	APPEND ~BGEE.LUA~ ~%TAB%},~
-	
+
 	APPEND ~BGEE.LUA~ ~}~
 	//PRINT ~There were %spell_count% spells.~
 	

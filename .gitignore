@@ -1,3 +1,5 @@
 *.*
 !bubb_spell_menu_extended/*.*
+!bubb_spell_menu_extended/work/*.*
+bubb_spell_menu_extended/work/to_patch.MENU
 !setup-bubb_spell_menu_extended.exe

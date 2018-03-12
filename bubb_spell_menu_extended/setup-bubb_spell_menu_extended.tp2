@@ -1,12 +1,28 @@
 BACKUP ~bubb_spell_menu_extended/backup~
 AUTHOR ~Bubb~
-VERSION 1.5
+VERSION 1.7
 AUTO_TRA ~bubb_spell_menu_extended/%s~
 
 BEGIN ~Bubb's Spell Menu Extended~
+REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 
 	INCLUDE ~bubb_spell_menu_extended/bubb_lib.tph~
 
+	//Patch UI.MENU
+	ACTION_IF FILE_EXISTS ~bubb_spell_menu_extended/work/failed.mrk~ BEGIN
+		DELETE ~bubb_spell_menu_extended/work/failed.mrk~
+	END
+	
+	COPY_EXISTING ~UI.MENU~ ~bubb_spell_menu_extended/work/to_patch.MENU~ IF_EXISTS
+	AT_NOW ~bubb_spell_menu_extended/work/UIUtil.exe~
+	
+	ACTION_IF FILE_EXISTS ~bubb_spell_menu_extended/work/failed.mrk~ BEGIN
+		FAIL ~Could not patch UI.MENU~
+	END
+	
+	COPY ~bubb_spell_menu_extended/work/out.MENU~ ~override/UI.MENU~
+	//Patch UI.MENU
+	
 	OUTER_SET spell_count = 0
 	APPEND ~BGEE.LUA~ ~spellInfo =~
 	APPEND ~BGEE.LUA~ ~{~

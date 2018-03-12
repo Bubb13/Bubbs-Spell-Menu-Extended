@@ -9,6 +9,7 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 	INCLUDE ~bubb_spell_menu_extended/bubb_lib.tph~
 
 	//Patch UI.MENU
+
 	ACTION_IF FILE_EXISTS ~bubb_spell_menu_extended/work/failed.mrk~ BEGIN
 		DELETE ~bubb_spell_menu_extended/work/failed.mrk~
 	END
@@ -17,10 +18,11 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 	AT_NOW ~bubb_spell_menu_extended/work/UIUtil.exe~
 	
 	ACTION_IF FILE_EXISTS ~bubb_spell_menu_extended/work/failed.mrk~ BEGIN
-		FAIL ~Could not patch UI.MENU~
+		FAIL ~Could not patch UI.MENU.~
 	END
 	
 	COPY ~bubb_spell_menu_extended/work/out.MENU~ ~override/UI.MENU~
+	
 	//Patch UI.MENU
 	
 	OUTER_SET spell_count = 0
@@ -118,5 +120,4 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 	APPEND ~BGEE.LUA~ ~%TAB%},~
 
 	APPEND ~BGEE.LUA~ ~}~
-	//PRINT ~There were %spell_count% spells.~
 	

@@ -8,23 +8,55 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 
 	INCLUDE ~bubb_spell_menu_extended/bubb_lib.tph~
 
-	//Patch UI.MENU
+	ACTION_IF ~%WEIDU_OS%~ STRING_EQUAL_CASE ~WIN32~ BEGIN
+	
+		ACTION_DEFINE_ASSOCIATIVE_ARRAY accepted_responses BEGIN ~1~ => 1 ~2~ => 1 END
+		LAF PROMPT_USER
+		STR_VAR
+			to_prompt = EVAL ~This installer can attempt to patch UI.MENU instead of overriding it on Windows platforms; which installation method do you wish to perform?%WNL% 1] Patch%WNL% 2] Override~
+			accepted_responses = ~accepted_responses~
+		RET
+			response
+		END
+	
+	END ELSE BEGIN
+	
+		ACTION_DEFINE_ASSOCIATIVE_ARRAY accepted_responses BEGIN ~2~ => 1 END
+		LAF PROMPT_USER
+		STR_VAR
+			to_prompt = EVAL ~This installer can attempt to patch UI.MENU instead of overriding it on Windows platforms; which installation method do you wish to perform?%WNL% 1] Patch (Disabled)%WNL% 2] Override~
+			accepted_responses = ~accepted_responses~
+		RET
+			response
+		END
+	
+	END
+	
+	ACTION_IF %response% == 1 BEGIN
+	
+		//Patch UI.MENU
+		
+		ACTION_IF FILE_EXISTS ~bubb_spell_menu_extended/work/failed.mrk~ BEGIN
+			DELETE ~bubb_spell_menu_extended/work/failed.mrk~
+		END
+		
+		COPY_EXISTING ~UI.MENU~ ~bubb_spell_menu_extended/work/to_patch.MENU~ IF_EXISTS
+		AT_NOW ~bubb_spell_menu_extended/work/UIUtil.exe~
+		
+		ACTION_IF FILE_EXISTS ~bubb_spell_menu_extended/work/failed.mrk~ BEGIN
+			FAIL ~Could not patch UI.MENU.~
+		END
+		
+		COPY ~bubb_spell_menu_extended/work/out.MENU~ ~override/UI.MENU~
+		
+		//Patch UI.MENU
+	
+	END ELSE BEGIN
+	
+		COPY ~bubb_spell_menu_extended/copy/UI.MENU~ ~override/UI.MENU~
+	
+	END
 
-	ACTION_IF FILE_EXISTS ~bubb_spell_menu_extended/work/failed.mrk~ BEGIN
-		DELETE ~bubb_spell_menu_extended/work/failed.mrk~
-	END
-	
-	COPY_EXISTING ~UI.MENU~ ~bubb_spell_menu_extended/work/to_patch.MENU~ IF_EXISTS
-	AT_NOW ~bubb_spell_menu_extended/work/UIUtil.exe~
-	
-	ACTION_IF FILE_EXISTS ~bubb_spell_menu_extended/work/failed.mrk~ BEGIN
-		FAIL ~Could not patch UI.MENU.~
-	END
-	
-	COPY ~bubb_spell_menu_extended/work/out.MENU~ ~override/UI.MENU~
-	
-	//Patch UI.MENU
-	
 	OUTER_SET spell_count = 0
 	APPEND ~BGEE.LUA~ ~spellInfo =~
 	APPEND ~BGEE.LUA~ ~{~

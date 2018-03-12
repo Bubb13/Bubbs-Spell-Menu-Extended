@@ -153,3 +153,17 @@
 		END
 	END
 	
+	DEFINE_ACTION_FUNCTION PROMPT_USER
+	STR_VAR
+		to_prompt = ~~
+		accepted_responses = ~~
+	RET
+		response
+	BEGIN
+		PRINT ~%to_prompt%~
+		ACTION_READLN response
+		ACTION_IF NOT VARIABLE_IS_SET $~%accepted_responses%~(~%response%~) BEGIN
+			LAF PROMPT_USER STR_VAR to_prompt = EVAL ~%to_prompt%~ accepted_responses = EVAL ~%accepted_responses%~ RET response END
+		END
+	END
+	

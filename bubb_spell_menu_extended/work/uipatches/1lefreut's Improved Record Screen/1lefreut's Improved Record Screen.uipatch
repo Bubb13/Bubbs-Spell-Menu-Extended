@@ -1,0 +1,8 @@
+:disable 0base menus CHARACTER @298
+:disable 0base menus CHARACTER @299
+:lua
+:functions
+:menus
+CHARACTER_INFORMATION
+-@70 		text lua "characters[currentID].Stats.favspell.current"
++@71 		text lua "replaceSpellUUIDs(characters[currentID].Stats.favspell.current)"

@@ -103,8 +103,9 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 
 					STRING_SET_EVALUATE unidentified_name_strref ~%unidentified_name_altered%~
 
-					LAF STRING_REPLACE STR_VAR string = EVAL ~%unidentified_name%~ to_replace = ~'~ with = ~\'~ RET unidentified_name_escaped = replaced_string END
-
+					LAF STRING_REPLACE STR_VAR string = EVAL ~%unidentified_name%~ to_replace = ~\~ with = ~\\~ RET unidentified_name_escaped = replaced_string END
+					LAF STRING_REPLACE STR_VAR string = EVAL ~%unidentified_name_escaped%~ to_replace = ~'~ with = ~\'~ RET unidentified_name_escaped = replaced_string END
+					
 					APPEND ~BGEE.LUA~ ~%TAB%['%hex_uuid%'] =~
 					APPEND ~BGEE.LUA~ ~%TAB%{~
 
@@ -144,8 +145,9 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 
 				INNER_ACTION BEGIN
 
-					LAF STRING_REPLACE STR_VAR string = EVAL ~%original_value%~ to_replace = ~'~ with = ~\'~ RET original_value_escaped = replaced_string END
-
+					LAF STRING_REPLACE STR_VAR string = EVAL ~%original_value%~ to_replace = ~\~ with = ~\\~ RET original_value_escaped = replaced_string END
+					LAF STRING_REPLACE STR_VAR string = EVAL ~%original_value_escaped%~ to_replace = ~'~ with = ~\'~ RET original_value_escaped = replaced_string END
+					
 					APPEND ~BGEE.LUA~ ~%TAB%['%hex_uuid%'] =~
 					APPEND ~BGEE.LUA~ ~%TAB%{~
 

@@ -525,7 +525,7 @@ function findNewSpellIndex()
 	end
 end
 
-function selectSpellWithUUID(uuid)
+function selectSpellWithUUID(uuid, leftClick)
 
 	resetSpellHotbar()
 	finding = true
@@ -544,7 +544,12 @@ function selectSpellWithUUID(uuid)
 
 					if spellUUID == uuid then
 
-						buttonArray:OnLButtonPressed(i)
+						if leftClick then
+							buttonArray:OnLButtonPressed(i)
+						else
+							buttonArray:OnRButtonPressed(i)
+						end
+
 						finding = false
 						break
 					end
@@ -622,7 +627,7 @@ function fillSpellListInfo()
 					toInsert = {}
 					toInsert.spellUUID = spellUUID
 					toInsert.spellName = spellName
-					toInsert.spellIcon = string.sub(spellIcon, 1, #spellIcon - 1)..'B'
+					toInsert.spellIcon = spellIcon
 					toInsert.spellLevel = spellLevel
 					toInsert.spellType = spellType
 					toInsert.spellCastableCount = getSpellCastableCountFromResref(spellResref)
@@ -770,8 +775,17 @@ function doActionForSlot(slot_row, slot_column)
 	else
 		local spell = getSpellForSlot(slot_row, slot_column)
 		if spell ~= nil then
-			selectSpellWithUUID(spell.spellUUID)
+			selectSpellWithUUID(spell.spellUUID, true)
 			Infinity_PopMenu('BUBB_SPELL_MENU_SLOTS')
+		end
+	end
+end
+
+function doActionAltForSlot(slot_row, slot_column)
+	if not getSlotIsArrow(slot_row, slot_column) then
+		local spell = getSpellForSlot(slot_row, slot_column)
+		if spell ~= nil then
+			selectSpellWithUUID(spell.spellUUID, false)
 		end
 	end
 end
@@ -1014,7 +1028,7 @@ menu
 			if key_pressed == 27 then
 				Infinity_PopMenu('BUBB_SPELL_MENU_SLOTS')
 			elseif key_pressed == 13 then
-				selectSpellWithUUID(getFirstSpellUUID())
+				selectSpellWithUUID(getFirstSpellUUID(), true)
 				Infinity_PopMenu('BUBB_SPELL_MENU_SLOTS')
 				return 0
 			else
@@ -1113,6 +1127,7 @@ menu
 		frame lua "getFrameForSlot(1, 1)"
 		tooltip lua "getTooltipForSlot(1, 1)"
 		action "doActionForSlot(1, 1)"
+		actionAlt "doActionAltForSlot(1, 1)"
 	}
 	button
 	{
@@ -1126,6 +1141,7 @@ menu
 		count lua "getCountForSlot(1, 1)"
 		tooltip lua "getTooltipForSlot(1, 1)"
 		action "doActionForSlot(1, 1)"
+		actionAlt "doActionAltForSlot(1, 1)"
 	}
 
 	button
@@ -1138,6 +1154,7 @@ menu
 		frame lua "getFrameForSlot(1, 2)"
 		tooltip lua "getTooltipForSlot(1, 2)"
 		action "doActionForSlot(1, 2)"
+		actionAlt "doActionAltForSlot(1, 2)"
 	}
 	button
 	{
@@ -1151,6 +1168,7 @@ menu
 		count lua "getCountForSlot(1, 2)"
 		tooltip lua "getTooltipForSlot(1, 2)"
 		action "doActionForSlot(1, 2)"
+		actionAlt "doActionAltForSlot(1, 2)"
 	}
 
 	button
@@ -1163,6 +1181,7 @@ menu
 		frame lua "getFrameForSlot(1, 3)"
 		tooltip lua "getTooltipForSlot(1, 3)"
 		action "doActionForSlot(1, 3)"
+		actionAlt "doActionAltForSlot(1, 3)"
 	}
 	button
 	{
@@ -1176,6 +1195,7 @@ menu
 		count lua "getCountForSlot(1, 3)"
 		tooltip lua "getTooltipForSlot(1, 3)"
 		action "doActionForSlot(1, 3)"
+		actionAlt "doActionAltForSlot(1, 3)"
 	}
 
 	button
@@ -1188,6 +1208,7 @@ menu
 		frame lua "getFrameForSlot(1, 4)"
 		tooltip lua "getTooltipForSlot(1, 4)"
 		action "doActionForSlot(1, 4)"
+		actionAlt "doActionAltForSlot(1, 4)"
 	}
 	button
 	{
@@ -1201,6 +1222,7 @@ menu
 		count lua "getCountForSlot(1, 4)"
 		tooltip lua "getTooltipForSlot(1, 4)"
 		action "doActionForSlot(1, 4)"
+		actionAlt "doActionAltForSlot(1, 4)"
 	}
 
 	button
@@ -1213,6 +1235,7 @@ menu
 		frame lua "getFrameForSlot(1, 5)"
 		tooltip lua "getTooltipForSlot(1, 5)"
 		action "doActionForSlot(1, 5)"
+		actionAlt "doActionAltForSlot(1, 5)"
 	}
 	button
 	{
@@ -1226,6 +1249,7 @@ menu
 		count lua "getCountForSlot(1, 5)"
 		tooltip lua "getTooltipForSlot(1, 5)"
 		action "doActionForSlot(1, 5)"
+		actionAlt "doActionAltForSlot(1, 5)"
 	}
 
 	button
@@ -1238,6 +1262,7 @@ menu
 		frame lua "getFrameForSlot(1, 6)"
 		tooltip lua "getTooltipForSlot(1, 6)"
 		action "doActionForSlot(1, 6)"
+		actionAlt "doActionAltForSlot(1, 6)"
 	}
 	button
 	{
@@ -1251,6 +1276,7 @@ menu
 		count lua "getCountForSlot(1, 6)"
 		tooltip lua "getTooltipForSlot(1, 6)"
 		action "doActionForSlot(1, 6)"
+		actionAlt "doActionAltForSlot(1, 6)"
 	}
 
 	button
@@ -1263,6 +1289,7 @@ menu
 		frame lua "getFrameForSlot(1, 7)"
 		tooltip lua "getTooltipForSlot(1, 7)"
 		action "doActionForSlot(1, 7)"
+		actionAlt "doActionAltForSlot(1, 7)"
 	}
 	button
 	{
@@ -1276,6 +1303,7 @@ menu
 		count lua "getCountForSlot(1, 7)"
 		tooltip lua "getTooltipForSlot(1, 7)"
 		action "doActionForSlot(1, 7)"
+		actionAlt "doActionAltForSlot(1, 7)"
 	}
 
 	button
@@ -1288,6 +1316,7 @@ menu
 		frame lua "getFrameForSlot(1, 8)"
 		tooltip lua "getTooltipForSlot(1, 8)"
 		action "doActionForSlot(1, 8)"
+		actionAlt "doActionAltForSlot(1, 8)"
 	}
 	button
 	{
@@ -1301,6 +1330,7 @@ menu
 		count lua "getCountForSlot(1, 8)"
 		tooltip lua "getTooltipForSlot(1, 8)"
 		action "doActionForSlot(1, 8)"
+		actionAlt "doActionAltForSlot(1, 8)"
 	}
 
 	button
@@ -1313,6 +1343,7 @@ menu
 		frame lua "getFrameForSlot(1, 9)"
 		tooltip lua "getTooltipForSlot(1, 9)"
 		action "doActionForSlot(1, 9)"
+		actionAlt "doActionAltForSlot(1, 9)"
 	}
 	button
 	{
@@ -1326,6 +1357,7 @@ menu
 		count lua "getCountForSlot(1, 9)"
 		tooltip lua "getTooltipForSlot(1, 9)"
 		action "doActionForSlot(1, 9)"
+		actionAlt "doActionAltForSlot(1, 9)"
 	}
 
 	button
@@ -1338,6 +1370,7 @@ menu
 		frame lua "getFrameForSlot(1, 10)"
 		tooltip lua "getTooltipForSlot(1, 10)"
 		action "doActionForSlot(1, 10)"
+		actionAlt "doActionAltForSlot(1, 10)"
 	}
 	button
 	{
@@ -1351,6 +1384,7 @@ menu
 		count lua "getCountForSlot(1, 10)"
 		tooltip lua "getTooltipForSlot(1, 10)"
 		action "doActionForSlot(1, 10)"
+		actionAlt "doActionAltForSlot(1, 10)"
 	}
 
 	button
@@ -1363,6 +1397,7 @@ menu
 		frame lua "getFrameForSlot(1, 11)"
 		tooltip lua "getTooltipForSlot(1, 11)"
 		action "doActionForSlot(1, 11)"
+		actionAlt "doActionAltForSlot(1, 11)"
 	}
 	button
 	{
@@ -1376,6 +1411,7 @@ menu
 		count lua "getCountForSlot(1, 11)"
 		tooltip lua "getTooltipForSlot(1, 11)"
 		action "doActionForSlot(1, 11)"
+		actionAlt "doActionAltForSlot(1, 11)"
 	}
 
 	button
@@ -1388,6 +1424,7 @@ menu
 		frame lua "getFrameForSlot(1, 12)"
 		tooltip lua "getTooltipForSlot(1, 12)"
 		action "doActionForSlot(1, 12)"
+		actionAlt "doActionAltForSlot(1, 12)"
 	}
 	button
 	{
@@ -1401,6 +1438,7 @@ menu
 		count lua "getCountForSlot(1, 12)"
 		tooltip lua "getTooltipForSlot(1, 12)"
 		action "doActionForSlot(1, 12)"
+		actionAlt "doActionAltForSlot(1, 12)"
 	}
 
 	button
@@ -1413,6 +1451,7 @@ menu
 		frame lua "getFrameForSlot(1, 13)"
 		tooltip lua "getTooltipForSlot(1, 13)"
 		action "doActionForSlot(1, 13)"
+		actionAlt "doActionAltForSlot(1, 13)"
 	}
 	button
 	{
@@ -1426,6 +1465,7 @@ menu
 		count lua "getCountForSlot(1, 13)"
 		tooltip lua "getTooltipForSlot(1, 13)"
 		action "doActionForSlot(1, 13)"
+		actionAlt "doActionAltForSlot(1, 13)"
 	}
 
 	button
@@ -1438,6 +1478,7 @@ menu
 		frame lua "getFrameForSlot(1, 14)"
 		tooltip lua "getTooltipForSlot(1, 14)"
 		action "doActionForSlot(1, 14)"
+		actionAlt "doActionAltForSlot(1, 14)"
 	}
 	button
 	{
@@ -1451,6 +1492,7 @@ menu
 		count lua "getCountForSlot(1, 14)"
 		tooltip lua "getTooltipForSlot(1, 14)"
 		action "doActionForSlot(1, 14)"
+		actionAlt "doActionAltForSlot(1, 14)"
 	}
 
 	button
@@ -1463,6 +1505,7 @@ menu
 		frame lua "getFrameForSlot(1, 15)"
 		tooltip lua "getTooltipForSlot(1, 15)"
 		action "doActionForSlot(1, 15)"
+		actionAlt "doActionAltForSlot(1, 15)"
 	}
 	button
 	{
@@ -1476,6 +1519,7 @@ menu
 		count lua "getCountForSlot(1, 15)"
 		tooltip lua "getTooltipForSlot(1, 15)"
 		action "doActionForSlot(1, 15)"
+		actionAlt "doActionAltForSlot(1, 15)"
 	}
 
 	button
@@ -1488,6 +1532,7 @@ menu
 		frame lua "getFrameForSlot(1, 16)"
 		tooltip lua "getTooltipForSlot(1, 16)"
 		action "doActionForSlot(1, 16)"
+		actionAlt "doActionAltForSlot(1, 16)"
 	}
 	button
 	{
@@ -1501,6 +1546,7 @@ menu
 		count lua "getCountForSlot(1, 16)"
 		tooltip lua "getTooltipForSlot(1, 16)"
 		action "doActionForSlot(1, 16)"
+		actionAlt "doActionAltForSlot(1, 16)"
 	}
 
 	button
@@ -1513,6 +1559,7 @@ menu
 		frame lua "getFrameForSlot(1, 17)"
 		tooltip lua "getTooltipForSlot(1, 17)"
 		action "doActionForSlot(1, 17)"
+		actionAlt "doActionAltForSlot(1, 17)"
 	}
 	button
 	{
@@ -1526,6 +1573,7 @@ menu
 		count lua "getCountForSlot(1, 17)"
 		tooltip lua "getTooltipForSlot(1, 17)"
 		action "doActionForSlot(1, 17)"
+		actionAlt "doActionAltForSlot(1, 17)"
 	}
 
 	button
@@ -1538,6 +1586,7 @@ menu
 		frame lua "getFrameForSlot(1, 18)"
 		tooltip lua "getTooltipForSlot(1, 18)"
 		action "doActionForSlot(1, 18)"
+		actionAlt "doActionAltForSlot(1, 18)"
 	}
 	button
 	{
@@ -1551,6 +1600,7 @@ menu
 		count lua "getCountForSlot(1, 18)"
 		tooltip lua "getTooltipForSlot(1, 18)"
 		action "doActionForSlot(1, 18)"
+		actionAlt "doActionAltForSlot(1, 18)"
 	}
 
 	button
@@ -1563,6 +1613,7 @@ menu
 		frame lua "getFrameForSlot(1, 19)"
 		tooltip lua "getTooltipForSlot(1, 19)"
 		action "doActionForSlot(1, 19)"
+		actionAlt "doActionAltForSlot(1, 19)"
 	}
 	button
 	{
@@ -1576,6 +1627,7 @@ menu
 		count lua "getCountForSlot(1, 19)"
 		tooltip lua "getTooltipForSlot(1, 19)"
 		action "doActionForSlot(1, 19)"
+		actionAlt "doActionAltForSlot(1, 19)"
 	}
 
 	button
@@ -1588,6 +1640,7 @@ menu
 		frame lua "getFrameForSlot(1, 20)"
 		tooltip lua "getTooltipForSlot(1, 20)"
 		action "doActionForSlot(1, 20)"
+		actionAlt "doActionAltForSlot(1, 20)"
 	}
 	button
 	{
@@ -1601,6 +1654,7 @@ menu
 		count lua "getCountForSlot(1, 20)"
 		tooltip lua "getTooltipForSlot(1, 20)"
 		action "doActionForSlot(1, 20)"
+		actionAlt "doActionAltForSlot(1, 20)"
 	}
 
 	button
@@ -1613,6 +1667,7 @@ menu
 		frame lua "getFrameForSlot(1, 21)"
 		tooltip lua "getTooltipForSlot(1, 21)"
 		action "doActionForSlot(1, 21)"
+		actionAlt "doActionAltForSlot(1, 21)"
 	}
 	button
 	{
@@ -1626,6 +1681,7 @@ menu
 		count lua "getCountForSlot(1, 21)"
 		tooltip lua "getTooltipForSlot(1, 21)"
 		action "doActionForSlot(1, 21)"
+		actionAlt "doActionAltForSlot(1, 21)"
 	}
 
 	button
@@ -1638,6 +1694,7 @@ menu
 		frame lua "getFrameForSlot(1, 22)"
 		tooltip lua "getTooltipForSlot(1, 22)"
 		action "doActionForSlot(1, 22)"
+		actionAlt "doActionAltForSlot(1, 22)"
 	}
 	button
 	{
@@ -1651,6 +1708,7 @@ menu
 		count lua "getCountForSlot(1, 22)"
 		tooltip lua "getTooltipForSlot(1, 22)"
 		action "doActionForSlot(1, 22)"
+		actionAlt "doActionAltForSlot(1, 22)"
 	}
 
 	button
@@ -1663,6 +1721,7 @@ menu
 		frame lua "getFrameForSlot(1, 23)"
 		tooltip lua "getTooltipForSlot(1, 23)"
 		action "doActionForSlot(1, 23)"
+		actionAlt "doActionAltForSlot(1, 23)"
 	}
 	button
 	{
@@ -1676,6 +1735,7 @@ menu
 		count lua "getCountForSlot(1, 23)"
 		tooltip lua "getTooltipForSlot(1, 23)"
 		action "doActionForSlot(1, 23)"
+		actionAlt "doActionAltForSlot(1, 23)"
 	}
 
 	button
@@ -1688,6 +1748,7 @@ menu
 		frame lua "getFrameForSlot(1, 24)"
 		tooltip lua "getTooltipForSlot(1, 24)"
 		action "doActionForSlot(1, 24)"
+		actionAlt "doActionAltForSlot(1, 24)"
 	}
 	button
 	{
@@ -1701,6 +1762,7 @@ menu
 		count lua "getCountForSlot(1, 24)"
 		tooltip lua "getTooltipForSlot(1, 24)"
 		action "doActionForSlot(1, 24)"
+		actionAlt "doActionAltForSlot(1, 24)"
 	}
 
 	button
@@ -1713,6 +1775,7 @@ menu
 		frame lua "getFrameForSlot(1, 25)"
 		tooltip lua "getTooltipForSlot(1, 25)"
 		action "doActionForSlot(1, 25)"
+		actionAlt "doActionAltForSlot(1, 25)"
 	}
 	button
 	{
@@ -1726,6 +1789,7 @@ menu
 		count lua "getCountForSlot(1, 25)"
 		tooltip lua "getTooltipForSlot(1, 25)"
 		action "doActionForSlot(1, 25)"
+		actionAlt "doActionAltForSlot(1, 25)"
 	}
 
 	button
@@ -1738,6 +1802,7 @@ menu
 		frame lua "getFrameForSlot(1, 26)"
 		tooltip lua "getTooltipForSlot(1, 26)"
 		action "doActionForSlot(1, 26)"
+		actionAlt "doActionAltForSlot(1, 26)"
 	}
 	button
 	{
@@ -1751,6 +1816,7 @@ menu
 		count lua "getCountForSlot(1, 26)"
 		tooltip lua "getTooltipForSlot(1, 26)"
 		action "doActionForSlot(1, 26)"
+		actionAlt "doActionAltForSlot(1, 26)"
 	}
 
 	button
@@ -1763,6 +1829,7 @@ menu
 		frame lua "getFrameForSlot(1, 27)"
 		tooltip lua "getTooltipForSlot(1, 27)"
 		action "doActionForSlot(1, 27)"
+		actionAlt "doActionAltForSlot(1, 27)"
 	}
 	button
 	{
@@ -1776,6 +1843,7 @@ menu
 		count lua "getCountForSlot(1, 27)"
 		tooltip lua "getTooltipForSlot(1, 27)"
 		action "doActionForSlot(1, 27)"
+		actionAlt "doActionAltForSlot(1, 27)"
 	}
 
 	button
@@ -1788,6 +1856,7 @@ menu
 		frame lua "getFrameForSlot(2, 1)"
 		tooltip lua "getTooltipForSlot(2, 1)"
 		action "doActionForSlot(2, 1)"
+		actionAlt "doActionAltForSlot(2, 1)"
 	}
 	button
 	{
@@ -1801,6 +1870,7 @@ menu
 		count lua "getCountForSlot(2, 1)"
 		tooltip lua "getTooltipForSlot(2, 1)"
 		action "doActionForSlot(2, 1)"
+		actionAlt "doActionAltForSlot(2, 1)"
 	}
 
 	button
@@ -1813,6 +1883,7 @@ menu
 		frame lua "getFrameForSlot(2, 2)"
 		tooltip lua "getTooltipForSlot(2, 2)"
 		action "doActionForSlot(2, 2)"
+		actionAlt "doActionAltForSlot(2, 2)"
 	}
 	button
 	{
@@ -1826,6 +1897,7 @@ menu
 		count lua "getCountForSlot(2, 2)"
 		tooltip lua "getTooltipForSlot(2, 2)"
 		action "doActionForSlot(2, 2)"
+		actionAlt "doActionAltForSlot(2, 2)"
 	}
 
 	button
@@ -1838,6 +1910,7 @@ menu
 		frame lua "getFrameForSlot(2, 3)"
 		tooltip lua "getTooltipForSlot(2, 3)"
 		action "doActionForSlot(2, 3)"
+		actionAlt "doActionAltForSlot(2, 3)"
 	}
 	button
 	{
@@ -1851,6 +1924,7 @@ menu
 		count lua "getCountForSlot(2, 3)"
 		tooltip lua "getTooltipForSlot(2, 3)"
 		action "doActionForSlot(2, 3)"
+		actionAlt "doActionAltForSlot(2, 3)"
 	}
 
 	button
@@ -1863,6 +1937,7 @@ menu
 		frame lua "getFrameForSlot(2, 4)"
 		tooltip lua "getTooltipForSlot(2, 4)"
 		action "doActionForSlot(2, 4)"
+		actionAlt "doActionAltForSlot(2, 4)"
 	}
 	button
 	{
@@ -1876,6 +1951,7 @@ menu
 		count lua "getCountForSlot(2, 4)"
 		tooltip lua "getTooltipForSlot(2, 4)"
 		action "doActionForSlot(2, 4)"
+		actionAlt "doActionAltForSlot(2, 4)"
 	}
 
 	button
@@ -1888,6 +1964,7 @@ menu
 		frame lua "getFrameForSlot(2, 5)"
 		tooltip lua "getTooltipForSlot(2, 5)"
 		action "doActionForSlot(2, 5)"
+		actionAlt "doActionAltForSlot(2, 5)"
 	}
 	button
 	{
@@ -1901,6 +1978,7 @@ menu
 		count lua "getCountForSlot(2, 5)"
 		tooltip lua "getTooltipForSlot(2, 5)"
 		action "doActionForSlot(2, 5)"
+		actionAlt "doActionAltForSlot(2, 5)"
 	}
 
 	button
@@ -1913,6 +1991,7 @@ menu
 		frame lua "getFrameForSlot(2, 6)"
 		tooltip lua "getTooltipForSlot(2, 6)"
 		action "doActionForSlot(2, 6)"
+		actionAlt "doActionAltForSlot(2, 6)"
 	}
 	button
 	{
@@ -1926,6 +2005,7 @@ menu
 		count lua "getCountForSlot(2, 6)"
 		tooltip lua "getTooltipForSlot(2, 6)"
 		action "doActionForSlot(2, 6)"
+		actionAlt "doActionAltForSlot(2, 6)"
 	}
 
 	button
@@ -1938,6 +2018,7 @@ menu
 		frame lua "getFrameForSlot(2, 7)"
 		tooltip lua "getTooltipForSlot(2, 7)"
 		action "doActionForSlot(2, 7)"
+		actionAlt "doActionAltForSlot(2, 7)"
 	}
 	button
 	{
@@ -1951,6 +2032,7 @@ menu
 		count lua "getCountForSlot(2, 7)"
 		tooltip lua "getTooltipForSlot(2, 7)"
 		action "doActionForSlot(2, 7)"
+		actionAlt "doActionAltForSlot(2, 7)"
 	}
 
 	button
@@ -1963,6 +2045,7 @@ menu
 		frame lua "getFrameForSlot(2, 8)"
 		tooltip lua "getTooltipForSlot(2, 8)"
 		action "doActionForSlot(2, 8)"
+		actionAlt "doActionAltForSlot(2, 8)"
 	}
 	button
 	{
@@ -1976,6 +2059,7 @@ menu
 		count lua "getCountForSlot(2, 8)"
 		tooltip lua "getTooltipForSlot(2, 8)"
 		action "doActionForSlot(2, 8)"
+		actionAlt "doActionAltForSlot(2, 8)"
 	}
 
 	button
@@ -1988,6 +2072,7 @@ menu
 		frame lua "getFrameForSlot(2, 9)"
 		tooltip lua "getTooltipForSlot(2, 9)"
 		action "doActionForSlot(2, 9)"
+		actionAlt "doActionAltForSlot(2, 9)"
 	}
 	button
 	{
@@ -2001,6 +2086,7 @@ menu
 		count lua "getCountForSlot(2, 9)"
 		tooltip lua "getTooltipForSlot(2, 9)"
 		action "doActionForSlot(2, 9)"
+		actionAlt "doActionAltForSlot(2, 9)"
 	}
 
 	button
@@ -2013,6 +2099,7 @@ menu
 		frame lua "getFrameForSlot(2, 10)"
 		tooltip lua "getTooltipForSlot(2, 10)"
 		action "doActionForSlot(2, 10)"
+		actionAlt "doActionAltForSlot(2, 10)"
 	}
 	button
 	{
@@ -2026,6 +2113,7 @@ menu
 		count lua "getCountForSlot(2, 10)"
 		tooltip lua "getTooltipForSlot(2, 10)"
 		action "doActionForSlot(2, 10)"
+		actionAlt "doActionAltForSlot(2, 10)"
 	}
 
 	button
@@ -2038,6 +2126,7 @@ menu
 		frame lua "getFrameForSlot(2, 11)"
 		tooltip lua "getTooltipForSlot(2, 11)"
 		action "doActionForSlot(2, 11)"
+		actionAlt "doActionAltForSlot(2, 11)"
 	}
 	button
 	{
@@ -2051,6 +2140,7 @@ menu
 		count lua "getCountForSlot(2, 11)"
 		tooltip lua "getTooltipForSlot(2, 11)"
 		action "doActionForSlot(2, 11)"
+		actionAlt "doActionAltForSlot(2, 11)"
 	}
 
 	button
@@ -2063,6 +2153,7 @@ menu
 		frame lua "getFrameForSlot(2, 12)"
 		tooltip lua "getTooltipForSlot(2, 12)"
 		action "doActionForSlot(2, 12)"
+		actionAlt "doActionAltForSlot(2, 12)"
 	}
 	button
 	{
@@ -2076,6 +2167,7 @@ menu
 		count lua "getCountForSlot(2, 12)"
 		tooltip lua "getTooltipForSlot(2, 12)"
 		action "doActionForSlot(2, 12)"
+		actionAlt "doActionAltForSlot(2, 12)"
 	}
 
 	button
@@ -2088,6 +2180,7 @@ menu
 		frame lua "getFrameForSlot(2, 13)"
 		tooltip lua "getTooltipForSlot(2, 13)"
 		action "doActionForSlot(2, 13)"
+		actionAlt "doActionAltForSlot(2, 13)"
 	}
 	button
 	{
@@ -2101,6 +2194,7 @@ menu
 		count lua "getCountForSlot(2, 13)"
 		tooltip lua "getTooltipForSlot(2, 13)"
 		action "doActionForSlot(2, 13)"
+		actionAlt "doActionAltForSlot(2, 13)"
 	}
 
 	button
@@ -2113,6 +2207,7 @@ menu
 		frame lua "getFrameForSlot(2, 14)"
 		tooltip lua "getTooltipForSlot(2, 14)"
 		action "doActionForSlot(2, 14)"
+		actionAlt "doActionAltForSlot(2, 14)"
 	}
 	button
 	{
@@ -2126,6 +2221,7 @@ menu
 		count lua "getCountForSlot(2, 14)"
 		tooltip lua "getTooltipForSlot(2, 14)"
 		action "doActionForSlot(2, 14)"
+		actionAlt "doActionAltForSlot(2, 14)"
 	}
 
 	button
@@ -2138,6 +2234,7 @@ menu
 		frame lua "getFrameForSlot(2, 15)"
 		tooltip lua "getTooltipForSlot(2, 15)"
 		action "doActionForSlot(2, 15)"
+		actionAlt "doActionAltForSlot(2, 15)"
 	}
 	button
 	{
@@ -2151,6 +2248,7 @@ menu
 		count lua "getCountForSlot(2, 15)"
 		tooltip lua "getTooltipForSlot(2, 15)"
 		action "doActionForSlot(2, 15)"
+		actionAlt "doActionAltForSlot(2, 15)"
 	}
 
 	button
@@ -2163,6 +2261,7 @@ menu
 		frame lua "getFrameForSlot(2, 16)"
 		tooltip lua "getTooltipForSlot(2, 16)"
 		action "doActionForSlot(2, 16)"
+		actionAlt "doActionAltForSlot(2, 16)"
 	}
 	button
 	{
@@ -2176,6 +2275,7 @@ menu
 		count lua "getCountForSlot(2, 16)"
 		tooltip lua "getTooltipForSlot(2, 16)"
 		action "doActionForSlot(2, 16)"
+		actionAlt "doActionAltForSlot(2, 16)"
 	}
 
 	button
@@ -2188,6 +2288,7 @@ menu
 		frame lua "getFrameForSlot(2, 17)"
 		tooltip lua "getTooltipForSlot(2, 17)"
 		action "doActionForSlot(2, 17)"
+		actionAlt "doActionAltForSlot(2, 17)"
 	}
 	button
 	{
@@ -2201,6 +2302,7 @@ menu
 		count lua "getCountForSlot(2, 17)"
 		tooltip lua "getTooltipForSlot(2, 17)"
 		action "doActionForSlot(2, 17)"
+		actionAlt "doActionAltForSlot(2, 17)"
 	}
 
 	button
@@ -2213,6 +2315,7 @@ menu
 		frame lua "getFrameForSlot(2, 18)"
 		tooltip lua "getTooltipForSlot(2, 18)"
 		action "doActionForSlot(2, 18)"
+		actionAlt "doActionAltForSlot(2, 18)"
 	}
 	button
 	{
@@ -2226,6 +2329,7 @@ menu
 		count lua "getCountForSlot(2, 18)"
 		tooltip lua "getTooltipForSlot(2, 18)"
 		action "doActionForSlot(2, 18)"
+		actionAlt "doActionAltForSlot(2, 18)"
 	}
 
 	button
@@ -2238,6 +2342,7 @@ menu
 		frame lua "getFrameForSlot(2, 19)"
 		tooltip lua "getTooltipForSlot(2, 19)"
 		action "doActionForSlot(2, 19)"
+		actionAlt "doActionAltForSlot(2, 19)"
 	}
 	button
 	{
@@ -2251,6 +2356,7 @@ menu
 		count lua "getCountForSlot(2, 19)"
 		tooltip lua "getTooltipForSlot(2, 19)"
 		action "doActionForSlot(2, 19)"
+		actionAlt "doActionAltForSlot(2, 19)"
 	}
 
 	button
@@ -2263,6 +2369,7 @@ menu
 		frame lua "getFrameForSlot(2, 20)"
 		tooltip lua "getTooltipForSlot(2, 20)"
 		action "doActionForSlot(2, 20)"
+		actionAlt "doActionAltForSlot(2, 20)"
 	}
 	button
 	{
@@ -2276,6 +2383,7 @@ menu
 		count lua "getCountForSlot(2, 20)"
 		tooltip lua "getTooltipForSlot(2, 20)"
 		action "doActionForSlot(2, 20)"
+		actionAlt "doActionAltForSlot(2, 20)"
 	}
 
 	button
@@ -2288,6 +2396,7 @@ menu
 		frame lua "getFrameForSlot(2, 21)"
 		tooltip lua "getTooltipForSlot(2, 21)"
 		action "doActionForSlot(2, 21)"
+		actionAlt "doActionAltForSlot(2, 21)"
 	}
 	button
 	{
@@ -2301,6 +2410,7 @@ menu
 		count lua "getCountForSlot(2, 21)"
 		tooltip lua "getTooltipForSlot(2, 21)"
 		action "doActionForSlot(2, 21)"
+		actionAlt "doActionAltForSlot(2, 21)"
 	}
 
 	button
@@ -2313,6 +2423,7 @@ menu
 		frame lua "getFrameForSlot(2, 22)"
 		tooltip lua "getTooltipForSlot(2, 22)"
 		action "doActionForSlot(2, 22)"
+		actionAlt "doActionAltForSlot(2, 22)"
 	}
 	button
 	{
@@ -2326,6 +2437,7 @@ menu
 		count lua "getCountForSlot(2, 22)"
 		tooltip lua "getTooltipForSlot(2, 22)"
 		action "doActionForSlot(2, 22)"
+		actionAlt "doActionAltForSlot(2, 22)"
 	}
 
 	button
@@ -2338,6 +2450,7 @@ menu
 		frame lua "getFrameForSlot(2, 23)"
 		tooltip lua "getTooltipForSlot(2, 23)"
 		action "doActionForSlot(2, 23)"
+		actionAlt "doActionAltForSlot(2, 23)"
 	}
 	button
 	{
@@ -2351,6 +2464,7 @@ menu
 		count lua "getCountForSlot(2, 23)"
 		tooltip lua "getTooltipForSlot(2, 23)"
 		action "doActionForSlot(2, 23)"
+		actionAlt "doActionAltForSlot(2, 23)"
 	}
 
 	button
@@ -2363,6 +2477,7 @@ menu
 		frame lua "getFrameForSlot(2, 24)"
 		tooltip lua "getTooltipForSlot(2, 24)"
 		action "doActionForSlot(2, 24)"
+		actionAlt "doActionAltForSlot(2, 24)"
 	}
 	button
 	{
@@ -2376,6 +2491,7 @@ menu
 		count lua "getCountForSlot(2, 24)"
 		tooltip lua "getTooltipForSlot(2, 24)"
 		action "doActionForSlot(2, 24)"
+		actionAlt "doActionAltForSlot(2, 24)"
 	}
 
 	button
@@ -2388,6 +2504,7 @@ menu
 		frame lua "getFrameForSlot(2, 25)"
 		tooltip lua "getTooltipForSlot(2, 25)"
 		action "doActionForSlot(2, 25)"
+		actionAlt "doActionAltForSlot(2, 25)"
 	}
 	button
 	{
@@ -2401,6 +2518,7 @@ menu
 		count lua "getCountForSlot(2, 25)"
 		tooltip lua "getTooltipForSlot(2, 25)"
 		action "doActionForSlot(2, 25)"
+		actionAlt "doActionAltForSlot(2, 25)"
 	}
 
 	button
@@ -2413,6 +2531,7 @@ menu
 		frame lua "getFrameForSlot(2, 26)"
 		tooltip lua "getTooltipForSlot(2, 26)"
 		action "doActionForSlot(2, 26)"
+		actionAlt "doActionAltForSlot(2, 26)"
 	}
 	button
 	{
@@ -2426,6 +2545,7 @@ menu
 		count lua "getCountForSlot(2, 26)"
 		tooltip lua "getTooltipForSlot(2, 26)"
 		action "doActionForSlot(2, 26)"
+		actionAlt "doActionAltForSlot(2, 26)"
 	}
 
 	button
@@ -2438,6 +2558,7 @@ menu
 		frame lua "getFrameForSlot(2, 27)"
 		tooltip lua "getTooltipForSlot(2, 27)"
 		action "doActionForSlot(2, 27)"
+		actionAlt "doActionAltForSlot(2, 27)"
 	}
 	button
 	{
@@ -2451,6 +2572,7 @@ menu
 		count lua "getCountForSlot(2, 27)"
 		tooltip lua "getTooltipForSlot(2, 27)"
 		action "doActionForSlot(2, 27)"
+		actionAlt "doActionAltForSlot(2, 27)"
 	}
 
 	button
@@ -2463,6 +2585,7 @@ menu
 		frame lua "getFrameForSlot(3, 1)"
 		tooltip lua "getTooltipForSlot(3, 1)"
 		action "doActionForSlot(3, 1)"
+		actionAlt "doActionAltForSlot(3, 1)"
 	}
 	button
 	{
@@ -2476,6 +2599,7 @@ menu
 		count lua "getCountForSlot(3, 1)"
 		tooltip lua "getTooltipForSlot(3, 1)"
 		action "doActionForSlot(3, 1)"
+		actionAlt "doActionAltForSlot(3, 1)"
 	}
 
 	button
@@ -2488,6 +2612,7 @@ menu
 		frame lua "getFrameForSlot(3, 2)"
 		tooltip lua "getTooltipForSlot(3, 2)"
 		action "doActionForSlot(3, 2)"
+		actionAlt "doActionAltForSlot(3, 2)"
 	}
 	button
 	{
@@ -2501,6 +2626,7 @@ menu
 		count lua "getCountForSlot(3, 2)"
 		tooltip lua "getTooltipForSlot(3, 2)"
 		action "doActionForSlot(3, 2)"
+		actionAlt "doActionAltForSlot(3, 2)"
 	}
 
 	button
@@ -2513,6 +2639,7 @@ menu
 		frame lua "getFrameForSlot(3, 3)"
 		tooltip lua "getTooltipForSlot(3, 3)"
 		action "doActionForSlot(3, 3)"
+		actionAlt "doActionAltForSlot(3, 3)"
 	}
 	button
 	{
@@ -2526,6 +2653,7 @@ menu
 		count lua "getCountForSlot(3, 3)"
 		tooltip lua "getTooltipForSlot(3, 3)"
 		action "doActionForSlot(3, 3)"
+		actionAlt "doActionAltForSlot(3, 3)"
 	}
 
 	button
@@ -2538,6 +2666,7 @@ menu
 		frame lua "getFrameForSlot(3, 4)"
 		tooltip lua "getTooltipForSlot(3, 4)"
 		action "doActionForSlot(3, 4)"
+		actionAlt "doActionAltForSlot(3, 4)"
 	}
 	button
 	{
@@ -2551,6 +2680,7 @@ menu
 		count lua "getCountForSlot(3, 4)"
 		tooltip lua "getTooltipForSlot(3, 4)"
 		action "doActionForSlot(3, 4)"
+		actionAlt "doActionAltForSlot(3, 4)"
 	}
 
 	button
@@ -2563,6 +2693,7 @@ menu
 		frame lua "getFrameForSlot(3, 5)"
 		tooltip lua "getTooltipForSlot(3, 5)"
 		action "doActionForSlot(3, 5)"
+		actionAlt "doActionAltForSlot(3, 5)"
 	}
 	button
 	{
@@ -2576,6 +2707,7 @@ menu
 		count lua "getCountForSlot(3, 5)"
 		tooltip lua "getTooltipForSlot(3, 5)"
 		action "doActionForSlot(3, 5)"
+		actionAlt "doActionAltForSlot(3, 5)"
 	}
 
 	button
@@ -2588,6 +2720,7 @@ menu
 		frame lua "getFrameForSlot(3, 6)"
 		tooltip lua "getTooltipForSlot(3, 6)"
 		action "doActionForSlot(3, 6)"
+		actionAlt "doActionAltForSlot(3, 6)"
 	}
 	button
 	{
@@ -2601,6 +2734,7 @@ menu
 		count lua "getCountForSlot(3, 6)"
 		tooltip lua "getTooltipForSlot(3, 6)"
 		action "doActionForSlot(3, 6)"
+		actionAlt "doActionAltForSlot(3, 6)"
 	}
 
 	button
@@ -2613,6 +2747,7 @@ menu
 		frame lua "getFrameForSlot(3, 7)"
 		tooltip lua "getTooltipForSlot(3, 7)"
 		action "doActionForSlot(3, 7)"
+		actionAlt "doActionAltForSlot(3, 7)"
 	}
 	button
 	{
@@ -2626,6 +2761,7 @@ menu
 		count lua "getCountForSlot(3, 7)"
 		tooltip lua "getTooltipForSlot(3, 7)"
 		action "doActionForSlot(3, 7)"
+		actionAlt "doActionAltForSlot(3, 7)"
 	}
 
 	button
@@ -2638,6 +2774,7 @@ menu
 		frame lua "getFrameForSlot(3, 8)"
 		tooltip lua "getTooltipForSlot(3, 8)"
 		action "doActionForSlot(3, 8)"
+		actionAlt "doActionAltForSlot(3, 8)"
 	}
 	button
 	{
@@ -2651,6 +2788,7 @@ menu
 		count lua "getCountForSlot(3, 8)"
 		tooltip lua "getTooltipForSlot(3, 8)"
 		action "doActionForSlot(3, 8)"
+		actionAlt "doActionAltForSlot(3, 8)"
 	}
 
 	button
@@ -2663,6 +2801,7 @@ menu
 		frame lua "getFrameForSlot(3, 9)"
 		tooltip lua "getTooltipForSlot(3, 9)"
 		action "doActionForSlot(3, 9)"
+		actionAlt "doActionAltForSlot(3, 9)"
 	}
 	button
 	{
@@ -2676,6 +2815,7 @@ menu
 		count lua "getCountForSlot(3, 9)"
 		tooltip lua "getTooltipForSlot(3, 9)"
 		action "doActionForSlot(3, 9)"
+		actionAlt "doActionAltForSlot(3, 9)"
 	}
 
 	button
@@ -2688,6 +2828,7 @@ menu
 		frame lua "getFrameForSlot(3, 10)"
 		tooltip lua "getTooltipForSlot(3, 10)"
 		action "doActionForSlot(3, 10)"
+		actionAlt "doActionAltForSlot(3, 10)"
 	}
 	button
 	{
@@ -2701,6 +2842,7 @@ menu
 		count lua "getCountForSlot(3, 10)"
 		tooltip lua "getTooltipForSlot(3, 10)"
 		action "doActionForSlot(3, 10)"
+		actionAlt "doActionAltForSlot(3, 10)"
 	}
 
 	button
@@ -2713,6 +2855,7 @@ menu
 		frame lua "getFrameForSlot(3, 11)"
 		tooltip lua "getTooltipForSlot(3, 11)"
 		action "doActionForSlot(3, 11)"
+		actionAlt "doActionAltForSlot(3, 11)"
 	}
 	button
 	{
@@ -2726,6 +2869,7 @@ menu
 		count lua "getCountForSlot(3, 11)"
 		tooltip lua "getTooltipForSlot(3, 11)"
 		action "doActionForSlot(3, 11)"
+		actionAlt "doActionAltForSlot(3, 11)"
 	}
 
 	button
@@ -2738,6 +2882,7 @@ menu
 		frame lua "getFrameForSlot(3, 12)"
 		tooltip lua "getTooltipForSlot(3, 12)"
 		action "doActionForSlot(3, 12)"
+		actionAlt "doActionAltForSlot(3, 12)"
 	}
 	button
 	{
@@ -2751,6 +2896,7 @@ menu
 		count lua "getCountForSlot(3, 12)"
 		tooltip lua "getTooltipForSlot(3, 12)"
 		action "doActionForSlot(3, 12)"
+		actionAlt "doActionAltForSlot(3, 12)"
 	}
 
 	button
@@ -2763,6 +2909,7 @@ menu
 		frame lua "getFrameForSlot(3, 13)"
 		tooltip lua "getTooltipForSlot(3, 13)"
 		action "doActionForSlot(3, 13)"
+		actionAlt "doActionAltForSlot(3, 13)"
 	}
 	button
 	{
@@ -2776,6 +2923,7 @@ menu
 		count lua "getCountForSlot(3, 13)"
 		tooltip lua "getTooltipForSlot(3, 13)"
 		action "doActionForSlot(3, 13)"
+		actionAlt "doActionAltForSlot(3, 13)"
 	}
 
 	button
@@ -2788,6 +2936,7 @@ menu
 		frame lua "getFrameForSlot(3, 14)"
 		tooltip lua "getTooltipForSlot(3, 14)"
 		action "doActionForSlot(3, 14)"
+		actionAlt "doActionAltForSlot(3, 14)"
 	}
 	button
 	{
@@ -2801,6 +2950,7 @@ menu
 		count lua "getCountForSlot(3, 14)"
 		tooltip lua "getTooltipForSlot(3, 14)"
 		action "doActionForSlot(3, 14)"
+		actionAlt "doActionAltForSlot(3, 14)"
 	}
 
 	button
@@ -2813,6 +2963,7 @@ menu
 		frame lua "getFrameForSlot(3, 15)"
 		tooltip lua "getTooltipForSlot(3, 15)"
 		action "doActionForSlot(3, 15)"
+		actionAlt "doActionAltForSlot(3, 15)"
 	}
 	button
 	{
@@ -2826,6 +2977,7 @@ menu
 		count lua "getCountForSlot(3, 15)"
 		tooltip lua "getTooltipForSlot(3, 15)"
 		action "doActionForSlot(3, 15)"
+		actionAlt "doActionAltForSlot(3, 15)"
 	}
 
 	button
@@ -2838,6 +2990,7 @@ menu
 		frame lua "getFrameForSlot(3, 16)"
 		tooltip lua "getTooltipForSlot(3, 16)"
 		action "doActionForSlot(3, 16)"
+		actionAlt "doActionAltForSlot(3, 16)"
 	}
 	button
 	{
@@ -2851,6 +3004,7 @@ menu
 		count lua "getCountForSlot(3, 16)"
 		tooltip lua "getTooltipForSlot(3, 16)"
 		action "doActionForSlot(3, 16)"
+		actionAlt "doActionAltForSlot(3, 16)"
 	}
 
 	button
@@ -2863,6 +3017,7 @@ menu
 		frame lua "getFrameForSlot(3, 17)"
 		tooltip lua "getTooltipForSlot(3, 17)"
 		action "doActionForSlot(3, 17)"
+		actionAlt "doActionAltForSlot(3, 17)"
 	}
 	button
 	{
@@ -2876,6 +3031,7 @@ menu
 		count lua "getCountForSlot(3, 17)"
 		tooltip lua "getTooltipForSlot(3, 17)"
 		action "doActionForSlot(3, 17)"
+		actionAlt "doActionAltForSlot(3, 17)"
 	}
 
 	button
@@ -2888,6 +3044,7 @@ menu
 		frame lua "getFrameForSlot(3, 18)"
 		tooltip lua "getTooltipForSlot(3, 18)"
 		action "doActionForSlot(3, 18)"
+		actionAlt "doActionAltForSlot(3, 18)"
 	}
 	button
 	{
@@ -2901,6 +3058,7 @@ menu
 		count lua "getCountForSlot(3, 18)"
 		tooltip lua "getTooltipForSlot(3, 18)"
 		action "doActionForSlot(3, 18)"
+		actionAlt "doActionAltForSlot(3, 18)"
 	}
 
 	button
@@ -2913,6 +3071,7 @@ menu
 		frame lua "getFrameForSlot(3, 19)"
 		tooltip lua "getTooltipForSlot(3, 19)"
 		action "doActionForSlot(3, 19)"
+		actionAlt "doActionAltForSlot(3, 19)"
 	}
 	button
 	{
@@ -2926,6 +3085,7 @@ menu
 		count lua "getCountForSlot(3, 19)"
 		tooltip lua "getTooltipForSlot(3, 19)"
 		action "doActionForSlot(3, 19)"
+		actionAlt "doActionAltForSlot(3, 19)"
 	}
 
 	button
@@ -2938,6 +3098,7 @@ menu
 		frame lua "getFrameForSlot(3, 20)"
 		tooltip lua "getTooltipForSlot(3, 20)"
 		action "doActionForSlot(3, 20)"
+		actionAlt "doActionAltForSlot(3, 20)"
 	}
 	button
 	{
@@ -2951,6 +3112,7 @@ menu
 		count lua "getCountForSlot(3, 20)"
 		tooltip lua "getTooltipForSlot(3, 20)"
 		action "doActionForSlot(3, 20)"
+		actionAlt "doActionAltForSlot(3, 20)"
 	}
 
 	button
@@ -2963,6 +3125,7 @@ menu
 		frame lua "getFrameForSlot(3, 21)"
 		tooltip lua "getTooltipForSlot(3, 21)"
 		action "doActionForSlot(3, 21)"
+		actionAlt "doActionAltForSlot(3, 21)"
 	}
 	button
 	{
@@ -2976,6 +3139,7 @@ menu
 		count lua "getCountForSlot(3, 21)"
 		tooltip lua "getTooltipForSlot(3, 21)"
 		action "doActionForSlot(3, 21)"
+		actionAlt "doActionAltForSlot(3, 21)"
 	}
 
 	button
@@ -2988,6 +3152,7 @@ menu
 		frame lua "getFrameForSlot(3, 22)"
 		tooltip lua "getTooltipForSlot(3, 22)"
 		action "doActionForSlot(3, 22)"
+		actionAlt "doActionAltForSlot(3, 22)"
 	}
 	button
 	{
@@ -3001,6 +3166,7 @@ menu
 		count lua "getCountForSlot(3, 22)"
 		tooltip lua "getTooltipForSlot(3, 22)"
 		action "doActionForSlot(3, 22)"
+		actionAlt "doActionAltForSlot(3, 22)"
 	}
 
 	button
@@ -3013,6 +3179,7 @@ menu
 		frame lua "getFrameForSlot(3, 23)"
 		tooltip lua "getTooltipForSlot(3, 23)"
 		action "doActionForSlot(3, 23)"
+		actionAlt "doActionAltForSlot(3, 23)"
 	}
 	button
 	{
@@ -3026,6 +3193,7 @@ menu
 		count lua "getCountForSlot(3, 23)"
 		tooltip lua "getTooltipForSlot(3, 23)"
 		action "doActionForSlot(3, 23)"
+		actionAlt "doActionAltForSlot(3, 23)"
 	}
 
 	button
@@ -3038,6 +3206,7 @@ menu
 		frame lua "getFrameForSlot(3, 24)"
 		tooltip lua "getTooltipForSlot(3, 24)"
 		action "doActionForSlot(3, 24)"
+		actionAlt "doActionAltForSlot(3, 24)"
 	}
 	button
 	{
@@ -3051,6 +3220,7 @@ menu
 		count lua "getCountForSlot(3, 24)"
 		tooltip lua "getTooltipForSlot(3, 24)"
 		action "doActionForSlot(3, 24)"
+		actionAlt "doActionAltForSlot(3, 24)"
 	}
 
 	button
@@ -3063,6 +3233,7 @@ menu
 		frame lua "getFrameForSlot(3, 25)"
 		tooltip lua "getTooltipForSlot(3, 25)"
 		action "doActionForSlot(3, 25)"
+		actionAlt "doActionAltForSlot(3, 25)"
 	}
 	button
 	{
@@ -3076,6 +3247,7 @@ menu
 		count lua "getCountForSlot(3, 25)"
 		tooltip lua "getTooltipForSlot(3, 25)"
 		action "doActionForSlot(3, 25)"
+		actionAlt "doActionAltForSlot(3, 25)"
 	}
 
 	button
@@ -3088,6 +3260,7 @@ menu
 		frame lua "getFrameForSlot(3, 26)"
 		tooltip lua "getTooltipForSlot(3, 26)"
 		action "doActionForSlot(3, 26)"
+		actionAlt "doActionAltForSlot(3, 26)"
 	}
 	button
 	{
@@ -3101,6 +3274,7 @@ menu
 		count lua "getCountForSlot(3, 26)"
 		tooltip lua "getTooltipForSlot(3, 26)"
 		action "doActionForSlot(3, 26)"
+		actionAlt "doActionAltForSlot(3, 26)"
 	}
 
 	button
@@ -3113,6 +3287,7 @@ menu
 		frame lua "getFrameForSlot(3, 27)"
 		tooltip lua "getTooltipForSlot(3, 27)"
 		action "doActionForSlot(3, 27)"
+		actionAlt "doActionAltForSlot(3, 27)"
 	}
 	button
 	{
@@ -3126,6 +3301,7 @@ menu
 		count lua "getCountForSlot(3, 27)"
 		tooltip lua "getTooltipForSlot(3, 27)"
 		action "doActionForSlot(3, 27)"
+		actionAlt "doActionAltForSlot(3, 27)"
 	}
 
 	button
@@ -3138,6 +3314,7 @@ menu
 		frame lua "getFrameForSlot(4, 1)"
 		tooltip lua "getTooltipForSlot(4, 1)"
 		action "doActionForSlot(4, 1)"
+		actionAlt "doActionAltForSlot(4, 1)"
 	}
 	button
 	{
@@ -3151,6 +3328,7 @@ menu
 		count lua "getCountForSlot(4, 1)"
 		tooltip lua "getTooltipForSlot(4, 1)"
 		action "doActionForSlot(4, 1)"
+		actionAlt "doActionAltForSlot(4, 1)"
 	}
 
 	button
@@ -3163,6 +3341,7 @@ menu
 		frame lua "getFrameForSlot(4, 2)"
 		tooltip lua "getTooltipForSlot(4, 2)"
 		action "doActionForSlot(4, 2)"
+		actionAlt "doActionAltForSlot(4, 2)"
 	}
 	button
 	{
@@ -3176,6 +3355,7 @@ menu
 		count lua "getCountForSlot(4, 2)"
 		tooltip lua "getTooltipForSlot(4, 2)"
 		action "doActionForSlot(4, 2)"
+		actionAlt "doActionAltForSlot(4, 2)"
 	}
 
 	button
@@ -3188,6 +3368,7 @@ menu
 		frame lua "getFrameForSlot(4, 3)"
 		tooltip lua "getTooltipForSlot(4, 3)"
 		action "doActionForSlot(4, 3)"
+		actionAlt "doActionAltForSlot(4, 3)"
 	}
 	button
 	{
@@ -3201,6 +3382,7 @@ menu
 		count lua "getCountForSlot(4, 3)"
 		tooltip lua "getTooltipForSlot(4, 3)"
 		action "doActionForSlot(4, 3)"
+		actionAlt "doActionAltForSlot(4, 3)"
 	}
 
 	button
@@ -3213,6 +3395,7 @@ menu
 		frame lua "getFrameForSlot(4, 4)"
 		tooltip lua "getTooltipForSlot(4, 4)"
 		action "doActionForSlot(4, 4)"
+		actionAlt "doActionAltForSlot(4, 4)"
 	}
 	button
 	{
@@ -3226,6 +3409,7 @@ menu
 		count lua "getCountForSlot(4, 4)"
 		tooltip lua "getTooltipForSlot(4, 4)"
 		action "doActionForSlot(4, 4)"
+		actionAlt "doActionAltForSlot(4, 4)"
 	}
 
 	button
@@ -3238,6 +3422,7 @@ menu
 		frame lua "getFrameForSlot(4, 5)"
 		tooltip lua "getTooltipForSlot(4, 5)"
 		action "doActionForSlot(4, 5)"
+		actionAlt "doActionAltForSlot(4, 5)"
 	}
 	button
 	{
@@ -3251,6 +3436,7 @@ menu
 		count lua "getCountForSlot(4, 5)"
 		tooltip lua "getTooltipForSlot(4, 5)"
 		action "doActionForSlot(4, 5)"
+		actionAlt "doActionAltForSlot(4, 5)"
 	}
 
 	button
@@ -3263,6 +3449,7 @@ menu
 		frame lua "getFrameForSlot(4, 6)"
 		tooltip lua "getTooltipForSlot(4, 6)"
 		action "doActionForSlot(4, 6)"
+		actionAlt "doActionAltForSlot(4, 6)"
 	}
 	button
 	{
@@ -3276,6 +3463,7 @@ menu
 		count lua "getCountForSlot(4, 6)"
 		tooltip lua "getTooltipForSlot(4, 6)"
 		action "doActionForSlot(4, 6)"
+		actionAlt "doActionAltForSlot(4, 6)"
 	}
 
 	button
@@ -3288,6 +3476,7 @@ menu
 		frame lua "getFrameForSlot(4, 7)"
 		tooltip lua "getTooltipForSlot(4, 7)"
 		action "doActionForSlot(4, 7)"
+		actionAlt "doActionAltForSlot(4, 7)"
 	}
 	button
 	{
@@ -3301,6 +3490,7 @@ menu
 		count lua "getCountForSlot(4, 7)"
 		tooltip lua "getTooltipForSlot(4, 7)"
 		action "doActionForSlot(4, 7)"
+		actionAlt "doActionAltForSlot(4, 7)"
 	}
 
 	button
@@ -3313,6 +3503,7 @@ menu
 		frame lua "getFrameForSlot(4, 8)"
 		tooltip lua "getTooltipForSlot(4, 8)"
 		action "doActionForSlot(4, 8)"
+		actionAlt "doActionAltForSlot(4, 8)"
 	}
 	button
 	{
@@ -3326,6 +3517,7 @@ menu
 		count lua "getCountForSlot(4, 8)"
 		tooltip lua "getTooltipForSlot(4, 8)"
 		action "doActionForSlot(4, 8)"
+		actionAlt "doActionAltForSlot(4, 8)"
 	}
 
 	button
@@ -3338,6 +3530,7 @@ menu
 		frame lua "getFrameForSlot(4, 9)"
 		tooltip lua "getTooltipForSlot(4, 9)"
 		action "doActionForSlot(4, 9)"
+		actionAlt "doActionAltForSlot(4, 9)"
 	}
 	button
 	{
@@ -3351,6 +3544,7 @@ menu
 		count lua "getCountForSlot(4, 9)"
 		tooltip lua "getTooltipForSlot(4, 9)"
 		action "doActionForSlot(4, 9)"
+		actionAlt "doActionAltForSlot(4, 9)"
 	}
 
 	button
@@ -3363,6 +3557,7 @@ menu
 		frame lua "getFrameForSlot(4, 10)"
 		tooltip lua "getTooltipForSlot(4, 10)"
 		action "doActionForSlot(4, 10)"
+		actionAlt "doActionAltForSlot(4, 10)"
 	}
 	button
 	{
@@ -3376,6 +3571,7 @@ menu
 		count lua "getCountForSlot(4, 10)"
 		tooltip lua "getTooltipForSlot(4, 10)"
 		action "doActionForSlot(4, 10)"
+		actionAlt "doActionAltForSlot(4, 10)"
 	}
 
 	button
@@ -3388,6 +3584,7 @@ menu
 		frame lua "getFrameForSlot(4, 11)"
 		tooltip lua "getTooltipForSlot(4, 11)"
 		action "doActionForSlot(4, 11)"
+		actionAlt "doActionAltForSlot(4, 11)"
 	}
 	button
 	{
@@ -3401,6 +3598,7 @@ menu
 		count lua "getCountForSlot(4, 11)"
 		tooltip lua "getTooltipForSlot(4, 11)"
 		action "doActionForSlot(4, 11)"
+		actionAlt "doActionAltForSlot(4, 11)"
 	}
 
 	button
@@ -3413,6 +3611,7 @@ menu
 		frame lua "getFrameForSlot(4, 12)"
 		tooltip lua "getTooltipForSlot(4, 12)"
 		action "doActionForSlot(4, 12)"
+		actionAlt "doActionAltForSlot(4, 12)"
 	}
 	button
 	{
@@ -3426,6 +3625,7 @@ menu
 		count lua "getCountForSlot(4, 12)"
 		tooltip lua "getTooltipForSlot(4, 12)"
 		action "doActionForSlot(4, 12)"
+		actionAlt "doActionAltForSlot(4, 12)"
 	}
 
 	button
@@ -3438,6 +3638,7 @@ menu
 		frame lua "getFrameForSlot(4, 13)"
 		tooltip lua "getTooltipForSlot(4, 13)"
 		action "doActionForSlot(4, 13)"
+		actionAlt "doActionAltForSlot(4, 13)"
 	}
 	button
 	{
@@ -3451,6 +3652,7 @@ menu
 		count lua "getCountForSlot(4, 13)"
 		tooltip lua "getTooltipForSlot(4, 13)"
 		action "doActionForSlot(4, 13)"
+		actionAlt "doActionAltForSlot(4, 13)"
 	}
 
 	button
@@ -3463,6 +3665,7 @@ menu
 		frame lua "getFrameForSlot(4, 14)"
 		tooltip lua "getTooltipForSlot(4, 14)"
 		action "doActionForSlot(4, 14)"
+		actionAlt "doActionAltForSlot(4, 14)"
 	}
 	button
 	{
@@ -3476,6 +3679,7 @@ menu
 		count lua "getCountForSlot(4, 14)"
 		tooltip lua "getTooltipForSlot(4, 14)"
 		action "doActionForSlot(4, 14)"
+		actionAlt "doActionAltForSlot(4, 14)"
 	}
 
 	button
@@ -3488,6 +3692,7 @@ menu
 		frame lua "getFrameForSlot(4, 15)"
 		tooltip lua "getTooltipForSlot(4, 15)"
 		action "doActionForSlot(4, 15)"
+		actionAlt "doActionAltForSlot(4, 15)"
 	}
 	button
 	{
@@ -3501,6 +3706,7 @@ menu
 		count lua "getCountForSlot(4, 15)"
 		tooltip lua "getTooltipForSlot(4, 15)"
 		action "doActionForSlot(4, 15)"
+		actionAlt "doActionAltForSlot(4, 15)"
 	}
 
 	button
@@ -3513,6 +3719,7 @@ menu
 		frame lua "getFrameForSlot(4, 16)"
 		tooltip lua "getTooltipForSlot(4, 16)"
 		action "doActionForSlot(4, 16)"
+		actionAlt "doActionAltForSlot(4, 16)"
 	}
 	button
 	{
@@ -3526,6 +3733,7 @@ menu
 		count lua "getCountForSlot(4, 16)"
 		tooltip lua "getTooltipForSlot(4, 16)"
 		action "doActionForSlot(4, 16)"
+		actionAlt "doActionAltForSlot(4, 16)"
 	}
 
 	button
@@ -3538,6 +3746,7 @@ menu
 		frame lua "getFrameForSlot(4, 17)"
 		tooltip lua "getTooltipForSlot(4, 17)"
 		action "doActionForSlot(4, 17)"
+		actionAlt "doActionAltForSlot(4, 17)"
 	}
 	button
 	{
@@ -3551,6 +3760,7 @@ menu
 		count lua "getCountForSlot(4, 17)"
 		tooltip lua "getTooltipForSlot(4, 17)"
 		action "doActionForSlot(4, 17)"
+		actionAlt "doActionAltForSlot(4, 17)"
 	}
 
 	button
@@ -3563,6 +3773,7 @@ menu
 		frame lua "getFrameForSlot(4, 18)"
 		tooltip lua "getTooltipForSlot(4, 18)"
 		action "doActionForSlot(4, 18)"
+		actionAlt "doActionAltForSlot(4, 18)"
 	}
 	button
 	{
@@ -3576,6 +3787,7 @@ menu
 		count lua "getCountForSlot(4, 18)"
 		tooltip lua "getTooltipForSlot(4, 18)"
 		action "doActionForSlot(4, 18)"
+		actionAlt "doActionAltForSlot(4, 18)"
 	}
 
 	button
@@ -3588,6 +3800,7 @@ menu
 		frame lua "getFrameForSlot(4, 19)"
 		tooltip lua "getTooltipForSlot(4, 19)"
 		action "doActionForSlot(4, 19)"
+		actionAlt "doActionAltForSlot(4, 19)"
 	}
 	button
 	{
@@ -3601,6 +3814,7 @@ menu
 		count lua "getCountForSlot(4, 19)"
 		tooltip lua "getTooltipForSlot(4, 19)"
 		action "doActionForSlot(4, 19)"
+		actionAlt "doActionAltForSlot(4, 19)"
 	}
 
 	button
@@ -3613,6 +3827,7 @@ menu
 		frame lua "getFrameForSlot(4, 20)"
 		tooltip lua "getTooltipForSlot(4, 20)"
 		action "doActionForSlot(4, 20)"
+		actionAlt "doActionAltForSlot(4, 20)"
 	}
 	button
 	{
@@ -3626,6 +3841,7 @@ menu
 		count lua "getCountForSlot(4, 20)"
 		tooltip lua "getTooltipForSlot(4, 20)"
 		action "doActionForSlot(4, 20)"
+		actionAlt "doActionAltForSlot(4, 20)"
 	}
 
 	button
@@ -3638,6 +3854,7 @@ menu
 		frame lua "getFrameForSlot(4, 21)"
 		tooltip lua "getTooltipForSlot(4, 21)"
 		action "doActionForSlot(4, 21)"
+		actionAlt "doActionAltForSlot(4, 21)"
 	}
 	button
 	{
@@ -3651,6 +3868,7 @@ menu
 		count lua "getCountForSlot(4, 21)"
 		tooltip lua "getTooltipForSlot(4, 21)"
 		action "doActionForSlot(4, 21)"
+		actionAlt "doActionAltForSlot(4, 21)"
 	}
 
 	button
@@ -3663,6 +3881,7 @@ menu
 		frame lua "getFrameForSlot(4, 22)"
 		tooltip lua "getTooltipForSlot(4, 22)"
 		action "doActionForSlot(4, 22)"
+		actionAlt "doActionAltForSlot(4, 22)"
 	}
 	button
 	{
@@ -3676,6 +3895,7 @@ menu
 		count lua "getCountForSlot(4, 22)"
 		tooltip lua "getTooltipForSlot(4, 22)"
 		action "doActionForSlot(4, 22)"
+		actionAlt "doActionAltForSlot(4, 22)"
 	}
 
 	button
@@ -3688,6 +3908,7 @@ menu
 		frame lua "getFrameForSlot(4, 23)"
 		tooltip lua "getTooltipForSlot(4, 23)"
 		action "doActionForSlot(4, 23)"
+		actionAlt "doActionAltForSlot(4, 23)"
 	}
 	button
 	{
@@ -3701,6 +3922,7 @@ menu
 		count lua "getCountForSlot(4, 23)"
 		tooltip lua "getTooltipForSlot(4, 23)"
 		action "doActionForSlot(4, 23)"
+		actionAlt "doActionAltForSlot(4, 23)"
 	}
 
 	button
@@ -3713,6 +3935,7 @@ menu
 		frame lua "getFrameForSlot(4, 24)"
 		tooltip lua "getTooltipForSlot(4, 24)"
 		action "doActionForSlot(4, 24)"
+		actionAlt "doActionAltForSlot(4, 24)"
 	}
 	button
 	{
@@ -3726,6 +3949,7 @@ menu
 		count lua "getCountForSlot(4, 24)"
 		tooltip lua "getTooltipForSlot(4, 24)"
 		action "doActionForSlot(4, 24)"
+		actionAlt "doActionAltForSlot(4, 24)"
 	}
 
 	button
@@ -3738,6 +3962,7 @@ menu
 		frame lua "getFrameForSlot(4, 25)"
 		tooltip lua "getTooltipForSlot(4, 25)"
 		action "doActionForSlot(4, 25)"
+		actionAlt "doActionAltForSlot(4, 25)"
 	}
 	button
 	{
@@ -3751,6 +3976,7 @@ menu
 		count lua "getCountForSlot(4, 25)"
 		tooltip lua "getTooltipForSlot(4, 25)"
 		action "doActionForSlot(4, 25)"
+		actionAlt "doActionAltForSlot(4, 25)"
 	}
 
 	button
@@ -3763,6 +3989,7 @@ menu
 		frame lua "getFrameForSlot(4, 26)"
 		tooltip lua "getTooltipForSlot(4, 26)"
 		action "doActionForSlot(4, 26)"
+		actionAlt "doActionAltForSlot(4, 26)"
 	}
 	button
 	{
@@ -3776,6 +4003,7 @@ menu
 		count lua "getCountForSlot(4, 26)"
 		tooltip lua "getTooltipForSlot(4, 26)"
 		action "doActionForSlot(4, 26)"
+		actionAlt "doActionAltForSlot(4, 26)"
 	}
 
 	button
@@ -3788,6 +4016,7 @@ menu
 		frame lua "getFrameForSlot(4, 27)"
 		tooltip lua "getTooltipForSlot(4, 27)"
 		action "doActionForSlot(4, 27)"
+		actionAlt "doActionAltForSlot(4, 27)"
 	}
 	button
 	{
@@ -3801,6 +4030,7 @@ menu
 		count lua "getCountForSlot(4, 27)"
 		tooltip lua "getTooltipForSlot(4, 27)"
 		action "doActionForSlot(4, 27)"
+		actionAlt "doActionAltForSlot(4, 27)"
 	}
 
 	button
@@ -3813,6 +4043,7 @@ menu
 		frame lua "getFrameForSlot(5, 1)"
 		tooltip lua "getTooltipForSlot(5, 1)"
 		action "doActionForSlot(5, 1)"
+		actionAlt "doActionAltForSlot(5, 1)"
 	}
 	button
 	{
@@ -3826,6 +4057,7 @@ menu
 		count lua "getCountForSlot(5, 1)"
 		tooltip lua "getTooltipForSlot(5, 1)"
 		action "doActionForSlot(5, 1)"
+		actionAlt "doActionAltForSlot(5, 1)"
 	}
 
 	button
@@ -3838,6 +4070,7 @@ menu
 		frame lua "getFrameForSlot(5, 2)"
 		tooltip lua "getTooltipForSlot(5, 2)"
 		action "doActionForSlot(5, 2)"
+		actionAlt "doActionAltForSlot(5, 2)"
 	}
 	button
 	{
@@ -3851,6 +4084,7 @@ menu
 		count lua "getCountForSlot(5, 2)"
 		tooltip lua "getTooltipForSlot(5, 2)"
 		action "doActionForSlot(5, 2)"
+		actionAlt "doActionAltForSlot(5, 2)"
 	}
 
 	button
@@ -3863,6 +4097,7 @@ menu
 		frame lua "getFrameForSlot(5, 3)"
 		tooltip lua "getTooltipForSlot(5, 3)"
 		action "doActionForSlot(5, 3)"
+		actionAlt "doActionAltForSlot(5, 3)"
 	}
 	button
 	{
@@ -3876,6 +4111,7 @@ menu
 		count lua "getCountForSlot(5, 3)"
 		tooltip lua "getTooltipForSlot(5, 3)"
 		action "doActionForSlot(5, 3)"
+		actionAlt "doActionAltForSlot(5, 3)"
 	}
 
 	button
@@ -3888,6 +4124,7 @@ menu
 		frame lua "getFrameForSlot(5, 4)"
 		tooltip lua "getTooltipForSlot(5, 4)"
 		action "doActionForSlot(5, 4)"
+		actionAlt "doActionAltForSlot(5, 4)"
 	}
 	button
 	{
@@ -3901,6 +4138,7 @@ menu
 		count lua "getCountForSlot(5, 4)"
 		tooltip lua "getTooltipForSlot(5, 4)"
 		action "doActionForSlot(5, 4)"
+		actionAlt "doActionAltForSlot(5, 4)"
 	}
 
 	button
@@ -3913,6 +4151,7 @@ menu
 		frame lua "getFrameForSlot(5, 5)"
 		tooltip lua "getTooltipForSlot(5, 5)"
 		action "doActionForSlot(5, 5)"
+		actionAlt "doActionAltForSlot(5, 5)"
 	}
 	button
 	{
@@ -3926,6 +4165,7 @@ menu
 		count lua "getCountForSlot(5, 5)"
 		tooltip lua "getTooltipForSlot(5, 5)"
 		action "doActionForSlot(5, 5)"
+		actionAlt "doActionAltForSlot(5, 5)"
 	}
 
 	button
@@ -3938,6 +4178,7 @@ menu
 		frame lua "getFrameForSlot(5, 6)"
 		tooltip lua "getTooltipForSlot(5, 6)"
 		action "doActionForSlot(5, 6)"
+		actionAlt "doActionAltForSlot(5, 6)"
 	}
 	button
 	{
@@ -3951,6 +4192,7 @@ menu
 		count lua "getCountForSlot(5, 6)"
 		tooltip lua "getTooltipForSlot(5, 6)"
 		action "doActionForSlot(5, 6)"
+		actionAlt "doActionAltForSlot(5, 6)"
 	}
 
 	button
@@ -3963,6 +4205,7 @@ menu
 		frame lua "getFrameForSlot(5, 7)"
 		tooltip lua "getTooltipForSlot(5, 7)"
 		action "doActionForSlot(5, 7)"
+		actionAlt "doActionAltForSlot(5, 7)"
 	}
 	button
 	{
@@ -3976,6 +4219,7 @@ menu
 		count lua "getCountForSlot(5, 7)"
 		tooltip lua "getTooltipForSlot(5, 7)"
 		action "doActionForSlot(5, 7)"
+		actionAlt "doActionAltForSlot(5, 7)"
 	}
 
 	button
@@ -3988,6 +4232,7 @@ menu
 		frame lua "getFrameForSlot(5, 8)"
 		tooltip lua "getTooltipForSlot(5, 8)"
 		action "doActionForSlot(5, 8)"
+		actionAlt "doActionAltForSlot(5, 8)"
 	}
 	button
 	{
@@ -4001,6 +4246,7 @@ menu
 		count lua "getCountForSlot(5, 8)"
 		tooltip lua "getTooltipForSlot(5, 8)"
 		action "doActionForSlot(5, 8)"
+		actionAlt "doActionAltForSlot(5, 8)"
 	}
 
 	button
@@ -4013,6 +4259,7 @@ menu
 		frame lua "getFrameForSlot(5, 9)"
 		tooltip lua "getTooltipForSlot(5, 9)"
 		action "doActionForSlot(5, 9)"
+		actionAlt "doActionAltForSlot(5, 9)"
 	}
 	button
 	{
@@ -4026,6 +4273,7 @@ menu
 		count lua "getCountForSlot(5, 9)"
 		tooltip lua "getTooltipForSlot(5, 9)"
 		action "doActionForSlot(5, 9)"
+		actionAlt "doActionAltForSlot(5, 9)"
 	}
 
 	button
@@ -4038,6 +4286,7 @@ menu
 		frame lua "getFrameForSlot(5, 10)"
 		tooltip lua "getTooltipForSlot(5, 10)"
 		action "doActionForSlot(5, 10)"
+		actionAlt "doActionAltForSlot(5, 10)"
 	}
 	button
 	{
@@ -4051,6 +4300,7 @@ menu
 		count lua "getCountForSlot(5, 10)"
 		tooltip lua "getTooltipForSlot(5, 10)"
 		action "doActionForSlot(5, 10)"
+		actionAlt "doActionAltForSlot(5, 10)"
 	}
 
 	button
@@ -4063,6 +4313,7 @@ menu
 		frame lua "getFrameForSlot(5, 11)"
 		tooltip lua "getTooltipForSlot(5, 11)"
 		action "doActionForSlot(5, 11)"
+		actionAlt "doActionAltForSlot(5, 11)"
 	}
 	button
 	{
@@ -4076,6 +4327,7 @@ menu
 		count lua "getCountForSlot(5, 11)"
 		tooltip lua "getTooltipForSlot(5, 11)"
 		action "doActionForSlot(5, 11)"
+		actionAlt "doActionAltForSlot(5, 11)"
 	}
 
 	button
@@ -4088,6 +4340,7 @@ menu
 		frame lua "getFrameForSlot(5, 12)"
 		tooltip lua "getTooltipForSlot(5, 12)"
 		action "doActionForSlot(5, 12)"
+		actionAlt "doActionAltForSlot(5, 12)"
 	}
 	button
 	{
@@ -4101,6 +4354,7 @@ menu
 		count lua "getCountForSlot(5, 12)"
 		tooltip lua "getTooltipForSlot(5, 12)"
 		action "doActionForSlot(5, 12)"
+		actionAlt "doActionAltForSlot(5, 12)"
 	}
 
 	button
@@ -4113,6 +4367,7 @@ menu
 		frame lua "getFrameForSlot(5, 13)"
 		tooltip lua "getTooltipForSlot(5, 13)"
 		action "doActionForSlot(5, 13)"
+		actionAlt "doActionAltForSlot(5, 13)"
 	}
 	button
 	{
@@ -4126,6 +4381,7 @@ menu
 		count lua "getCountForSlot(5, 13)"
 		tooltip lua "getTooltipForSlot(5, 13)"
 		action "doActionForSlot(5, 13)"
+		actionAlt "doActionAltForSlot(5, 13)"
 	}
 
 	button
@@ -4138,6 +4394,7 @@ menu
 		frame lua "getFrameForSlot(5, 14)"
 		tooltip lua "getTooltipForSlot(5, 14)"
 		action "doActionForSlot(5, 14)"
+		actionAlt "doActionAltForSlot(5, 14)"
 	}
 	button
 	{
@@ -4151,6 +4408,7 @@ menu
 		count lua "getCountForSlot(5, 14)"
 		tooltip lua "getTooltipForSlot(5, 14)"
 		action "doActionForSlot(5, 14)"
+		actionAlt "doActionAltForSlot(5, 14)"
 	}
 
 	button
@@ -4163,6 +4421,7 @@ menu
 		frame lua "getFrameForSlot(5, 15)"
 		tooltip lua "getTooltipForSlot(5, 15)"
 		action "doActionForSlot(5, 15)"
+		actionAlt "doActionAltForSlot(5, 15)"
 	}
 	button
 	{
@@ -4176,6 +4435,7 @@ menu
 		count lua "getCountForSlot(5, 15)"
 		tooltip lua "getTooltipForSlot(5, 15)"
 		action "doActionForSlot(5, 15)"
+		actionAlt "doActionAltForSlot(5, 15)"
 	}
 
 	button
@@ -4188,6 +4448,7 @@ menu
 		frame lua "getFrameForSlot(5, 16)"
 		tooltip lua "getTooltipForSlot(5, 16)"
 		action "doActionForSlot(5, 16)"
+		actionAlt "doActionAltForSlot(5, 16)"
 	}
 	button
 	{
@@ -4201,6 +4462,7 @@ menu
 		count lua "getCountForSlot(5, 16)"
 		tooltip lua "getTooltipForSlot(5, 16)"
 		action "doActionForSlot(5, 16)"
+		actionAlt "doActionAltForSlot(5, 16)"
 	}
 
 	button
@@ -4213,6 +4475,7 @@ menu
 		frame lua "getFrameForSlot(5, 17)"
 		tooltip lua "getTooltipForSlot(5, 17)"
 		action "doActionForSlot(5, 17)"
+		actionAlt "doActionAltForSlot(5, 17)"
 	}
 	button
 	{
@@ -4226,6 +4489,7 @@ menu
 		count lua "getCountForSlot(5, 17)"
 		tooltip lua "getTooltipForSlot(5, 17)"
 		action "doActionForSlot(5, 17)"
+		actionAlt "doActionAltForSlot(5, 17)"
 	}
 
 	button
@@ -4238,6 +4502,7 @@ menu
 		frame lua "getFrameForSlot(5, 18)"
 		tooltip lua "getTooltipForSlot(5, 18)"
 		action "doActionForSlot(5, 18)"
+		actionAlt "doActionAltForSlot(5, 18)"
 	}
 	button
 	{
@@ -4251,6 +4516,7 @@ menu
 		count lua "getCountForSlot(5, 18)"
 		tooltip lua "getTooltipForSlot(5, 18)"
 		action "doActionForSlot(5, 18)"
+		actionAlt "doActionAltForSlot(5, 18)"
 	}
 
 	button
@@ -4263,6 +4529,7 @@ menu
 		frame lua "getFrameForSlot(5, 19)"
 		tooltip lua "getTooltipForSlot(5, 19)"
 		action "doActionForSlot(5, 19)"
+		actionAlt "doActionAltForSlot(5, 19)"
 	}
 	button
 	{
@@ -4276,6 +4543,7 @@ menu
 		count lua "getCountForSlot(5, 19)"
 		tooltip lua "getTooltipForSlot(5, 19)"
 		action "doActionForSlot(5, 19)"
+		actionAlt "doActionAltForSlot(5, 19)"
 	}
 
 	button
@@ -4288,6 +4556,7 @@ menu
 		frame lua "getFrameForSlot(5, 20)"
 		tooltip lua "getTooltipForSlot(5, 20)"
 		action "doActionForSlot(5, 20)"
+		actionAlt "doActionAltForSlot(5, 20)"
 	}
 	button
 	{
@@ -4301,6 +4570,7 @@ menu
 		count lua "getCountForSlot(5, 20)"
 		tooltip lua "getTooltipForSlot(5, 20)"
 		action "doActionForSlot(5, 20)"
+		actionAlt "doActionAltForSlot(5, 20)"
 	}
 
 	button
@@ -4313,6 +4583,7 @@ menu
 		frame lua "getFrameForSlot(5, 21)"
 		tooltip lua "getTooltipForSlot(5, 21)"
 		action "doActionForSlot(5, 21)"
+		actionAlt "doActionAltForSlot(5, 21)"
 	}
 	button
 	{
@@ -4326,6 +4597,7 @@ menu
 		count lua "getCountForSlot(5, 21)"
 		tooltip lua "getTooltipForSlot(5, 21)"
 		action "doActionForSlot(5, 21)"
+		actionAlt "doActionAltForSlot(5, 21)"
 	}
 
 	button
@@ -4338,6 +4610,7 @@ menu
 		frame lua "getFrameForSlot(5, 22)"
 		tooltip lua "getTooltipForSlot(5, 22)"
 		action "doActionForSlot(5, 22)"
+		actionAlt "doActionAltForSlot(5, 22)"
 	}
 	button
 	{
@@ -4351,6 +4624,7 @@ menu
 		count lua "getCountForSlot(5, 22)"
 		tooltip lua "getTooltipForSlot(5, 22)"
 		action "doActionForSlot(5, 22)"
+		actionAlt "doActionAltForSlot(5, 22)"
 	}
 
 	button
@@ -4363,6 +4637,7 @@ menu
 		frame lua "getFrameForSlot(5, 23)"
 		tooltip lua "getTooltipForSlot(5, 23)"
 		action "doActionForSlot(5, 23)"
+		actionAlt "doActionAltForSlot(5, 23)"
 	}
 	button
 	{
@@ -4376,6 +4651,7 @@ menu
 		count lua "getCountForSlot(5, 23)"
 		tooltip lua "getTooltipForSlot(5, 23)"
 		action "doActionForSlot(5, 23)"
+		actionAlt "doActionAltForSlot(5, 23)"
 	}
 
 	button
@@ -4388,6 +4664,7 @@ menu
 		frame lua "getFrameForSlot(5, 24)"
 		tooltip lua "getTooltipForSlot(5, 24)"
 		action "doActionForSlot(5, 24)"
+		actionAlt "doActionAltForSlot(5, 24)"
 	}
 	button
 	{
@@ -4401,6 +4678,7 @@ menu
 		count lua "getCountForSlot(5, 24)"
 		tooltip lua "getTooltipForSlot(5, 24)"
 		action "doActionForSlot(5, 24)"
+		actionAlt "doActionAltForSlot(5, 24)"
 	}
 
 	button
@@ -4413,6 +4691,7 @@ menu
 		frame lua "getFrameForSlot(5, 25)"
 		tooltip lua "getTooltipForSlot(5, 25)"
 		action "doActionForSlot(5, 25)"
+		actionAlt "doActionAltForSlot(5, 25)"
 	}
 	button
 	{
@@ -4426,6 +4705,7 @@ menu
 		count lua "getCountForSlot(5, 25)"
 		tooltip lua "getTooltipForSlot(5, 25)"
 		action "doActionForSlot(5, 25)"
+		actionAlt "doActionAltForSlot(5, 25)"
 	}
 
 	button
@@ -4438,6 +4718,7 @@ menu
 		frame lua "getFrameForSlot(5, 26)"
 		tooltip lua "getTooltipForSlot(5, 26)"
 		action "doActionForSlot(5, 26)"
+		actionAlt "doActionAltForSlot(5, 26)"
 	}
 	button
 	{
@@ -4451,6 +4732,7 @@ menu
 		count lua "getCountForSlot(5, 26)"
 		tooltip lua "getTooltipForSlot(5, 26)"
 		action "doActionForSlot(5, 26)"
+		actionAlt "doActionAltForSlot(5, 26)"
 	}
 
 	button
@@ -4463,6 +4745,7 @@ menu
 		frame lua "getFrameForSlot(5, 27)"
 		tooltip lua "getTooltipForSlot(5, 27)"
 		action "doActionForSlot(5, 27)"
+		actionAlt "doActionAltForSlot(5, 27)"
 	}
 	button
 	{
@@ -4476,6 +4759,7 @@ menu
 		count lua "getCountForSlot(5, 27)"
 		tooltip lua "getTooltipForSlot(5, 27)"
 		action "doActionForSlot(5, 27)"
+		actionAlt "doActionAltForSlot(5, 27)"
 	}
 
 	button
@@ -4488,6 +4772,7 @@ menu
 		frame lua "getFrameForSlot(6, 1)"
 		tooltip lua "getTooltipForSlot(6, 1)"
 		action "doActionForSlot(6, 1)"
+		actionAlt "doActionAltForSlot(6, 1)"
 	}
 	button
 	{
@@ -4501,6 +4786,7 @@ menu
 		count lua "getCountForSlot(6, 1)"
 		tooltip lua "getTooltipForSlot(6, 1)"
 		action "doActionForSlot(6, 1)"
+		actionAlt "doActionAltForSlot(6, 1)"
 	}
 
 	button
@@ -4513,6 +4799,7 @@ menu
 		frame lua "getFrameForSlot(6, 2)"
 		tooltip lua "getTooltipForSlot(6, 2)"
 		action "doActionForSlot(6, 2)"
+		actionAlt "doActionAltForSlot(6, 2)"
 	}
 	button
 	{
@@ -4526,6 +4813,7 @@ menu
 		count lua "getCountForSlot(6, 2)"
 		tooltip lua "getTooltipForSlot(6, 2)"
 		action "doActionForSlot(6, 2)"
+		actionAlt "doActionAltForSlot(6, 2)"
 	}
 
 	button
@@ -4538,6 +4826,7 @@ menu
 		frame lua "getFrameForSlot(6, 3)"
 		tooltip lua "getTooltipForSlot(6, 3)"
 		action "doActionForSlot(6, 3)"
+		actionAlt "doActionAltForSlot(6, 3)"
 	}
 	button
 	{
@@ -4551,6 +4840,7 @@ menu
 		count lua "getCountForSlot(6, 3)"
 		tooltip lua "getTooltipForSlot(6, 3)"
 		action "doActionForSlot(6, 3)"
+		actionAlt "doActionAltForSlot(6, 3)"
 	}
 
 	button
@@ -4563,6 +4853,7 @@ menu
 		frame lua "getFrameForSlot(6, 4)"
 		tooltip lua "getTooltipForSlot(6, 4)"
 		action "doActionForSlot(6, 4)"
+		actionAlt "doActionAltForSlot(6, 4)"
 	}
 	button
 	{
@@ -4576,6 +4867,7 @@ menu
 		count lua "getCountForSlot(6, 4)"
 		tooltip lua "getTooltipForSlot(6, 4)"
 		action "doActionForSlot(6, 4)"
+		actionAlt "doActionAltForSlot(6, 4)"
 	}
 
 	button
@@ -4588,6 +4880,7 @@ menu
 		frame lua "getFrameForSlot(6, 5)"
 		tooltip lua "getTooltipForSlot(6, 5)"
 		action "doActionForSlot(6, 5)"
+		actionAlt "doActionAltForSlot(6, 5)"
 	}
 	button
 	{
@@ -4601,6 +4894,7 @@ menu
 		count lua "getCountForSlot(6, 5)"
 		tooltip lua "getTooltipForSlot(6, 5)"
 		action "doActionForSlot(6, 5)"
+		actionAlt "doActionAltForSlot(6, 5)"
 	}
 
 	button
@@ -4613,6 +4907,7 @@ menu
 		frame lua "getFrameForSlot(6, 6)"
 		tooltip lua "getTooltipForSlot(6, 6)"
 		action "doActionForSlot(6, 6)"
+		actionAlt "doActionAltForSlot(6, 6)"
 	}
 	button
 	{
@@ -4626,6 +4921,7 @@ menu
 		count lua "getCountForSlot(6, 6)"
 		tooltip lua "getTooltipForSlot(6, 6)"
 		action "doActionForSlot(6, 6)"
+		actionAlt "doActionAltForSlot(6, 6)"
 	}
 
 	button
@@ -4638,6 +4934,7 @@ menu
 		frame lua "getFrameForSlot(6, 7)"
 		tooltip lua "getTooltipForSlot(6, 7)"
 		action "doActionForSlot(6, 7)"
+		actionAlt "doActionAltForSlot(6, 7)"
 	}
 	button
 	{
@@ -4651,6 +4948,7 @@ menu
 		count lua "getCountForSlot(6, 7)"
 		tooltip lua "getTooltipForSlot(6, 7)"
 		action "doActionForSlot(6, 7)"
+		actionAlt "doActionAltForSlot(6, 7)"
 	}
 
 	button
@@ -4663,6 +4961,7 @@ menu
 		frame lua "getFrameForSlot(6, 8)"
 		tooltip lua "getTooltipForSlot(6, 8)"
 		action "doActionForSlot(6, 8)"
+		actionAlt "doActionAltForSlot(6, 8)"
 	}
 	button
 	{
@@ -4676,6 +4975,7 @@ menu
 		count lua "getCountForSlot(6, 8)"
 		tooltip lua "getTooltipForSlot(6, 8)"
 		action "doActionForSlot(6, 8)"
+		actionAlt "doActionAltForSlot(6, 8)"
 	}
 
 	button
@@ -4688,6 +4988,7 @@ menu
 		frame lua "getFrameForSlot(6, 9)"
 		tooltip lua "getTooltipForSlot(6, 9)"
 		action "doActionForSlot(6, 9)"
+		actionAlt "doActionAltForSlot(6, 9)"
 	}
 	button
 	{
@@ -4701,6 +5002,7 @@ menu
 		count lua "getCountForSlot(6, 9)"
 		tooltip lua "getTooltipForSlot(6, 9)"
 		action "doActionForSlot(6, 9)"
+		actionAlt "doActionAltForSlot(6, 9)"
 	}
 
 	button
@@ -4713,6 +5015,7 @@ menu
 		frame lua "getFrameForSlot(6, 10)"
 		tooltip lua "getTooltipForSlot(6, 10)"
 		action "doActionForSlot(6, 10)"
+		actionAlt "doActionAltForSlot(6, 10)"
 	}
 	button
 	{
@@ -4726,6 +5029,7 @@ menu
 		count lua "getCountForSlot(6, 10)"
 		tooltip lua "getTooltipForSlot(6, 10)"
 		action "doActionForSlot(6, 10)"
+		actionAlt "doActionAltForSlot(6, 10)"
 	}
 
 	button
@@ -4738,6 +5042,7 @@ menu
 		frame lua "getFrameForSlot(6, 11)"
 		tooltip lua "getTooltipForSlot(6, 11)"
 		action "doActionForSlot(6, 11)"
+		actionAlt "doActionAltForSlot(6, 11)"
 	}
 	button
 	{
@@ -4751,6 +5056,7 @@ menu
 		count lua "getCountForSlot(6, 11)"
 		tooltip lua "getTooltipForSlot(6, 11)"
 		action "doActionForSlot(6, 11)"
+		actionAlt "doActionAltForSlot(6, 11)"
 	}
 
 	button
@@ -4763,6 +5069,7 @@ menu
 		frame lua "getFrameForSlot(6, 12)"
 		tooltip lua "getTooltipForSlot(6, 12)"
 		action "doActionForSlot(6, 12)"
+		actionAlt "doActionAltForSlot(6, 12)"
 	}
 	button
 	{
@@ -4776,6 +5083,7 @@ menu
 		count lua "getCountForSlot(6, 12)"
 		tooltip lua "getTooltipForSlot(6, 12)"
 		action "doActionForSlot(6, 12)"
+		actionAlt "doActionAltForSlot(6, 12)"
 	}
 
 	button
@@ -4788,6 +5096,7 @@ menu
 		frame lua "getFrameForSlot(6, 13)"
 		tooltip lua "getTooltipForSlot(6, 13)"
 		action "doActionForSlot(6, 13)"
+		actionAlt "doActionAltForSlot(6, 13)"
 	}
 	button
 	{
@@ -4801,6 +5110,7 @@ menu
 		count lua "getCountForSlot(6, 13)"
 		tooltip lua "getTooltipForSlot(6, 13)"
 		action "doActionForSlot(6, 13)"
+		actionAlt "doActionAltForSlot(6, 13)"
 	}
 
 	button
@@ -4813,6 +5123,7 @@ menu
 		frame lua "getFrameForSlot(6, 14)"
 		tooltip lua "getTooltipForSlot(6, 14)"
 		action "doActionForSlot(6, 14)"
+		actionAlt "doActionAltForSlot(6, 14)"
 	}
 	button
 	{
@@ -4826,6 +5137,7 @@ menu
 		count lua "getCountForSlot(6, 14)"
 		tooltip lua "getTooltipForSlot(6, 14)"
 		action "doActionForSlot(6, 14)"
+		actionAlt "doActionAltForSlot(6, 14)"
 	}
 
 	button
@@ -4838,6 +5150,7 @@ menu
 		frame lua "getFrameForSlot(6, 15)"
 		tooltip lua "getTooltipForSlot(6, 15)"
 		action "doActionForSlot(6, 15)"
+		actionAlt "doActionAltForSlot(6, 15)"
 	}
 	button
 	{
@@ -4851,6 +5164,7 @@ menu
 		count lua "getCountForSlot(6, 15)"
 		tooltip lua "getTooltipForSlot(6, 15)"
 		action "doActionForSlot(6, 15)"
+		actionAlt "doActionAltForSlot(6, 15)"
 	}
 
 	button
@@ -4863,6 +5177,7 @@ menu
 		frame lua "getFrameForSlot(6, 16)"
 		tooltip lua "getTooltipForSlot(6, 16)"
 		action "doActionForSlot(6, 16)"
+		actionAlt "doActionAltForSlot(6, 16)"
 	}
 	button
 	{
@@ -4876,6 +5191,7 @@ menu
 		count lua "getCountForSlot(6, 16)"
 		tooltip lua "getTooltipForSlot(6, 16)"
 		action "doActionForSlot(6, 16)"
+		actionAlt "doActionAltForSlot(6, 16)"
 	}
 
 	button
@@ -4888,6 +5204,7 @@ menu
 		frame lua "getFrameForSlot(6, 17)"
 		tooltip lua "getTooltipForSlot(6, 17)"
 		action "doActionForSlot(6, 17)"
+		actionAlt "doActionAltForSlot(6, 17)"
 	}
 	button
 	{
@@ -4901,6 +5218,7 @@ menu
 		count lua "getCountForSlot(6, 17)"
 		tooltip lua "getTooltipForSlot(6, 17)"
 		action "doActionForSlot(6, 17)"
+		actionAlt "doActionAltForSlot(6, 17)"
 	}
 
 	button
@@ -4913,6 +5231,7 @@ menu
 		frame lua "getFrameForSlot(6, 18)"
 		tooltip lua "getTooltipForSlot(6, 18)"
 		action "doActionForSlot(6, 18)"
+		actionAlt "doActionAltForSlot(6, 18)"
 	}
 	button
 	{
@@ -4926,6 +5245,7 @@ menu
 		count lua "getCountForSlot(6, 18)"
 		tooltip lua "getTooltipForSlot(6, 18)"
 		action "doActionForSlot(6, 18)"
+		actionAlt "doActionAltForSlot(6, 18)"
 	}
 
 	button
@@ -4938,6 +5258,7 @@ menu
 		frame lua "getFrameForSlot(6, 19)"
 		tooltip lua "getTooltipForSlot(6, 19)"
 		action "doActionForSlot(6, 19)"
+		actionAlt "doActionAltForSlot(6, 19)"
 	}
 	button
 	{
@@ -4951,6 +5272,7 @@ menu
 		count lua "getCountForSlot(6, 19)"
 		tooltip lua "getTooltipForSlot(6, 19)"
 		action "doActionForSlot(6, 19)"
+		actionAlt "doActionAltForSlot(6, 19)"
 	}
 
 	button
@@ -4963,6 +5285,7 @@ menu
 		frame lua "getFrameForSlot(6, 20)"
 		tooltip lua "getTooltipForSlot(6, 20)"
 		action "doActionForSlot(6, 20)"
+		actionAlt "doActionAltForSlot(6, 20)"
 	}
 	button
 	{
@@ -4976,6 +5299,7 @@ menu
 		count lua "getCountForSlot(6, 20)"
 		tooltip lua "getTooltipForSlot(6, 20)"
 		action "doActionForSlot(6, 20)"
+		actionAlt "doActionAltForSlot(6, 20)"
 	}
 
 	button
@@ -4988,6 +5312,7 @@ menu
 		frame lua "getFrameForSlot(6, 21)"
 		tooltip lua "getTooltipForSlot(6, 21)"
 		action "doActionForSlot(6, 21)"
+		actionAlt "doActionAltForSlot(6, 21)"
 	}
 	button
 	{
@@ -5001,6 +5326,7 @@ menu
 		count lua "getCountForSlot(6, 21)"
 		tooltip lua "getTooltipForSlot(6, 21)"
 		action "doActionForSlot(6, 21)"
+		actionAlt "doActionAltForSlot(6, 21)"
 	}
 
 	button
@@ -5013,6 +5339,7 @@ menu
 		frame lua "getFrameForSlot(6, 22)"
 		tooltip lua "getTooltipForSlot(6, 22)"
 		action "doActionForSlot(6, 22)"
+		actionAlt "doActionAltForSlot(6, 22)"
 	}
 	button
 	{
@@ -5026,6 +5353,7 @@ menu
 		count lua "getCountForSlot(6, 22)"
 		tooltip lua "getTooltipForSlot(6, 22)"
 		action "doActionForSlot(6, 22)"
+		actionAlt "doActionAltForSlot(6, 22)"
 	}
 
 	button
@@ -5038,6 +5366,7 @@ menu
 		frame lua "getFrameForSlot(6, 23)"
 		tooltip lua "getTooltipForSlot(6, 23)"
 		action "doActionForSlot(6, 23)"
+		actionAlt "doActionAltForSlot(6, 23)"
 	}
 	button
 	{
@@ -5051,6 +5380,7 @@ menu
 		count lua "getCountForSlot(6, 23)"
 		tooltip lua "getTooltipForSlot(6, 23)"
 		action "doActionForSlot(6, 23)"
+		actionAlt "doActionAltForSlot(6, 23)"
 	}
 
 	button
@@ -5063,6 +5393,7 @@ menu
 		frame lua "getFrameForSlot(6, 24)"
 		tooltip lua "getTooltipForSlot(6, 24)"
 		action "doActionForSlot(6, 24)"
+		actionAlt "doActionAltForSlot(6, 24)"
 	}
 	button
 	{
@@ -5076,6 +5407,7 @@ menu
 		count lua "getCountForSlot(6, 24)"
 		tooltip lua "getTooltipForSlot(6, 24)"
 		action "doActionForSlot(6, 24)"
+		actionAlt "doActionAltForSlot(6, 24)"
 	}
 
 	button
@@ -5088,6 +5420,7 @@ menu
 		frame lua "getFrameForSlot(6, 25)"
 		tooltip lua "getTooltipForSlot(6, 25)"
 		action "doActionForSlot(6, 25)"
+		actionAlt "doActionAltForSlot(6, 25)"
 	}
 	button
 	{
@@ -5101,6 +5434,7 @@ menu
 		count lua "getCountForSlot(6, 25)"
 		tooltip lua "getTooltipForSlot(6, 25)"
 		action "doActionForSlot(6, 25)"
+		actionAlt "doActionAltForSlot(6, 25)"
 	}
 
 	button
@@ -5113,6 +5447,7 @@ menu
 		frame lua "getFrameForSlot(6, 26)"
 		tooltip lua "getTooltipForSlot(6, 26)"
 		action "doActionForSlot(6, 26)"
+		actionAlt "doActionAltForSlot(6, 26)"
 	}
 	button
 	{
@@ -5126,6 +5461,7 @@ menu
 		count lua "getCountForSlot(6, 26)"
 		tooltip lua "getTooltipForSlot(6, 26)"
 		action "doActionForSlot(6, 26)"
+		actionAlt "doActionAltForSlot(6, 26)"
 	}
 
 	button
@@ -5138,6 +5474,7 @@ menu
 		frame lua "getFrameForSlot(6, 27)"
 		tooltip lua "getTooltipForSlot(6, 27)"
 		action "doActionForSlot(6, 27)"
+		actionAlt "doActionAltForSlot(6, 27)"
 	}
 	button
 	{
@@ -5151,6 +5488,7 @@ menu
 		count lua "getCountForSlot(6, 27)"
 		tooltip lua "getTooltipForSlot(6, 27)"
 		action "doActionForSlot(6, 27)"
+		actionAlt "doActionAltForSlot(6, 27)"
 	}
 
 	button
@@ -5163,6 +5501,7 @@ menu
 		frame lua "getFrameForSlot(7, 1)"
 		tooltip lua "getTooltipForSlot(7, 1)"
 		action "doActionForSlot(7, 1)"
+		actionAlt "doActionAltForSlot(7, 1)"
 	}
 	button
 	{
@@ -5176,6 +5515,7 @@ menu
 		count lua "getCountForSlot(7, 1)"
 		tooltip lua "getTooltipForSlot(7, 1)"
 		action "doActionForSlot(7, 1)"
+		actionAlt "doActionAltForSlot(7, 1)"
 	}
 
 	button
@@ -5188,6 +5528,7 @@ menu
 		frame lua "getFrameForSlot(7, 2)"
 		tooltip lua "getTooltipForSlot(7, 2)"
 		action "doActionForSlot(7, 2)"
+		actionAlt "doActionAltForSlot(7, 2)"
 	}
 	button
 	{
@@ -5201,6 +5542,7 @@ menu
 		count lua "getCountForSlot(7, 2)"
 		tooltip lua "getTooltipForSlot(7, 2)"
 		action "doActionForSlot(7, 2)"
+		actionAlt "doActionAltForSlot(7, 2)"
 	}
 
 	button
@@ -5213,6 +5555,7 @@ menu
 		frame lua "getFrameForSlot(7, 3)"
 		tooltip lua "getTooltipForSlot(7, 3)"
 		action "doActionForSlot(7, 3)"
+		actionAlt "doActionAltForSlot(7, 3)"
 	}
 	button
 	{
@@ -5226,6 +5569,7 @@ menu
 		count lua "getCountForSlot(7, 3)"
 		tooltip lua "getTooltipForSlot(7, 3)"
 		action "doActionForSlot(7, 3)"
+		actionAlt "doActionAltForSlot(7, 3)"
 	}
 
 	button
@@ -5238,6 +5582,7 @@ menu
 		frame lua "getFrameForSlot(7, 4)"
 		tooltip lua "getTooltipForSlot(7, 4)"
 		action "doActionForSlot(7, 4)"
+		actionAlt "doActionAltForSlot(7, 4)"
 	}
 	button
 	{
@@ -5251,6 +5596,7 @@ menu
 		count lua "getCountForSlot(7, 4)"
 		tooltip lua "getTooltipForSlot(7, 4)"
 		action "doActionForSlot(7, 4)"
+		actionAlt "doActionAltForSlot(7, 4)"
 	}
 
 	button
@@ -5263,6 +5609,7 @@ menu
 		frame lua "getFrameForSlot(7, 5)"
 		tooltip lua "getTooltipForSlot(7, 5)"
 		action "doActionForSlot(7, 5)"
+		actionAlt "doActionAltForSlot(7, 5)"
 	}
 	button
 	{
@@ -5276,6 +5623,7 @@ menu
 		count lua "getCountForSlot(7, 5)"
 		tooltip lua "getTooltipForSlot(7, 5)"
 		action "doActionForSlot(7, 5)"
+		actionAlt "doActionAltForSlot(7, 5)"
 	}
 
 	button
@@ -5288,6 +5636,7 @@ menu
 		frame lua "getFrameForSlot(7, 6)"
 		tooltip lua "getTooltipForSlot(7, 6)"
 		action "doActionForSlot(7, 6)"
+		actionAlt "doActionAltForSlot(7, 6)"
 	}
 	button
 	{
@@ -5301,6 +5650,7 @@ menu
 		count lua "getCountForSlot(7, 6)"
 		tooltip lua "getTooltipForSlot(7, 6)"
 		action "doActionForSlot(7, 6)"
+		actionAlt "doActionAltForSlot(7, 6)"
 	}
 
 	button
@@ -5313,6 +5663,7 @@ menu
 		frame lua "getFrameForSlot(7, 7)"
 		tooltip lua "getTooltipForSlot(7, 7)"
 		action "doActionForSlot(7, 7)"
+		actionAlt "doActionAltForSlot(7, 7)"
 	}
 	button
 	{
@@ -5326,6 +5677,7 @@ menu
 		count lua "getCountForSlot(7, 7)"
 		tooltip lua "getTooltipForSlot(7, 7)"
 		action "doActionForSlot(7, 7)"
+		actionAlt "doActionAltForSlot(7, 7)"
 	}
 
 	button
@@ -5338,6 +5690,7 @@ menu
 		frame lua "getFrameForSlot(7, 8)"
 		tooltip lua "getTooltipForSlot(7, 8)"
 		action "doActionForSlot(7, 8)"
+		actionAlt "doActionAltForSlot(7, 8)"
 	}
 	button
 	{
@@ -5351,6 +5704,7 @@ menu
 		count lua "getCountForSlot(7, 8)"
 		tooltip lua "getTooltipForSlot(7, 8)"
 		action "doActionForSlot(7, 8)"
+		actionAlt "doActionAltForSlot(7, 8)"
 	}
 
 	button
@@ -5363,6 +5717,7 @@ menu
 		frame lua "getFrameForSlot(7, 9)"
 		tooltip lua "getTooltipForSlot(7, 9)"
 		action "doActionForSlot(7, 9)"
+		actionAlt "doActionAltForSlot(7, 9)"
 	}
 	button
 	{
@@ -5376,6 +5731,7 @@ menu
 		count lua "getCountForSlot(7, 9)"
 		tooltip lua "getTooltipForSlot(7, 9)"
 		action "doActionForSlot(7, 9)"
+		actionAlt "doActionAltForSlot(7, 9)"
 	}
 
 	button
@@ -5388,6 +5744,7 @@ menu
 		frame lua "getFrameForSlot(7, 10)"
 		tooltip lua "getTooltipForSlot(7, 10)"
 		action "doActionForSlot(7, 10)"
+		actionAlt "doActionAltForSlot(7, 10)"
 	}
 	button
 	{
@@ -5401,6 +5758,7 @@ menu
 		count lua "getCountForSlot(7, 10)"
 		tooltip lua "getTooltipForSlot(7, 10)"
 		action "doActionForSlot(7, 10)"
+		actionAlt "doActionAltForSlot(7, 10)"
 	}
 
 	button
@@ -5413,6 +5771,7 @@ menu
 		frame lua "getFrameForSlot(7, 11)"
 		tooltip lua "getTooltipForSlot(7, 11)"
 		action "doActionForSlot(7, 11)"
+		actionAlt "doActionAltForSlot(7, 11)"
 	}
 	button
 	{
@@ -5426,6 +5785,7 @@ menu
 		count lua "getCountForSlot(7, 11)"
 		tooltip lua "getTooltipForSlot(7, 11)"
 		action "doActionForSlot(7, 11)"
+		actionAlt "doActionAltForSlot(7, 11)"
 	}
 
 	button
@@ -5438,6 +5798,7 @@ menu
 		frame lua "getFrameForSlot(7, 12)"
 		tooltip lua "getTooltipForSlot(7, 12)"
 		action "doActionForSlot(7, 12)"
+		actionAlt "doActionAltForSlot(7, 12)"
 	}
 	button
 	{
@@ -5451,6 +5812,7 @@ menu
 		count lua "getCountForSlot(7, 12)"
 		tooltip lua "getTooltipForSlot(7, 12)"
 		action "doActionForSlot(7, 12)"
+		actionAlt "doActionAltForSlot(7, 12)"
 	}
 
 	button
@@ -5463,6 +5825,7 @@ menu
 		frame lua "getFrameForSlot(7, 13)"
 		tooltip lua "getTooltipForSlot(7, 13)"
 		action "doActionForSlot(7, 13)"
+		actionAlt "doActionAltForSlot(7, 13)"
 	}
 	button
 	{
@@ -5476,6 +5839,7 @@ menu
 		count lua "getCountForSlot(7, 13)"
 		tooltip lua "getTooltipForSlot(7, 13)"
 		action "doActionForSlot(7, 13)"
+		actionAlt "doActionAltForSlot(7, 13)"
 	}
 
 	button
@@ -5488,6 +5852,7 @@ menu
 		frame lua "getFrameForSlot(7, 14)"
 		tooltip lua "getTooltipForSlot(7, 14)"
 		action "doActionForSlot(7, 14)"
+		actionAlt "doActionAltForSlot(7, 14)"
 	}
 	button
 	{
@@ -5501,6 +5866,7 @@ menu
 		count lua "getCountForSlot(7, 14)"
 		tooltip lua "getTooltipForSlot(7, 14)"
 		action "doActionForSlot(7, 14)"
+		actionAlt "doActionAltForSlot(7, 14)"
 	}
 
 	button
@@ -5513,6 +5879,7 @@ menu
 		frame lua "getFrameForSlot(7, 15)"
 		tooltip lua "getTooltipForSlot(7, 15)"
 		action "doActionForSlot(7, 15)"
+		actionAlt "doActionAltForSlot(7, 15)"
 	}
 	button
 	{
@@ -5526,6 +5893,7 @@ menu
 		count lua "getCountForSlot(7, 15)"
 		tooltip lua "getTooltipForSlot(7, 15)"
 		action "doActionForSlot(7, 15)"
+		actionAlt "doActionAltForSlot(7, 15)"
 	}
 
 	button
@@ -5538,6 +5906,7 @@ menu
 		frame lua "getFrameForSlot(7, 16)"
 		tooltip lua "getTooltipForSlot(7, 16)"
 		action "doActionForSlot(7, 16)"
+		actionAlt "doActionAltForSlot(7, 16)"
 	}
 	button
 	{
@@ -5551,6 +5920,7 @@ menu
 		count lua "getCountForSlot(7, 16)"
 		tooltip lua "getTooltipForSlot(7, 16)"
 		action "doActionForSlot(7, 16)"
+		actionAlt "doActionAltForSlot(7, 16)"
 	}
 
 	button
@@ -5563,6 +5933,7 @@ menu
 		frame lua "getFrameForSlot(7, 17)"
 		tooltip lua "getTooltipForSlot(7, 17)"
 		action "doActionForSlot(7, 17)"
+		actionAlt "doActionAltForSlot(7, 17)"
 	}
 	button
 	{
@@ -5576,6 +5947,7 @@ menu
 		count lua "getCountForSlot(7, 17)"
 		tooltip lua "getTooltipForSlot(7, 17)"
 		action "doActionForSlot(7, 17)"
+		actionAlt "doActionAltForSlot(7, 17)"
 	}
 
 	button
@@ -5588,6 +5960,7 @@ menu
 		frame lua "getFrameForSlot(7, 18)"
 		tooltip lua "getTooltipForSlot(7, 18)"
 		action "doActionForSlot(7, 18)"
+		actionAlt "doActionAltForSlot(7, 18)"
 	}
 	button
 	{
@@ -5601,6 +5974,7 @@ menu
 		count lua "getCountForSlot(7, 18)"
 		tooltip lua "getTooltipForSlot(7, 18)"
 		action "doActionForSlot(7, 18)"
+		actionAlt "doActionAltForSlot(7, 18)"
 	}
 
 	button
@@ -5613,6 +5987,7 @@ menu
 		frame lua "getFrameForSlot(7, 19)"
 		tooltip lua "getTooltipForSlot(7, 19)"
 		action "doActionForSlot(7, 19)"
+		actionAlt "doActionAltForSlot(7, 19)"
 	}
 	button
 	{
@@ -5626,6 +6001,7 @@ menu
 		count lua "getCountForSlot(7, 19)"
 		tooltip lua "getTooltipForSlot(7, 19)"
 		action "doActionForSlot(7, 19)"
+		actionAlt "doActionAltForSlot(7, 19)"
 	}
 
 	button
@@ -5638,6 +6014,7 @@ menu
 		frame lua "getFrameForSlot(7, 20)"
 		tooltip lua "getTooltipForSlot(7, 20)"
 		action "doActionForSlot(7, 20)"
+		actionAlt "doActionAltForSlot(7, 20)"
 	}
 	button
 	{
@@ -5651,6 +6028,7 @@ menu
 		count lua "getCountForSlot(7, 20)"
 		tooltip lua "getTooltipForSlot(7, 20)"
 		action "doActionForSlot(7, 20)"
+		actionAlt "doActionAltForSlot(7, 20)"
 	}
 
 	button
@@ -5663,6 +6041,7 @@ menu
 		frame lua "getFrameForSlot(7, 21)"
 		tooltip lua "getTooltipForSlot(7, 21)"
 		action "doActionForSlot(7, 21)"
+		actionAlt "doActionAltForSlot(7, 21)"
 	}
 	button
 	{
@@ -5676,6 +6055,7 @@ menu
 		count lua "getCountForSlot(7, 21)"
 		tooltip lua "getTooltipForSlot(7, 21)"
 		action "doActionForSlot(7, 21)"
+		actionAlt "doActionAltForSlot(7, 21)"
 	}
 
 	button
@@ -5688,6 +6068,7 @@ menu
 		frame lua "getFrameForSlot(7, 22)"
 		tooltip lua "getTooltipForSlot(7, 22)"
 		action "doActionForSlot(7, 22)"
+		actionAlt "doActionAltForSlot(7, 22)"
 	}
 	button
 	{
@@ -5701,6 +6082,7 @@ menu
 		count lua "getCountForSlot(7, 22)"
 		tooltip lua "getTooltipForSlot(7, 22)"
 		action "doActionForSlot(7, 22)"
+		actionAlt "doActionAltForSlot(7, 22)"
 	}
 
 	button
@@ -5713,6 +6095,7 @@ menu
 		frame lua "getFrameForSlot(7, 23)"
 		tooltip lua "getTooltipForSlot(7, 23)"
 		action "doActionForSlot(7, 23)"
+		actionAlt "doActionAltForSlot(7, 23)"
 	}
 	button
 	{
@@ -5726,6 +6109,7 @@ menu
 		count lua "getCountForSlot(7, 23)"
 		tooltip lua "getTooltipForSlot(7, 23)"
 		action "doActionForSlot(7, 23)"
+		actionAlt "doActionAltForSlot(7, 23)"
 	}
 
 	button
@@ -5738,6 +6122,7 @@ menu
 		frame lua "getFrameForSlot(7, 24)"
 		tooltip lua "getTooltipForSlot(7, 24)"
 		action "doActionForSlot(7, 24)"
+		actionAlt "doActionAltForSlot(7, 24)"
 	}
 	button
 	{
@@ -5751,6 +6136,7 @@ menu
 		count lua "getCountForSlot(7, 24)"
 		tooltip lua "getTooltipForSlot(7, 24)"
 		action "doActionForSlot(7, 24)"
+		actionAlt "doActionAltForSlot(7, 24)"
 	}
 
 	button
@@ -5763,6 +6149,7 @@ menu
 		frame lua "getFrameForSlot(7, 25)"
 		tooltip lua "getTooltipForSlot(7, 25)"
 		action "doActionForSlot(7, 25)"
+		actionAlt "doActionAltForSlot(7, 25)"
 	}
 	button
 	{
@@ -5776,6 +6163,7 @@ menu
 		count lua "getCountForSlot(7, 25)"
 		tooltip lua "getTooltipForSlot(7, 25)"
 		action "doActionForSlot(7, 25)"
+		actionAlt "doActionAltForSlot(7, 25)"
 	}
 
 	button
@@ -5788,6 +6176,7 @@ menu
 		frame lua "getFrameForSlot(7, 26)"
 		tooltip lua "getTooltipForSlot(7, 26)"
 		action "doActionForSlot(7, 26)"
+		actionAlt "doActionAltForSlot(7, 26)"
 	}
 	button
 	{
@@ -5801,6 +6190,7 @@ menu
 		count lua "getCountForSlot(7, 26)"
 		tooltip lua "getTooltipForSlot(7, 26)"
 		action "doActionForSlot(7, 26)"
+		actionAlt "doActionAltForSlot(7, 26)"
 	}
 
 	button
@@ -5813,6 +6203,7 @@ menu
 		frame lua "getFrameForSlot(7, 27)"
 		tooltip lua "getTooltipForSlot(7, 27)"
 		action "doActionForSlot(7, 27)"
+		actionAlt "doActionAltForSlot(7, 27)"
 	}
 	button
 	{
@@ -5826,6 +6217,7 @@ menu
 		count lua "getCountForSlot(7, 27)"
 		tooltip lua "getTooltipForSlot(7, 27)"
 		action "doActionForSlot(7, 27)"
+		actionAlt "doActionAltForSlot(7, 27)"
 	}
 
 	button
@@ -5838,6 +6230,7 @@ menu
 		frame lua "getFrameForSlot(8, 1)"
 		tooltip lua "getTooltipForSlot(8, 1)"
 		action "doActionForSlot(8, 1)"
+		actionAlt "doActionAltForSlot(8, 1)"
 	}
 	button
 	{
@@ -5851,6 +6244,7 @@ menu
 		count lua "getCountForSlot(8, 1)"
 		tooltip lua "getTooltipForSlot(8, 1)"
 		action "doActionForSlot(8, 1)"
+		actionAlt "doActionAltForSlot(8, 1)"
 	}
 
 	button
@@ -5863,6 +6257,7 @@ menu
 		frame lua "getFrameForSlot(8, 2)"
 		tooltip lua "getTooltipForSlot(8, 2)"
 		action "doActionForSlot(8, 2)"
+		actionAlt "doActionAltForSlot(8, 2)"
 	}
 	button
 	{
@@ -5876,6 +6271,7 @@ menu
 		count lua "getCountForSlot(8, 2)"
 		tooltip lua "getTooltipForSlot(8, 2)"
 		action "doActionForSlot(8, 2)"
+		actionAlt "doActionAltForSlot(8, 2)"
 	}
 
 	button
@@ -5888,6 +6284,7 @@ menu
 		frame lua "getFrameForSlot(8, 3)"
 		tooltip lua "getTooltipForSlot(8, 3)"
 		action "doActionForSlot(8, 3)"
+		actionAlt "doActionAltForSlot(8, 3)"
 	}
 	button
 	{
@@ -5901,6 +6298,7 @@ menu
 		count lua "getCountForSlot(8, 3)"
 		tooltip lua "getTooltipForSlot(8, 3)"
 		action "doActionForSlot(8, 3)"
+		actionAlt "doActionAltForSlot(8, 3)"
 	}
 
 	button
@@ -5913,6 +6311,7 @@ menu
 		frame lua "getFrameForSlot(8, 4)"
 		tooltip lua "getTooltipForSlot(8, 4)"
 		action "doActionForSlot(8, 4)"
+		actionAlt "doActionAltForSlot(8, 4)"
 	}
 	button
 	{
@@ -5926,6 +6325,7 @@ menu
 		count lua "getCountForSlot(8, 4)"
 		tooltip lua "getTooltipForSlot(8, 4)"
 		action "doActionForSlot(8, 4)"
+		actionAlt "doActionAltForSlot(8, 4)"
 	}
 
 	button
@@ -5938,6 +6338,7 @@ menu
 		frame lua "getFrameForSlot(8, 5)"
 		tooltip lua "getTooltipForSlot(8, 5)"
 		action "doActionForSlot(8, 5)"
+		actionAlt "doActionAltForSlot(8, 5)"
 	}
 	button
 	{
@@ -5951,6 +6352,7 @@ menu
 		count lua "getCountForSlot(8, 5)"
 		tooltip lua "getTooltipForSlot(8, 5)"
 		action "doActionForSlot(8, 5)"
+		actionAlt "doActionAltForSlot(8, 5)"
 	}
 
 	button
@@ -5963,6 +6365,7 @@ menu
 		frame lua "getFrameForSlot(8, 6)"
 		tooltip lua "getTooltipForSlot(8, 6)"
 		action "doActionForSlot(8, 6)"
+		actionAlt "doActionAltForSlot(8, 6)"
 	}
 	button
 	{
@@ -5976,6 +6379,7 @@ menu
 		count lua "getCountForSlot(8, 6)"
 		tooltip lua "getTooltipForSlot(8, 6)"
 		action "doActionForSlot(8, 6)"
+		actionAlt "doActionAltForSlot(8, 6)"
 	}
 
 	button
@@ -5988,6 +6392,7 @@ menu
 		frame lua "getFrameForSlot(8, 7)"
 		tooltip lua "getTooltipForSlot(8, 7)"
 		action "doActionForSlot(8, 7)"
+		actionAlt "doActionAltForSlot(8, 7)"
 	}
 	button
 	{
@@ -6001,6 +6406,7 @@ menu
 		count lua "getCountForSlot(8, 7)"
 		tooltip lua "getTooltipForSlot(8, 7)"
 		action "doActionForSlot(8, 7)"
+		actionAlt "doActionAltForSlot(8, 7)"
 	}
 
 	button
@@ -6013,6 +6419,7 @@ menu
 		frame lua "getFrameForSlot(8, 8)"
 		tooltip lua "getTooltipForSlot(8, 8)"
 		action "doActionForSlot(8, 8)"
+		actionAlt "doActionAltForSlot(8, 8)"
 	}
 	button
 	{
@@ -6026,6 +6433,7 @@ menu
 		count lua "getCountForSlot(8, 8)"
 		tooltip lua "getTooltipForSlot(8, 8)"
 		action "doActionForSlot(8, 8)"
+		actionAlt "doActionAltForSlot(8, 8)"
 	}
 
 	button
@@ -6038,6 +6446,7 @@ menu
 		frame lua "getFrameForSlot(8, 9)"
 		tooltip lua "getTooltipForSlot(8, 9)"
 		action "doActionForSlot(8, 9)"
+		actionAlt "doActionAltForSlot(8, 9)"
 	}
 	button
 	{
@@ -6051,6 +6460,7 @@ menu
 		count lua "getCountForSlot(8, 9)"
 		tooltip lua "getTooltipForSlot(8, 9)"
 		action "doActionForSlot(8, 9)"
+		actionAlt "doActionAltForSlot(8, 9)"
 	}
 
 	button
@@ -6063,6 +6473,7 @@ menu
 		frame lua "getFrameForSlot(8, 10)"
 		tooltip lua "getTooltipForSlot(8, 10)"
 		action "doActionForSlot(8, 10)"
+		actionAlt "doActionAltForSlot(8, 10)"
 	}
 	button
 	{
@@ -6076,6 +6487,7 @@ menu
 		count lua "getCountForSlot(8, 10)"
 		tooltip lua "getTooltipForSlot(8, 10)"
 		action "doActionForSlot(8, 10)"
+		actionAlt "doActionAltForSlot(8, 10)"
 	}
 
 	button
@@ -6088,6 +6500,7 @@ menu
 		frame lua "getFrameForSlot(8, 11)"
 		tooltip lua "getTooltipForSlot(8, 11)"
 		action "doActionForSlot(8, 11)"
+		actionAlt "doActionAltForSlot(8, 11)"
 	}
 	button
 	{
@@ -6101,6 +6514,7 @@ menu
 		count lua "getCountForSlot(8, 11)"
 		tooltip lua "getTooltipForSlot(8, 11)"
 		action "doActionForSlot(8, 11)"
+		actionAlt "doActionAltForSlot(8, 11)"
 	}
 
 	button
@@ -6113,6 +6527,7 @@ menu
 		frame lua "getFrameForSlot(8, 12)"
 		tooltip lua "getTooltipForSlot(8, 12)"
 		action "doActionForSlot(8, 12)"
+		actionAlt "doActionAltForSlot(8, 12)"
 	}
 	button
 	{
@@ -6126,6 +6541,7 @@ menu
 		count lua "getCountForSlot(8, 12)"
 		tooltip lua "getTooltipForSlot(8, 12)"
 		action "doActionForSlot(8, 12)"
+		actionAlt "doActionAltForSlot(8, 12)"
 	}
 
 	button
@@ -6138,6 +6554,7 @@ menu
 		frame lua "getFrameForSlot(8, 13)"
 		tooltip lua "getTooltipForSlot(8, 13)"
 		action "doActionForSlot(8, 13)"
+		actionAlt "doActionAltForSlot(8, 13)"
 	}
 	button
 	{
@@ -6151,6 +6568,7 @@ menu
 		count lua "getCountForSlot(8, 13)"
 		tooltip lua "getTooltipForSlot(8, 13)"
 		action "doActionForSlot(8, 13)"
+		actionAlt "doActionAltForSlot(8, 13)"
 	}
 
 	button
@@ -6163,6 +6581,7 @@ menu
 		frame lua "getFrameForSlot(8, 14)"
 		tooltip lua "getTooltipForSlot(8, 14)"
 		action "doActionForSlot(8, 14)"
+		actionAlt "doActionAltForSlot(8, 14)"
 	}
 	button
 	{
@@ -6176,6 +6595,7 @@ menu
 		count lua "getCountForSlot(8, 14)"
 		tooltip lua "getTooltipForSlot(8, 14)"
 		action "doActionForSlot(8, 14)"
+		actionAlt "doActionAltForSlot(8, 14)"
 	}
 
 	button
@@ -6188,6 +6608,7 @@ menu
 		frame lua "getFrameForSlot(8, 15)"
 		tooltip lua "getTooltipForSlot(8, 15)"
 		action "doActionForSlot(8, 15)"
+		actionAlt "doActionAltForSlot(8, 15)"
 	}
 	button
 	{
@@ -6201,6 +6622,7 @@ menu
 		count lua "getCountForSlot(8, 15)"
 		tooltip lua "getTooltipForSlot(8, 15)"
 		action "doActionForSlot(8, 15)"
+		actionAlt "doActionAltForSlot(8, 15)"
 	}
 
 	button
@@ -6213,6 +6635,7 @@ menu
 		frame lua "getFrameForSlot(8, 16)"
 		tooltip lua "getTooltipForSlot(8, 16)"
 		action "doActionForSlot(8, 16)"
+		actionAlt "doActionAltForSlot(8, 16)"
 	}
 	button
 	{
@@ -6226,6 +6649,7 @@ menu
 		count lua "getCountForSlot(8, 16)"
 		tooltip lua "getTooltipForSlot(8, 16)"
 		action "doActionForSlot(8, 16)"
+		actionAlt "doActionAltForSlot(8, 16)"
 	}
 
 	button
@@ -6238,6 +6662,7 @@ menu
 		frame lua "getFrameForSlot(8, 17)"
 		tooltip lua "getTooltipForSlot(8, 17)"
 		action "doActionForSlot(8, 17)"
+		actionAlt "doActionAltForSlot(8, 17)"
 	}
 	button
 	{
@@ -6251,6 +6676,7 @@ menu
 		count lua "getCountForSlot(8, 17)"
 		tooltip lua "getTooltipForSlot(8, 17)"
 		action "doActionForSlot(8, 17)"
+		actionAlt "doActionAltForSlot(8, 17)"
 	}
 
 	button
@@ -6263,6 +6689,7 @@ menu
 		frame lua "getFrameForSlot(8, 18)"
 		tooltip lua "getTooltipForSlot(8, 18)"
 		action "doActionForSlot(8, 18)"
+		actionAlt "doActionAltForSlot(8, 18)"
 	}
 	button
 	{
@@ -6276,6 +6703,7 @@ menu
 		count lua "getCountForSlot(8, 18)"
 		tooltip lua "getTooltipForSlot(8, 18)"
 		action "doActionForSlot(8, 18)"
+		actionAlt "doActionAltForSlot(8, 18)"
 	}
 
 	button
@@ -6288,6 +6716,7 @@ menu
 		frame lua "getFrameForSlot(8, 19)"
 		tooltip lua "getTooltipForSlot(8, 19)"
 		action "doActionForSlot(8, 19)"
+		actionAlt "doActionAltForSlot(8, 19)"
 	}
 	button
 	{
@@ -6301,6 +6730,7 @@ menu
 		count lua "getCountForSlot(8, 19)"
 		tooltip lua "getTooltipForSlot(8, 19)"
 		action "doActionForSlot(8, 19)"
+		actionAlt "doActionAltForSlot(8, 19)"
 	}
 
 	button
@@ -6313,6 +6743,7 @@ menu
 		frame lua "getFrameForSlot(8, 20)"
 		tooltip lua "getTooltipForSlot(8, 20)"
 		action "doActionForSlot(8, 20)"
+		actionAlt "doActionAltForSlot(8, 20)"
 	}
 	button
 	{
@@ -6326,6 +6757,7 @@ menu
 		count lua "getCountForSlot(8, 20)"
 		tooltip lua "getTooltipForSlot(8, 20)"
 		action "doActionForSlot(8, 20)"
+		actionAlt "doActionAltForSlot(8, 20)"
 	}
 
 	button
@@ -6338,6 +6770,7 @@ menu
 		frame lua "getFrameForSlot(8, 21)"
 		tooltip lua "getTooltipForSlot(8, 21)"
 		action "doActionForSlot(8, 21)"
+		actionAlt "doActionAltForSlot(8, 21)"
 	}
 	button
 	{
@@ -6351,6 +6784,7 @@ menu
 		count lua "getCountForSlot(8, 21)"
 		tooltip lua "getTooltipForSlot(8, 21)"
 		action "doActionForSlot(8, 21)"
+		actionAlt "doActionAltForSlot(8, 21)"
 	}
 
 	button
@@ -6363,6 +6797,7 @@ menu
 		frame lua "getFrameForSlot(8, 22)"
 		tooltip lua "getTooltipForSlot(8, 22)"
 		action "doActionForSlot(8, 22)"
+		actionAlt "doActionAltForSlot(8, 22)"
 	}
 	button
 	{
@@ -6376,6 +6811,7 @@ menu
 		count lua "getCountForSlot(8, 22)"
 		tooltip lua "getTooltipForSlot(8, 22)"
 		action "doActionForSlot(8, 22)"
+		actionAlt "doActionAltForSlot(8, 22)"
 	}
 
 	button
@@ -6388,6 +6824,7 @@ menu
 		frame lua "getFrameForSlot(8, 23)"
 		tooltip lua "getTooltipForSlot(8, 23)"
 		action "doActionForSlot(8, 23)"
+		actionAlt "doActionAltForSlot(8, 23)"
 	}
 	button
 	{
@@ -6401,6 +6838,7 @@ menu
 		count lua "getCountForSlot(8, 23)"
 		tooltip lua "getTooltipForSlot(8, 23)"
 		action "doActionForSlot(8, 23)"
+		actionAlt "doActionAltForSlot(8, 23)"
 	}
 
 	button
@@ -6413,6 +6851,7 @@ menu
 		frame lua "getFrameForSlot(8, 24)"
 		tooltip lua "getTooltipForSlot(8, 24)"
 		action "doActionForSlot(8, 24)"
+		actionAlt "doActionAltForSlot(8, 24)"
 	}
 	button
 	{
@@ -6426,6 +6865,7 @@ menu
 		count lua "getCountForSlot(8, 24)"
 		tooltip lua "getTooltipForSlot(8, 24)"
 		action "doActionForSlot(8, 24)"
+		actionAlt "doActionAltForSlot(8, 24)"
 	}
 
 	button
@@ -6438,6 +6878,7 @@ menu
 		frame lua "getFrameForSlot(8, 25)"
 		tooltip lua "getTooltipForSlot(8, 25)"
 		action "doActionForSlot(8, 25)"
+		actionAlt "doActionAltForSlot(8, 25)"
 	}
 	button
 	{
@@ -6451,6 +6892,7 @@ menu
 		count lua "getCountForSlot(8, 25)"
 		tooltip lua "getTooltipForSlot(8, 25)"
 		action "doActionForSlot(8, 25)"
+		actionAlt "doActionAltForSlot(8, 25)"
 	}
 
 	button
@@ -6463,6 +6905,7 @@ menu
 		frame lua "getFrameForSlot(8, 26)"
 		tooltip lua "getTooltipForSlot(8, 26)"
 		action "doActionForSlot(8, 26)"
+		actionAlt "doActionAltForSlot(8, 26)"
 	}
 	button
 	{
@@ -6476,6 +6919,7 @@ menu
 		count lua "getCountForSlot(8, 26)"
 		tooltip lua "getTooltipForSlot(8, 26)"
 		action "doActionForSlot(8, 26)"
+		actionAlt "doActionAltForSlot(8, 26)"
 	}
 
 	button
@@ -6488,6 +6932,7 @@ menu
 		frame lua "getFrameForSlot(8, 27)"
 		tooltip lua "getTooltipForSlot(8, 27)"
 		action "doActionForSlot(8, 27)"
+		actionAlt "doActionAltForSlot(8, 27)"
 	}
 	button
 	{
@@ -6501,6 +6946,7 @@ menu
 		count lua "getCountForSlot(8, 27)"
 		tooltip lua "getTooltipForSlot(8, 27)"
 		action "doActionForSlot(8, 27)"
+		actionAlt "doActionAltForSlot(8, 27)"
 	}
 
 	button
@@ -6513,6 +6959,7 @@ menu
 		frame lua "getFrameForSlot(9, 1)"
 		tooltip lua "getTooltipForSlot(9, 1)"
 		action "doActionForSlot(9, 1)"
+		actionAlt "doActionAltForSlot(9, 1)"
 	}
 	button
 	{
@@ -6526,6 +6973,7 @@ menu
 		count lua "getCountForSlot(9, 1)"
 		tooltip lua "getTooltipForSlot(9, 1)"
 		action "doActionForSlot(9, 1)"
+		actionAlt "doActionAltForSlot(9, 1)"
 	}
 
 	button
@@ -6538,6 +6986,7 @@ menu
 		frame lua "getFrameForSlot(9, 2)"
 		tooltip lua "getTooltipForSlot(9, 2)"
 		action "doActionForSlot(9, 2)"
+		actionAlt "doActionAltForSlot(9, 2)"
 	}
 	button
 	{
@@ -6551,6 +7000,7 @@ menu
 		count lua "getCountForSlot(9, 2)"
 		tooltip lua "getTooltipForSlot(9, 2)"
 		action "doActionForSlot(9, 2)"
+		actionAlt "doActionAltForSlot(9, 2)"
 	}
 
 	button
@@ -6563,6 +7013,7 @@ menu
 		frame lua "getFrameForSlot(9, 3)"
 		tooltip lua "getTooltipForSlot(9, 3)"
 		action "doActionForSlot(9, 3)"
+		actionAlt "doActionAltForSlot(9, 3)"
 	}
 	button
 	{
@@ -6576,6 +7027,7 @@ menu
 		count lua "getCountForSlot(9, 3)"
 		tooltip lua "getTooltipForSlot(9, 3)"
 		action "doActionForSlot(9, 3)"
+		actionAlt "doActionAltForSlot(9, 3)"
 	}
 
 	button
@@ -6588,6 +7040,7 @@ menu
 		frame lua "getFrameForSlot(9, 4)"
 		tooltip lua "getTooltipForSlot(9, 4)"
 		action "doActionForSlot(9, 4)"
+		actionAlt "doActionAltForSlot(9, 4)"
 	}
 	button
 	{
@@ -6601,6 +7054,7 @@ menu
 		count lua "getCountForSlot(9, 4)"
 		tooltip lua "getTooltipForSlot(9, 4)"
 		action "doActionForSlot(9, 4)"
+		actionAlt "doActionAltForSlot(9, 4)"
 	}
 
 	button
@@ -6613,6 +7067,7 @@ menu
 		frame lua "getFrameForSlot(9, 5)"
 		tooltip lua "getTooltipForSlot(9, 5)"
 		action "doActionForSlot(9, 5)"
+		actionAlt "doActionAltForSlot(9, 5)"
 	}
 	button
 	{
@@ -6626,6 +7081,7 @@ menu
 		count lua "getCountForSlot(9, 5)"
 		tooltip lua "getTooltipForSlot(9, 5)"
 		action "doActionForSlot(9, 5)"
+		actionAlt "doActionAltForSlot(9, 5)"
 	}
 
 	button
@@ -6638,6 +7094,7 @@ menu
 		frame lua "getFrameForSlot(9, 6)"
 		tooltip lua "getTooltipForSlot(9, 6)"
 		action "doActionForSlot(9, 6)"
+		actionAlt "doActionAltForSlot(9, 6)"
 	}
 	button
 	{
@@ -6651,6 +7108,7 @@ menu
 		count lua "getCountForSlot(9, 6)"
 		tooltip lua "getTooltipForSlot(9, 6)"
 		action "doActionForSlot(9, 6)"
+		actionAlt "doActionAltForSlot(9, 6)"
 	}
 
 	button
@@ -6663,6 +7121,7 @@ menu
 		frame lua "getFrameForSlot(9, 7)"
 		tooltip lua "getTooltipForSlot(9, 7)"
 		action "doActionForSlot(9, 7)"
+		actionAlt "doActionAltForSlot(9, 7)"
 	}
 	button
 	{
@@ -6676,6 +7135,7 @@ menu
 		count lua "getCountForSlot(9, 7)"
 		tooltip lua "getTooltipForSlot(9, 7)"
 		action "doActionForSlot(9, 7)"
+		actionAlt "doActionAltForSlot(9, 7)"
 	}
 
 	button
@@ -6688,6 +7148,7 @@ menu
 		frame lua "getFrameForSlot(9, 8)"
 		tooltip lua "getTooltipForSlot(9, 8)"
 		action "doActionForSlot(9, 8)"
+		actionAlt "doActionAltForSlot(9, 8)"
 	}
 	button
 	{
@@ -6701,6 +7162,7 @@ menu
 		count lua "getCountForSlot(9, 8)"
 		tooltip lua "getTooltipForSlot(9, 8)"
 		action "doActionForSlot(9, 8)"
+		actionAlt "doActionAltForSlot(9, 8)"
 	}
 
 	button
@@ -6713,6 +7175,7 @@ menu
 		frame lua "getFrameForSlot(9, 9)"
 		tooltip lua "getTooltipForSlot(9, 9)"
 		action "doActionForSlot(9, 9)"
+		actionAlt "doActionAltForSlot(9, 9)"
 	}
 	button
 	{
@@ -6726,6 +7189,7 @@ menu
 		count lua "getCountForSlot(9, 9)"
 		tooltip lua "getTooltipForSlot(9, 9)"
 		action "doActionForSlot(9, 9)"
+		actionAlt "doActionAltForSlot(9, 9)"
 	}
 
 	button
@@ -6738,6 +7202,7 @@ menu
 		frame lua "getFrameForSlot(9, 10)"
 		tooltip lua "getTooltipForSlot(9, 10)"
 		action "doActionForSlot(9, 10)"
+		actionAlt "doActionAltForSlot(9, 10)"
 	}
 	button
 	{
@@ -6751,6 +7216,7 @@ menu
 		count lua "getCountForSlot(9, 10)"
 		tooltip lua "getTooltipForSlot(9, 10)"
 		action "doActionForSlot(9, 10)"
+		actionAlt "doActionAltForSlot(9, 10)"
 	}
 
 	button
@@ -6763,6 +7229,7 @@ menu
 		frame lua "getFrameForSlot(9, 11)"
 		tooltip lua "getTooltipForSlot(9, 11)"
 		action "doActionForSlot(9, 11)"
+		actionAlt "doActionAltForSlot(9, 11)"
 	}
 	button
 	{
@@ -6776,6 +7243,7 @@ menu
 		count lua "getCountForSlot(9, 11)"
 		tooltip lua "getTooltipForSlot(9, 11)"
 		action "doActionForSlot(9, 11)"
+		actionAlt "doActionAltForSlot(9, 11)"
 	}
 
 	button
@@ -6788,6 +7256,7 @@ menu
 		frame lua "getFrameForSlot(9, 12)"
 		tooltip lua "getTooltipForSlot(9, 12)"
 		action "doActionForSlot(9, 12)"
+		actionAlt "doActionAltForSlot(9, 12)"
 	}
 	button
 	{
@@ -6801,6 +7270,7 @@ menu
 		count lua "getCountForSlot(9, 12)"
 		tooltip lua "getTooltipForSlot(9, 12)"
 		action "doActionForSlot(9, 12)"
+		actionAlt "doActionAltForSlot(9, 12)"
 	}
 
 	button
@@ -6813,6 +7283,7 @@ menu
 		frame lua "getFrameForSlot(9, 13)"
 		tooltip lua "getTooltipForSlot(9, 13)"
 		action "doActionForSlot(9, 13)"
+		actionAlt "doActionAltForSlot(9, 13)"
 	}
 	button
 	{
@@ -6826,6 +7297,7 @@ menu
 		count lua "getCountForSlot(9, 13)"
 		tooltip lua "getTooltipForSlot(9, 13)"
 		action "doActionForSlot(9, 13)"
+		actionAlt "doActionAltForSlot(9, 13)"
 	}
 
 	button
@@ -6838,6 +7310,7 @@ menu
 		frame lua "getFrameForSlot(9, 14)"
 		tooltip lua "getTooltipForSlot(9, 14)"
 		action "doActionForSlot(9, 14)"
+		actionAlt "doActionAltForSlot(9, 14)"
 	}
 	button
 	{
@@ -6851,6 +7324,7 @@ menu
 		count lua "getCountForSlot(9, 14)"
 		tooltip lua "getTooltipForSlot(9, 14)"
 		action "doActionForSlot(9, 14)"
+		actionAlt "doActionAltForSlot(9, 14)"
 	}
 
 	button
@@ -6863,6 +7337,7 @@ menu
 		frame lua "getFrameForSlot(9, 15)"
 		tooltip lua "getTooltipForSlot(9, 15)"
 		action "doActionForSlot(9, 15)"
+		actionAlt "doActionAltForSlot(9, 15)"
 	}
 	button
 	{
@@ -6876,6 +7351,7 @@ menu
 		count lua "getCountForSlot(9, 15)"
 		tooltip lua "getTooltipForSlot(9, 15)"
 		action "doActionForSlot(9, 15)"
+		actionAlt "doActionAltForSlot(9, 15)"
 	}
 
 	button
@@ -6888,6 +7364,7 @@ menu
 		frame lua "getFrameForSlot(9, 16)"
 		tooltip lua "getTooltipForSlot(9, 16)"
 		action "doActionForSlot(9, 16)"
+		actionAlt "doActionAltForSlot(9, 16)"
 	}
 	button
 	{
@@ -6901,6 +7378,7 @@ menu
 		count lua "getCountForSlot(9, 16)"
 		tooltip lua "getTooltipForSlot(9, 16)"
 		action "doActionForSlot(9, 16)"
+		actionAlt "doActionAltForSlot(9, 16)"
 	}
 
 	button
@@ -6913,6 +7391,7 @@ menu
 		frame lua "getFrameForSlot(9, 17)"
 		tooltip lua "getTooltipForSlot(9, 17)"
 		action "doActionForSlot(9, 17)"
+		actionAlt "doActionAltForSlot(9, 17)"
 	}
 	button
 	{
@@ -6926,6 +7405,7 @@ menu
 		count lua "getCountForSlot(9, 17)"
 		tooltip lua "getTooltipForSlot(9, 17)"
 		action "doActionForSlot(9, 17)"
+		actionAlt "doActionAltForSlot(9, 17)"
 	}
 
 	button
@@ -6938,6 +7418,7 @@ menu
 		frame lua "getFrameForSlot(9, 18)"
 		tooltip lua "getTooltipForSlot(9, 18)"
 		action "doActionForSlot(9, 18)"
+		actionAlt "doActionAltForSlot(9, 18)"
 	}
 	button
 	{
@@ -6951,6 +7432,7 @@ menu
 		count lua "getCountForSlot(9, 18)"
 		tooltip lua "getTooltipForSlot(9, 18)"
 		action "doActionForSlot(9, 18)"
+		actionAlt "doActionAltForSlot(9, 18)"
 	}
 
 	button
@@ -6963,6 +7445,7 @@ menu
 		frame lua "getFrameForSlot(9, 19)"
 		tooltip lua "getTooltipForSlot(9, 19)"
 		action "doActionForSlot(9, 19)"
+		actionAlt "doActionAltForSlot(9, 19)"
 	}
 	button
 	{
@@ -6976,6 +7459,7 @@ menu
 		count lua "getCountForSlot(9, 19)"
 		tooltip lua "getTooltipForSlot(9, 19)"
 		action "doActionForSlot(9, 19)"
+		actionAlt "doActionAltForSlot(9, 19)"
 	}
 
 	button
@@ -6988,6 +7472,7 @@ menu
 		frame lua "getFrameForSlot(9, 20)"
 		tooltip lua "getTooltipForSlot(9, 20)"
 		action "doActionForSlot(9, 20)"
+		actionAlt "doActionAltForSlot(9, 20)"
 	}
 	button
 	{
@@ -7001,6 +7486,7 @@ menu
 		count lua "getCountForSlot(9, 20)"
 		tooltip lua "getTooltipForSlot(9, 20)"
 		action "doActionForSlot(9, 20)"
+		actionAlt "doActionAltForSlot(9, 20)"
 	}
 
 	button
@@ -7013,6 +7499,7 @@ menu
 		frame lua "getFrameForSlot(9, 21)"
 		tooltip lua "getTooltipForSlot(9, 21)"
 		action "doActionForSlot(9, 21)"
+		actionAlt "doActionAltForSlot(9, 21)"
 	}
 	button
 	{
@@ -7026,6 +7513,7 @@ menu
 		count lua "getCountForSlot(9, 21)"
 		tooltip lua "getTooltipForSlot(9, 21)"
 		action "doActionForSlot(9, 21)"
+		actionAlt "doActionAltForSlot(9, 21)"
 	}
 
 	button
@@ -7038,6 +7526,7 @@ menu
 		frame lua "getFrameForSlot(9, 22)"
 		tooltip lua "getTooltipForSlot(9, 22)"
 		action "doActionForSlot(9, 22)"
+		actionAlt "doActionAltForSlot(9, 22)"
 	}
 	button
 	{
@@ -7051,6 +7540,7 @@ menu
 		count lua "getCountForSlot(9, 22)"
 		tooltip lua "getTooltipForSlot(9, 22)"
 		action "doActionForSlot(9, 22)"
+		actionAlt "doActionAltForSlot(9, 22)"
 	}
 
 	button
@@ -7063,6 +7553,7 @@ menu
 		frame lua "getFrameForSlot(9, 23)"
 		tooltip lua "getTooltipForSlot(9, 23)"
 		action "doActionForSlot(9, 23)"
+		actionAlt "doActionAltForSlot(9, 23)"
 	}
 	button
 	{
@@ -7076,6 +7567,7 @@ menu
 		count lua "getCountForSlot(9, 23)"
 		tooltip lua "getTooltipForSlot(9, 23)"
 		action "doActionForSlot(9, 23)"
+		actionAlt "doActionAltForSlot(9, 23)"
 	}
 
 	button
@@ -7088,6 +7580,7 @@ menu
 		frame lua "getFrameForSlot(9, 24)"
 		tooltip lua "getTooltipForSlot(9, 24)"
 		action "doActionForSlot(9, 24)"
+		actionAlt "doActionAltForSlot(9, 24)"
 	}
 	button
 	{
@@ -7101,6 +7594,7 @@ menu
 		count lua "getCountForSlot(9, 24)"
 		tooltip lua "getTooltipForSlot(9, 24)"
 		action "doActionForSlot(9, 24)"
+		actionAlt "doActionAltForSlot(9, 24)"
 	}
 
 	button
@@ -7113,6 +7607,7 @@ menu
 		frame lua "getFrameForSlot(9, 25)"
 		tooltip lua "getTooltipForSlot(9, 25)"
 		action "doActionForSlot(9, 25)"
+		actionAlt "doActionAltForSlot(9, 25)"
 	}
 	button
 	{
@@ -7126,6 +7621,7 @@ menu
 		count lua "getCountForSlot(9, 25)"
 		tooltip lua "getTooltipForSlot(9, 25)"
 		action "doActionForSlot(9, 25)"
+		actionAlt "doActionAltForSlot(9, 25)"
 	}
 
 	button
@@ -7138,6 +7634,7 @@ menu
 		frame lua "getFrameForSlot(9, 26)"
 		tooltip lua "getTooltipForSlot(9, 26)"
 		action "doActionForSlot(9, 26)"
+		actionAlt "doActionAltForSlot(9, 26)"
 	}
 	button
 	{
@@ -7151,6 +7648,7 @@ menu
 		count lua "getCountForSlot(9, 26)"
 		tooltip lua "getTooltipForSlot(9, 26)"
 		action "doActionForSlot(9, 26)"
+		actionAlt "doActionAltForSlot(9, 26)"
 	}
 
 	button
@@ -7163,6 +7661,7 @@ menu
 		frame lua "getFrameForSlot(9, 27)"
 		tooltip lua "getTooltipForSlot(9, 27)"
 		action "doActionForSlot(9, 27)"
+		actionAlt "doActionAltForSlot(9, 27)"
 	}
 	button
 	{
@@ -7176,6 +7675,7 @@ menu
 		count lua "getCountForSlot(9, 27)"
 		tooltip lua "getTooltipForSlot(9, 27)"
 		action "doActionForSlot(9, 27)"
+		actionAlt "doActionAltForSlot(9, 27)"
 	}
 }
 
@@ -7771,7 +8271,7 @@ menu
 			label
 			{
 				area		0 0 -1 -1
-				text		lua "Infinity_FetchString(statusEffects[rowNumber].strRef)"
+				text		lua "replaceSpellUUIDs(Infinity_FetchString(statusEffects[rowNumber].strRef))"
 				text style  'normal'
 				text align	left center
 			}
@@ -15182,7 +15682,7 @@ menu
 	label
 	{
 		area 310 65 310 50
-		text lua "Infinity_FetchString(PopupDetails.name)"
+		text lua "replaceSpellUUIDs(Infinity_FetchString(PopupDetails.name))"
 		text style "label"
 	}
 	text
@@ -22092,7 +22592,7 @@ menu
 			label
 			{
 				area 4 0 -1 -1
-				text lua "Infinity_FetchString(chargen.HLAs[rowNumber].name)"
+				text lua "replaceSpellUUIDs(Infinity_FetchString(chargen.HLAs[rowNumber].name))"
 				text style "normal"
 				align left center
 				

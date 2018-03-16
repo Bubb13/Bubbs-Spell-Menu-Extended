@@ -74,6 +74,15 @@ decrementRowOffset+
 +@0 	if rowOffset < 0 then rowOffset = 0 end
 +@0 	slotRowOffsets[slot_row] = rowOffset
 +@0 end
+doActionAltForSlot+
++@0 function doActionAltForSlot(slot_row, slot_column)
++@0 	if not getSlotIsArrow(slot_row, slot_column) then
++@0 		local spell = getSpellForSlot(slot_row, slot_column)
++@0 		if spell ~= nil then
++@0 			selectSpellWithUUID(spell.spellUUID, false)
++@0 		end
++@0 	end
++@0 end
 doActionForSlot+
 +@0 function doActionForSlot(slot_row, slot_column)
 +@0 	if getSlotIsArrow(slot_row, slot_column) then
@@ -85,7 +94,7 @@ doActionForSlot+
 +@0 	else
 +@0 		local spell = getSpellForSlot(slot_row, slot_column)
 +@0 		if spell ~= nil then
-+@0 			selectSpellWithUUID(spell.spellUUID)
++@0 			selectSpellWithUUID(spell.spellUUID, true)
 +@0 			Infinity_PopMenu('BUBB_SPELL_MENU_SLOTS')
 +@0 		end
 +@0 	end
@@ -256,7 +265,7 @@ fillSpellListInfo+
 +@0 					toInsert = {}
 +@0 					toInsert.spellUUID = spellUUID
 +@0 					toInsert.spellName = spellName
-+@0 					toInsert.spellIcon = string.sub(spellIcon, 1, #spellIcon - 1)..'B'
++@0 					toInsert.spellIcon = spellIcon
 +@0 					toInsert.spellLevel = spellLevel
 +@0 					toInsert.spellType = spellType
 +@0 					toInsert.spellCastableCount = getSpellCastableCountFromResref(spellResref)
@@ -833,7 +842,7 @@ resolveTooltip+
 +@0 	return tooltip
 +@0 end
 selectSpellWithUUID+
-+@0 function selectSpellWithUUID(uuid)
++@0 function selectSpellWithUUID(uuid, leftClick)
 +@0 
 +@0 	resetSpellHotbar()
 +@0 	finding = true
@@ -852,7 +861,12 @@ selectSpellWithUUID+
 +@0 
 +@0 					if spellUUID == uuid then
 +@0 
-+@0 						buttonArray:OnLButtonPressed(i)
++@0 						if leftClick then
++@0 							buttonArray:OnLButtonPressed(i)
++@0 						else
++@0 							buttonArray:OnRButtonPressed(i)
++@0 						end
++@0 
 +@0 						finding = false
 +@0 						break
 +@0 					end
@@ -1000,7 +1014,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 			if key_pressed == 27 then
 +@0 				Infinity_PopMenu('BUBB_SPELL_MENU_SLOTS')
 +@0 			elseif key_pressed == 13 then
-+@0 				selectSpellWithUUID(getFirstSpellUUID())
++@0 				selectSpellWithUUID(getFirstSpellUUID(), true)
 +@0 				Infinity_PopMenu('BUBB_SPELL_MENU_SLOTS')
 +@0 				return 0
 +@0 			else
@@ -1099,6 +1113,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 1)"
 +@0 		tooltip lua "getTooltipForSlot(1, 1)"
 +@0 		action "doActionForSlot(1, 1)"
++@0 		actionAlt "doActionAltForSlot(1, 1)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1112,6 +1127,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 1)"
 +@0 		tooltip lua "getTooltipForSlot(1, 1)"
 +@0 		action "doActionForSlot(1, 1)"
++@0 		actionAlt "doActionAltForSlot(1, 1)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1124,6 +1140,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 2)"
 +@0 		tooltip lua "getTooltipForSlot(1, 2)"
 +@0 		action "doActionForSlot(1, 2)"
++@0 		actionAlt "doActionAltForSlot(1, 2)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1137,6 +1154,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 2)"
 +@0 		tooltip lua "getTooltipForSlot(1, 2)"
 +@0 		action "doActionForSlot(1, 2)"
++@0 		actionAlt "doActionAltForSlot(1, 2)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1149,6 +1167,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 3)"
 +@0 		tooltip lua "getTooltipForSlot(1, 3)"
 +@0 		action "doActionForSlot(1, 3)"
++@0 		actionAlt "doActionAltForSlot(1, 3)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1162,6 +1181,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 3)"
 +@0 		tooltip lua "getTooltipForSlot(1, 3)"
 +@0 		action "doActionForSlot(1, 3)"
++@0 		actionAlt "doActionAltForSlot(1, 3)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1174,6 +1194,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 4)"
 +@0 		tooltip lua "getTooltipForSlot(1, 4)"
 +@0 		action "doActionForSlot(1, 4)"
++@0 		actionAlt "doActionAltForSlot(1, 4)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1187,6 +1208,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 4)"
 +@0 		tooltip lua "getTooltipForSlot(1, 4)"
 +@0 		action "doActionForSlot(1, 4)"
++@0 		actionAlt "doActionAltForSlot(1, 4)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1199,6 +1221,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 5)"
 +@0 		tooltip lua "getTooltipForSlot(1, 5)"
 +@0 		action "doActionForSlot(1, 5)"
++@0 		actionAlt "doActionAltForSlot(1, 5)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1212,6 +1235,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 5)"
 +@0 		tooltip lua "getTooltipForSlot(1, 5)"
 +@0 		action "doActionForSlot(1, 5)"
++@0 		actionAlt "doActionAltForSlot(1, 5)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1224,6 +1248,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 6)"
 +@0 		tooltip lua "getTooltipForSlot(1, 6)"
 +@0 		action "doActionForSlot(1, 6)"
++@0 		actionAlt "doActionAltForSlot(1, 6)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1237,6 +1262,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 6)"
 +@0 		tooltip lua "getTooltipForSlot(1, 6)"
 +@0 		action "doActionForSlot(1, 6)"
++@0 		actionAlt "doActionAltForSlot(1, 6)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1249,6 +1275,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 7)"
 +@0 		tooltip lua "getTooltipForSlot(1, 7)"
 +@0 		action "doActionForSlot(1, 7)"
++@0 		actionAlt "doActionAltForSlot(1, 7)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1262,6 +1289,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 7)"
 +@0 		tooltip lua "getTooltipForSlot(1, 7)"
 +@0 		action "doActionForSlot(1, 7)"
++@0 		actionAlt "doActionAltForSlot(1, 7)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1274,6 +1302,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 8)"
 +@0 		tooltip lua "getTooltipForSlot(1, 8)"
 +@0 		action "doActionForSlot(1, 8)"
++@0 		actionAlt "doActionAltForSlot(1, 8)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1287,6 +1316,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 8)"
 +@0 		tooltip lua "getTooltipForSlot(1, 8)"
 +@0 		action "doActionForSlot(1, 8)"
++@0 		actionAlt "doActionAltForSlot(1, 8)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1299,6 +1329,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 9)"
 +@0 		tooltip lua "getTooltipForSlot(1, 9)"
 +@0 		action "doActionForSlot(1, 9)"
++@0 		actionAlt "doActionAltForSlot(1, 9)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1312,6 +1343,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 9)"
 +@0 		tooltip lua "getTooltipForSlot(1, 9)"
 +@0 		action "doActionForSlot(1, 9)"
++@0 		actionAlt "doActionAltForSlot(1, 9)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1324,6 +1356,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 10)"
 +@0 		tooltip lua "getTooltipForSlot(1, 10)"
 +@0 		action "doActionForSlot(1, 10)"
++@0 		actionAlt "doActionAltForSlot(1, 10)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1337,6 +1370,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 10)"
 +@0 		tooltip lua "getTooltipForSlot(1, 10)"
 +@0 		action "doActionForSlot(1, 10)"
++@0 		actionAlt "doActionAltForSlot(1, 10)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1349,6 +1383,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 11)"
 +@0 		tooltip lua "getTooltipForSlot(1, 11)"
 +@0 		action "doActionForSlot(1, 11)"
++@0 		actionAlt "doActionAltForSlot(1, 11)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1362,6 +1397,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 11)"
 +@0 		tooltip lua "getTooltipForSlot(1, 11)"
 +@0 		action "doActionForSlot(1, 11)"
++@0 		actionAlt "doActionAltForSlot(1, 11)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1374,6 +1410,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 12)"
 +@0 		tooltip lua "getTooltipForSlot(1, 12)"
 +@0 		action "doActionForSlot(1, 12)"
++@0 		actionAlt "doActionAltForSlot(1, 12)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1387,6 +1424,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 12)"
 +@0 		tooltip lua "getTooltipForSlot(1, 12)"
 +@0 		action "doActionForSlot(1, 12)"
++@0 		actionAlt "doActionAltForSlot(1, 12)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1399,6 +1437,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 13)"
 +@0 		tooltip lua "getTooltipForSlot(1, 13)"
 +@0 		action "doActionForSlot(1, 13)"
++@0 		actionAlt "doActionAltForSlot(1, 13)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1412,6 +1451,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 13)"
 +@0 		tooltip lua "getTooltipForSlot(1, 13)"
 +@0 		action "doActionForSlot(1, 13)"
++@0 		actionAlt "doActionAltForSlot(1, 13)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1424,6 +1464,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 14)"
 +@0 		tooltip lua "getTooltipForSlot(1, 14)"
 +@0 		action "doActionForSlot(1, 14)"
++@0 		actionAlt "doActionAltForSlot(1, 14)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1437,6 +1478,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 14)"
 +@0 		tooltip lua "getTooltipForSlot(1, 14)"
 +@0 		action "doActionForSlot(1, 14)"
++@0 		actionAlt "doActionAltForSlot(1, 14)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1449,6 +1491,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 15)"
 +@0 		tooltip lua "getTooltipForSlot(1, 15)"
 +@0 		action "doActionForSlot(1, 15)"
++@0 		actionAlt "doActionAltForSlot(1, 15)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1462,6 +1505,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 15)"
 +@0 		tooltip lua "getTooltipForSlot(1, 15)"
 +@0 		action "doActionForSlot(1, 15)"
++@0 		actionAlt "doActionAltForSlot(1, 15)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1474,6 +1518,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 16)"
 +@0 		tooltip lua "getTooltipForSlot(1, 16)"
 +@0 		action "doActionForSlot(1, 16)"
++@0 		actionAlt "doActionAltForSlot(1, 16)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1487,6 +1532,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 16)"
 +@0 		tooltip lua "getTooltipForSlot(1, 16)"
 +@0 		action "doActionForSlot(1, 16)"
++@0 		actionAlt "doActionAltForSlot(1, 16)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1499,6 +1545,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 17)"
 +@0 		tooltip lua "getTooltipForSlot(1, 17)"
 +@0 		action "doActionForSlot(1, 17)"
++@0 		actionAlt "doActionAltForSlot(1, 17)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1512,6 +1559,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 17)"
 +@0 		tooltip lua "getTooltipForSlot(1, 17)"
 +@0 		action "doActionForSlot(1, 17)"
++@0 		actionAlt "doActionAltForSlot(1, 17)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1524,6 +1572,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 18)"
 +@0 		tooltip lua "getTooltipForSlot(1, 18)"
 +@0 		action "doActionForSlot(1, 18)"
++@0 		actionAlt "doActionAltForSlot(1, 18)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1537,6 +1586,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 18)"
 +@0 		tooltip lua "getTooltipForSlot(1, 18)"
 +@0 		action "doActionForSlot(1, 18)"
++@0 		actionAlt "doActionAltForSlot(1, 18)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1549,6 +1599,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 19)"
 +@0 		tooltip lua "getTooltipForSlot(1, 19)"
 +@0 		action "doActionForSlot(1, 19)"
++@0 		actionAlt "doActionAltForSlot(1, 19)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1562,6 +1613,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 19)"
 +@0 		tooltip lua "getTooltipForSlot(1, 19)"
 +@0 		action "doActionForSlot(1, 19)"
++@0 		actionAlt "doActionAltForSlot(1, 19)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1574,6 +1626,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 20)"
 +@0 		tooltip lua "getTooltipForSlot(1, 20)"
 +@0 		action "doActionForSlot(1, 20)"
++@0 		actionAlt "doActionAltForSlot(1, 20)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1587,6 +1640,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 20)"
 +@0 		tooltip lua "getTooltipForSlot(1, 20)"
 +@0 		action "doActionForSlot(1, 20)"
++@0 		actionAlt "doActionAltForSlot(1, 20)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1599,6 +1653,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 21)"
 +@0 		tooltip lua "getTooltipForSlot(1, 21)"
 +@0 		action "doActionForSlot(1, 21)"
++@0 		actionAlt "doActionAltForSlot(1, 21)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1612,6 +1667,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 21)"
 +@0 		tooltip lua "getTooltipForSlot(1, 21)"
 +@0 		action "doActionForSlot(1, 21)"
++@0 		actionAlt "doActionAltForSlot(1, 21)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1624,6 +1680,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 22)"
 +@0 		tooltip lua "getTooltipForSlot(1, 22)"
 +@0 		action "doActionForSlot(1, 22)"
++@0 		actionAlt "doActionAltForSlot(1, 22)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1637,6 +1694,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 22)"
 +@0 		tooltip lua "getTooltipForSlot(1, 22)"
 +@0 		action "doActionForSlot(1, 22)"
++@0 		actionAlt "doActionAltForSlot(1, 22)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1649,6 +1707,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 23)"
 +@0 		tooltip lua "getTooltipForSlot(1, 23)"
 +@0 		action "doActionForSlot(1, 23)"
++@0 		actionAlt "doActionAltForSlot(1, 23)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1662,6 +1721,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 23)"
 +@0 		tooltip lua "getTooltipForSlot(1, 23)"
 +@0 		action "doActionForSlot(1, 23)"
++@0 		actionAlt "doActionAltForSlot(1, 23)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1674,6 +1734,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 24)"
 +@0 		tooltip lua "getTooltipForSlot(1, 24)"
 +@0 		action "doActionForSlot(1, 24)"
++@0 		actionAlt "doActionAltForSlot(1, 24)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1687,6 +1748,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 24)"
 +@0 		tooltip lua "getTooltipForSlot(1, 24)"
 +@0 		action "doActionForSlot(1, 24)"
++@0 		actionAlt "doActionAltForSlot(1, 24)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1699,6 +1761,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 25)"
 +@0 		tooltip lua "getTooltipForSlot(1, 25)"
 +@0 		action "doActionForSlot(1, 25)"
++@0 		actionAlt "doActionAltForSlot(1, 25)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1712,6 +1775,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 25)"
 +@0 		tooltip lua "getTooltipForSlot(1, 25)"
 +@0 		action "doActionForSlot(1, 25)"
++@0 		actionAlt "doActionAltForSlot(1, 25)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1724,6 +1788,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 26)"
 +@0 		tooltip lua "getTooltipForSlot(1, 26)"
 +@0 		action "doActionForSlot(1, 26)"
++@0 		actionAlt "doActionAltForSlot(1, 26)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1737,6 +1802,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 26)"
 +@0 		tooltip lua "getTooltipForSlot(1, 26)"
 +@0 		action "doActionForSlot(1, 26)"
++@0 		actionAlt "doActionAltForSlot(1, 26)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1749,6 +1815,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(1, 27)"
 +@0 		tooltip lua "getTooltipForSlot(1, 27)"
 +@0 		action "doActionForSlot(1, 27)"
++@0 		actionAlt "doActionAltForSlot(1, 27)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1762,6 +1829,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(1, 27)"
 +@0 		tooltip lua "getTooltipForSlot(1, 27)"
 +@0 		action "doActionForSlot(1, 27)"
++@0 		actionAlt "doActionAltForSlot(1, 27)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1774,6 +1842,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 1)"
 +@0 		tooltip lua "getTooltipForSlot(2, 1)"
 +@0 		action "doActionForSlot(2, 1)"
++@0 		actionAlt "doActionAltForSlot(2, 1)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1787,6 +1856,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 1)"
 +@0 		tooltip lua "getTooltipForSlot(2, 1)"
 +@0 		action "doActionForSlot(2, 1)"
++@0 		actionAlt "doActionAltForSlot(2, 1)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1799,6 +1869,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 2)"
 +@0 		tooltip lua "getTooltipForSlot(2, 2)"
 +@0 		action "doActionForSlot(2, 2)"
++@0 		actionAlt "doActionAltForSlot(2, 2)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1812,6 +1883,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 2)"
 +@0 		tooltip lua "getTooltipForSlot(2, 2)"
 +@0 		action "doActionForSlot(2, 2)"
++@0 		actionAlt "doActionAltForSlot(2, 2)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1824,6 +1896,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 3)"
 +@0 		tooltip lua "getTooltipForSlot(2, 3)"
 +@0 		action "doActionForSlot(2, 3)"
++@0 		actionAlt "doActionAltForSlot(2, 3)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1837,6 +1910,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 3)"
 +@0 		tooltip lua "getTooltipForSlot(2, 3)"
 +@0 		action "doActionForSlot(2, 3)"
++@0 		actionAlt "doActionAltForSlot(2, 3)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1849,6 +1923,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 4)"
 +@0 		tooltip lua "getTooltipForSlot(2, 4)"
 +@0 		action "doActionForSlot(2, 4)"
++@0 		actionAlt "doActionAltForSlot(2, 4)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1862,6 +1937,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 4)"
 +@0 		tooltip lua "getTooltipForSlot(2, 4)"
 +@0 		action "doActionForSlot(2, 4)"
++@0 		actionAlt "doActionAltForSlot(2, 4)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1874,6 +1950,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 5)"
 +@0 		tooltip lua "getTooltipForSlot(2, 5)"
 +@0 		action "doActionForSlot(2, 5)"
++@0 		actionAlt "doActionAltForSlot(2, 5)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1887,6 +1964,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 5)"
 +@0 		tooltip lua "getTooltipForSlot(2, 5)"
 +@0 		action "doActionForSlot(2, 5)"
++@0 		actionAlt "doActionAltForSlot(2, 5)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1899,6 +1977,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 6)"
 +@0 		tooltip lua "getTooltipForSlot(2, 6)"
 +@0 		action "doActionForSlot(2, 6)"
++@0 		actionAlt "doActionAltForSlot(2, 6)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1912,6 +1991,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 6)"
 +@0 		tooltip lua "getTooltipForSlot(2, 6)"
 +@0 		action "doActionForSlot(2, 6)"
++@0 		actionAlt "doActionAltForSlot(2, 6)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1924,6 +2004,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 7)"
 +@0 		tooltip lua "getTooltipForSlot(2, 7)"
 +@0 		action "doActionForSlot(2, 7)"
++@0 		actionAlt "doActionAltForSlot(2, 7)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1937,6 +2018,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 7)"
 +@0 		tooltip lua "getTooltipForSlot(2, 7)"
 +@0 		action "doActionForSlot(2, 7)"
++@0 		actionAlt "doActionAltForSlot(2, 7)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1949,6 +2031,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 8)"
 +@0 		tooltip lua "getTooltipForSlot(2, 8)"
 +@0 		action "doActionForSlot(2, 8)"
++@0 		actionAlt "doActionAltForSlot(2, 8)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1962,6 +2045,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 8)"
 +@0 		tooltip lua "getTooltipForSlot(2, 8)"
 +@0 		action "doActionForSlot(2, 8)"
++@0 		actionAlt "doActionAltForSlot(2, 8)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1974,6 +2058,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 9)"
 +@0 		tooltip lua "getTooltipForSlot(2, 9)"
 +@0 		action "doActionForSlot(2, 9)"
++@0 		actionAlt "doActionAltForSlot(2, 9)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -1987,6 +2072,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 9)"
 +@0 		tooltip lua "getTooltipForSlot(2, 9)"
 +@0 		action "doActionForSlot(2, 9)"
++@0 		actionAlt "doActionAltForSlot(2, 9)"
 +@0 	}
 +@0 
 +@0 	button
@@ -1999,6 +2085,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 10)"
 +@0 		tooltip lua "getTooltipForSlot(2, 10)"
 +@0 		action "doActionForSlot(2, 10)"
++@0 		actionAlt "doActionAltForSlot(2, 10)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2012,6 +2099,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 10)"
 +@0 		tooltip lua "getTooltipForSlot(2, 10)"
 +@0 		action "doActionForSlot(2, 10)"
++@0 		actionAlt "doActionAltForSlot(2, 10)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2024,6 +2112,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 11)"
 +@0 		tooltip lua "getTooltipForSlot(2, 11)"
 +@0 		action "doActionForSlot(2, 11)"
++@0 		actionAlt "doActionAltForSlot(2, 11)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2037,6 +2126,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 11)"
 +@0 		tooltip lua "getTooltipForSlot(2, 11)"
 +@0 		action "doActionForSlot(2, 11)"
++@0 		actionAlt "doActionAltForSlot(2, 11)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2049,6 +2139,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 12)"
 +@0 		tooltip lua "getTooltipForSlot(2, 12)"
 +@0 		action "doActionForSlot(2, 12)"
++@0 		actionAlt "doActionAltForSlot(2, 12)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2062,6 +2153,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 12)"
 +@0 		tooltip lua "getTooltipForSlot(2, 12)"
 +@0 		action "doActionForSlot(2, 12)"
++@0 		actionAlt "doActionAltForSlot(2, 12)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2074,6 +2166,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 13)"
 +@0 		tooltip lua "getTooltipForSlot(2, 13)"
 +@0 		action "doActionForSlot(2, 13)"
++@0 		actionAlt "doActionAltForSlot(2, 13)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2087,6 +2180,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 13)"
 +@0 		tooltip lua "getTooltipForSlot(2, 13)"
 +@0 		action "doActionForSlot(2, 13)"
++@0 		actionAlt "doActionAltForSlot(2, 13)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2099,6 +2193,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 14)"
 +@0 		tooltip lua "getTooltipForSlot(2, 14)"
 +@0 		action "doActionForSlot(2, 14)"
++@0 		actionAlt "doActionAltForSlot(2, 14)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2112,6 +2207,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 14)"
 +@0 		tooltip lua "getTooltipForSlot(2, 14)"
 +@0 		action "doActionForSlot(2, 14)"
++@0 		actionAlt "doActionAltForSlot(2, 14)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2124,6 +2220,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 15)"
 +@0 		tooltip lua "getTooltipForSlot(2, 15)"
 +@0 		action "doActionForSlot(2, 15)"
++@0 		actionAlt "doActionAltForSlot(2, 15)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2137,6 +2234,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 15)"
 +@0 		tooltip lua "getTooltipForSlot(2, 15)"
 +@0 		action "doActionForSlot(2, 15)"
++@0 		actionAlt "doActionAltForSlot(2, 15)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2149,6 +2247,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 16)"
 +@0 		tooltip lua "getTooltipForSlot(2, 16)"
 +@0 		action "doActionForSlot(2, 16)"
++@0 		actionAlt "doActionAltForSlot(2, 16)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2162,6 +2261,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 16)"
 +@0 		tooltip lua "getTooltipForSlot(2, 16)"
 +@0 		action "doActionForSlot(2, 16)"
++@0 		actionAlt "doActionAltForSlot(2, 16)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2174,6 +2274,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 17)"
 +@0 		tooltip lua "getTooltipForSlot(2, 17)"
 +@0 		action "doActionForSlot(2, 17)"
++@0 		actionAlt "doActionAltForSlot(2, 17)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2187,6 +2288,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 17)"
 +@0 		tooltip lua "getTooltipForSlot(2, 17)"
 +@0 		action "doActionForSlot(2, 17)"
++@0 		actionAlt "doActionAltForSlot(2, 17)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2199,6 +2301,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 18)"
 +@0 		tooltip lua "getTooltipForSlot(2, 18)"
 +@0 		action "doActionForSlot(2, 18)"
++@0 		actionAlt "doActionAltForSlot(2, 18)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2212,6 +2315,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 18)"
 +@0 		tooltip lua "getTooltipForSlot(2, 18)"
 +@0 		action "doActionForSlot(2, 18)"
++@0 		actionAlt "doActionAltForSlot(2, 18)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2224,6 +2328,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 19)"
 +@0 		tooltip lua "getTooltipForSlot(2, 19)"
 +@0 		action "doActionForSlot(2, 19)"
++@0 		actionAlt "doActionAltForSlot(2, 19)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2237,6 +2342,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 19)"
 +@0 		tooltip lua "getTooltipForSlot(2, 19)"
 +@0 		action "doActionForSlot(2, 19)"
++@0 		actionAlt "doActionAltForSlot(2, 19)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2249,6 +2355,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 20)"
 +@0 		tooltip lua "getTooltipForSlot(2, 20)"
 +@0 		action "doActionForSlot(2, 20)"
++@0 		actionAlt "doActionAltForSlot(2, 20)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2262,6 +2369,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 20)"
 +@0 		tooltip lua "getTooltipForSlot(2, 20)"
 +@0 		action "doActionForSlot(2, 20)"
++@0 		actionAlt "doActionAltForSlot(2, 20)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2274,6 +2382,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 21)"
 +@0 		tooltip lua "getTooltipForSlot(2, 21)"
 +@0 		action "doActionForSlot(2, 21)"
++@0 		actionAlt "doActionAltForSlot(2, 21)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2287,6 +2396,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 21)"
 +@0 		tooltip lua "getTooltipForSlot(2, 21)"
 +@0 		action "doActionForSlot(2, 21)"
++@0 		actionAlt "doActionAltForSlot(2, 21)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2299,6 +2409,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 22)"
 +@0 		tooltip lua "getTooltipForSlot(2, 22)"
 +@0 		action "doActionForSlot(2, 22)"
++@0 		actionAlt "doActionAltForSlot(2, 22)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2312,6 +2423,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 22)"
 +@0 		tooltip lua "getTooltipForSlot(2, 22)"
 +@0 		action "doActionForSlot(2, 22)"
++@0 		actionAlt "doActionAltForSlot(2, 22)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2324,6 +2436,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 23)"
 +@0 		tooltip lua "getTooltipForSlot(2, 23)"
 +@0 		action "doActionForSlot(2, 23)"
++@0 		actionAlt "doActionAltForSlot(2, 23)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2337,6 +2450,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 23)"
 +@0 		tooltip lua "getTooltipForSlot(2, 23)"
 +@0 		action "doActionForSlot(2, 23)"
++@0 		actionAlt "doActionAltForSlot(2, 23)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2349,6 +2463,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 24)"
 +@0 		tooltip lua "getTooltipForSlot(2, 24)"
 +@0 		action "doActionForSlot(2, 24)"
++@0 		actionAlt "doActionAltForSlot(2, 24)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2362,6 +2477,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 24)"
 +@0 		tooltip lua "getTooltipForSlot(2, 24)"
 +@0 		action "doActionForSlot(2, 24)"
++@0 		actionAlt "doActionAltForSlot(2, 24)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2374,6 +2490,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 25)"
 +@0 		tooltip lua "getTooltipForSlot(2, 25)"
 +@0 		action "doActionForSlot(2, 25)"
++@0 		actionAlt "doActionAltForSlot(2, 25)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2387,6 +2504,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 25)"
 +@0 		tooltip lua "getTooltipForSlot(2, 25)"
 +@0 		action "doActionForSlot(2, 25)"
++@0 		actionAlt "doActionAltForSlot(2, 25)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2399,6 +2517,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 26)"
 +@0 		tooltip lua "getTooltipForSlot(2, 26)"
 +@0 		action "doActionForSlot(2, 26)"
++@0 		actionAlt "doActionAltForSlot(2, 26)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2412,6 +2531,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 26)"
 +@0 		tooltip lua "getTooltipForSlot(2, 26)"
 +@0 		action "doActionForSlot(2, 26)"
++@0 		actionAlt "doActionAltForSlot(2, 26)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2424,6 +2544,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(2, 27)"
 +@0 		tooltip lua "getTooltipForSlot(2, 27)"
 +@0 		action "doActionForSlot(2, 27)"
++@0 		actionAlt "doActionAltForSlot(2, 27)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2437,6 +2558,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(2, 27)"
 +@0 		tooltip lua "getTooltipForSlot(2, 27)"
 +@0 		action "doActionForSlot(2, 27)"
++@0 		actionAlt "doActionAltForSlot(2, 27)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2449,6 +2571,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 1)"
 +@0 		tooltip lua "getTooltipForSlot(3, 1)"
 +@0 		action "doActionForSlot(3, 1)"
++@0 		actionAlt "doActionAltForSlot(3, 1)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2462,6 +2585,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 1)"
 +@0 		tooltip lua "getTooltipForSlot(3, 1)"
 +@0 		action "doActionForSlot(3, 1)"
++@0 		actionAlt "doActionAltForSlot(3, 1)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2474,6 +2598,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 2)"
 +@0 		tooltip lua "getTooltipForSlot(3, 2)"
 +@0 		action "doActionForSlot(3, 2)"
++@0 		actionAlt "doActionAltForSlot(3, 2)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2487,6 +2612,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 2)"
 +@0 		tooltip lua "getTooltipForSlot(3, 2)"
 +@0 		action "doActionForSlot(3, 2)"
++@0 		actionAlt "doActionAltForSlot(3, 2)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2499,6 +2625,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 3)"
 +@0 		tooltip lua "getTooltipForSlot(3, 3)"
 +@0 		action "doActionForSlot(3, 3)"
++@0 		actionAlt "doActionAltForSlot(3, 3)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2512,6 +2639,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 3)"
 +@0 		tooltip lua "getTooltipForSlot(3, 3)"
 +@0 		action "doActionForSlot(3, 3)"
++@0 		actionAlt "doActionAltForSlot(3, 3)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2524,6 +2652,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 4)"
 +@0 		tooltip lua "getTooltipForSlot(3, 4)"
 +@0 		action "doActionForSlot(3, 4)"
++@0 		actionAlt "doActionAltForSlot(3, 4)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2537,6 +2666,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 4)"
 +@0 		tooltip lua "getTooltipForSlot(3, 4)"
 +@0 		action "doActionForSlot(3, 4)"
++@0 		actionAlt "doActionAltForSlot(3, 4)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2549,6 +2679,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 5)"
 +@0 		tooltip lua "getTooltipForSlot(3, 5)"
 +@0 		action "doActionForSlot(3, 5)"
++@0 		actionAlt "doActionAltForSlot(3, 5)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2562,6 +2693,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 5)"
 +@0 		tooltip lua "getTooltipForSlot(3, 5)"
 +@0 		action "doActionForSlot(3, 5)"
++@0 		actionAlt "doActionAltForSlot(3, 5)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2574,6 +2706,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 6)"
 +@0 		tooltip lua "getTooltipForSlot(3, 6)"
 +@0 		action "doActionForSlot(3, 6)"
++@0 		actionAlt "doActionAltForSlot(3, 6)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2587,6 +2720,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 6)"
 +@0 		tooltip lua "getTooltipForSlot(3, 6)"
 +@0 		action "doActionForSlot(3, 6)"
++@0 		actionAlt "doActionAltForSlot(3, 6)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2599,6 +2733,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 7)"
 +@0 		tooltip lua "getTooltipForSlot(3, 7)"
 +@0 		action "doActionForSlot(3, 7)"
++@0 		actionAlt "doActionAltForSlot(3, 7)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2612,6 +2747,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 7)"
 +@0 		tooltip lua "getTooltipForSlot(3, 7)"
 +@0 		action "doActionForSlot(3, 7)"
++@0 		actionAlt "doActionAltForSlot(3, 7)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2624,6 +2760,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 8)"
 +@0 		tooltip lua "getTooltipForSlot(3, 8)"
 +@0 		action "doActionForSlot(3, 8)"
++@0 		actionAlt "doActionAltForSlot(3, 8)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2637,6 +2774,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 8)"
 +@0 		tooltip lua "getTooltipForSlot(3, 8)"
 +@0 		action "doActionForSlot(3, 8)"
++@0 		actionAlt "doActionAltForSlot(3, 8)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2649,6 +2787,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 9)"
 +@0 		tooltip lua "getTooltipForSlot(3, 9)"
 +@0 		action "doActionForSlot(3, 9)"
++@0 		actionAlt "doActionAltForSlot(3, 9)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2662,6 +2801,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 9)"
 +@0 		tooltip lua "getTooltipForSlot(3, 9)"
 +@0 		action "doActionForSlot(3, 9)"
++@0 		actionAlt "doActionAltForSlot(3, 9)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2674,6 +2814,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 10)"
 +@0 		tooltip lua "getTooltipForSlot(3, 10)"
 +@0 		action "doActionForSlot(3, 10)"
++@0 		actionAlt "doActionAltForSlot(3, 10)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2687,6 +2828,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 10)"
 +@0 		tooltip lua "getTooltipForSlot(3, 10)"
 +@0 		action "doActionForSlot(3, 10)"
++@0 		actionAlt "doActionAltForSlot(3, 10)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2699,6 +2841,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 11)"
 +@0 		tooltip lua "getTooltipForSlot(3, 11)"
 +@0 		action "doActionForSlot(3, 11)"
++@0 		actionAlt "doActionAltForSlot(3, 11)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2712,6 +2855,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 11)"
 +@0 		tooltip lua "getTooltipForSlot(3, 11)"
 +@0 		action "doActionForSlot(3, 11)"
++@0 		actionAlt "doActionAltForSlot(3, 11)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2724,6 +2868,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 12)"
 +@0 		tooltip lua "getTooltipForSlot(3, 12)"
 +@0 		action "doActionForSlot(3, 12)"
++@0 		actionAlt "doActionAltForSlot(3, 12)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2737,6 +2882,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 12)"
 +@0 		tooltip lua "getTooltipForSlot(3, 12)"
 +@0 		action "doActionForSlot(3, 12)"
++@0 		actionAlt "doActionAltForSlot(3, 12)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2749,6 +2895,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 13)"
 +@0 		tooltip lua "getTooltipForSlot(3, 13)"
 +@0 		action "doActionForSlot(3, 13)"
++@0 		actionAlt "doActionAltForSlot(3, 13)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2762,6 +2909,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 13)"
 +@0 		tooltip lua "getTooltipForSlot(3, 13)"
 +@0 		action "doActionForSlot(3, 13)"
++@0 		actionAlt "doActionAltForSlot(3, 13)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2774,6 +2922,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 14)"
 +@0 		tooltip lua "getTooltipForSlot(3, 14)"
 +@0 		action "doActionForSlot(3, 14)"
++@0 		actionAlt "doActionAltForSlot(3, 14)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2787,6 +2936,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 14)"
 +@0 		tooltip lua "getTooltipForSlot(3, 14)"
 +@0 		action "doActionForSlot(3, 14)"
++@0 		actionAlt "doActionAltForSlot(3, 14)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2799,6 +2949,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 15)"
 +@0 		tooltip lua "getTooltipForSlot(3, 15)"
 +@0 		action "doActionForSlot(3, 15)"
++@0 		actionAlt "doActionAltForSlot(3, 15)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2812,6 +2963,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 15)"
 +@0 		tooltip lua "getTooltipForSlot(3, 15)"
 +@0 		action "doActionForSlot(3, 15)"
++@0 		actionAlt "doActionAltForSlot(3, 15)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2824,6 +2976,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 16)"
 +@0 		tooltip lua "getTooltipForSlot(3, 16)"
 +@0 		action "doActionForSlot(3, 16)"
++@0 		actionAlt "doActionAltForSlot(3, 16)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2837,6 +2990,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 16)"
 +@0 		tooltip lua "getTooltipForSlot(3, 16)"
 +@0 		action "doActionForSlot(3, 16)"
++@0 		actionAlt "doActionAltForSlot(3, 16)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2849,6 +3003,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 17)"
 +@0 		tooltip lua "getTooltipForSlot(3, 17)"
 +@0 		action "doActionForSlot(3, 17)"
++@0 		actionAlt "doActionAltForSlot(3, 17)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2862,6 +3017,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 17)"
 +@0 		tooltip lua "getTooltipForSlot(3, 17)"
 +@0 		action "doActionForSlot(3, 17)"
++@0 		actionAlt "doActionAltForSlot(3, 17)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2874,6 +3030,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 18)"
 +@0 		tooltip lua "getTooltipForSlot(3, 18)"
 +@0 		action "doActionForSlot(3, 18)"
++@0 		actionAlt "doActionAltForSlot(3, 18)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2887,6 +3044,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 18)"
 +@0 		tooltip lua "getTooltipForSlot(3, 18)"
 +@0 		action "doActionForSlot(3, 18)"
++@0 		actionAlt "doActionAltForSlot(3, 18)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2899,6 +3057,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 19)"
 +@0 		tooltip lua "getTooltipForSlot(3, 19)"
 +@0 		action "doActionForSlot(3, 19)"
++@0 		actionAlt "doActionAltForSlot(3, 19)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2912,6 +3071,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 19)"
 +@0 		tooltip lua "getTooltipForSlot(3, 19)"
 +@0 		action "doActionForSlot(3, 19)"
++@0 		actionAlt "doActionAltForSlot(3, 19)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2924,6 +3084,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 20)"
 +@0 		tooltip lua "getTooltipForSlot(3, 20)"
 +@0 		action "doActionForSlot(3, 20)"
++@0 		actionAlt "doActionAltForSlot(3, 20)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2937,6 +3098,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 20)"
 +@0 		tooltip lua "getTooltipForSlot(3, 20)"
 +@0 		action "doActionForSlot(3, 20)"
++@0 		actionAlt "doActionAltForSlot(3, 20)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2949,6 +3111,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 21)"
 +@0 		tooltip lua "getTooltipForSlot(3, 21)"
 +@0 		action "doActionForSlot(3, 21)"
++@0 		actionAlt "doActionAltForSlot(3, 21)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2962,6 +3125,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 21)"
 +@0 		tooltip lua "getTooltipForSlot(3, 21)"
 +@0 		action "doActionForSlot(3, 21)"
++@0 		actionAlt "doActionAltForSlot(3, 21)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2974,6 +3138,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 22)"
 +@0 		tooltip lua "getTooltipForSlot(3, 22)"
 +@0 		action "doActionForSlot(3, 22)"
++@0 		actionAlt "doActionAltForSlot(3, 22)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -2987,6 +3152,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 22)"
 +@0 		tooltip lua "getTooltipForSlot(3, 22)"
 +@0 		action "doActionForSlot(3, 22)"
++@0 		actionAlt "doActionAltForSlot(3, 22)"
 +@0 	}
 +@0 
 +@0 	button
@@ -2999,6 +3165,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 23)"
 +@0 		tooltip lua "getTooltipForSlot(3, 23)"
 +@0 		action "doActionForSlot(3, 23)"
++@0 		actionAlt "doActionAltForSlot(3, 23)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3012,6 +3179,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 23)"
 +@0 		tooltip lua "getTooltipForSlot(3, 23)"
 +@0 		action "doActionForSlot(3, 23)"
++@0 		actionAlt "doActionAltForSlot(3, 23)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3024,6 +3192,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 24)"
 +@0 		tooltip lua "getTooltipForSlot(3, 24)"
 +@0 		action "doActionForSlot(3, 24)"
++@0 		actionAlt "doActionAltForSlot(3, 24)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3037,6 +3206,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 24)"
 +@0 		tooltip lua "getTooltipForSlot(3, 24)"
 +@0 		action "doActionForSlot(3, 24)"
++@0 		actionAlt "doActionAltForSlot(3, 24)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3049,6 +3219,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 25)"
 +@0 		tooltip lua "getTooltipForSlot(3, 25)"
 +@0 		action "doActionForSlot(3, 25)"
++@0 		actionAlt "doActionAltForSlot(3, 25)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3062,6 +3233,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 25)"
 +@0 		tooltip lua "getTooltipForSlot(3, 25)"
 +@0 		action "doActionForSlot(3, 25)"
++@0 		actionAlt "doActionAltForSlot(3, 25)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3074,6 +3246,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 26)"
 +@0 		tooltip lua "getTooltipForSlot(3, 26)"
 +@0 		action "doActionForSlot(3, 26)"
++@0 		actionAlt "doActionAltForSlot(3, 26)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3087,6 +3260,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 26)"
 +@0 		tooltip lua "getTooltipForSlot(3, 26)"
 +@0 		action "doActionForSlot(3, 26)"
++@0 		actionAlt "doActionAltForSlot(3, 26)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3099,6 +3273,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(3, 27)"
 +@0 		tooltip lua "getTooltipForSlot(3, 27)"
 +@0 		action "doActionForSlot(3, 27)"
++@0 		actionAlt "doActionAltForSlot(3, 27)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3112,6 +3287,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(3, 27)"
 +@0 		tooltip lua "getTooltipForSlot(3, 27)"
 +@0 		action "doActionForSlot(3, 27)"
++@0 		actionAlt "doActionAltForSlot(3, 27)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3124,6 +3300,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 1)"
 +@0 		tooltip lua "getTooltipForSlot(4, 1)"
 +@0 		action "doActionForSlot(4, 1)"
++@0 		actionAlt "doActionAltForSlot(4, 1)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3137,6 +3314,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 1)"
 +@0 		tooltip lua "getTooltipForSlot(4, 1)"
 +@0 		action "doActionForSlot(4, 1)"
++@0 		actionAlt "doActionAltForSlot(4, 1)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3149,6 +3327,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 2)"
 +@0 		tooltip lua "getTooltipForSlot(4, 2)"
 +@0 		action "doActionForSlot(4, 2)"
++@0 		actionAlt "doActionAltForSlot(4, 2)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3162,6 +3341,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 2)"
 +@0 		tooltip lua "getTooltipForSlot(4, 2)"
 +@0 		action "doActionForSlot(4, 2)"
++@0 		actionAlt "doActionAltForSlot(4, 2)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3174,6 +3354,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 3)"
 +@0 		tooltip lua "getTooltipForSlot(4, 3)"
 +@0 		action "doActionForSlot(4, 3)"
++@0 		actionAlt "doActionAltForSlot(4, 3)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3187,6 +3368,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 3)"
 +@0 		tooltip lua "getTooltipForSlot(4, 3)"
 +@0 		action "doActionForSlot(4, 3)"
++@0 		actionAlt "doActionAltForSlot(4, 3)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3199,6 +3381,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 4)"
 +@0 		tooltip lua "getTooltipForSlot(4, 4)"
 +@0 		action "doActionForSlot(4, 4)"
++@0 		actionAlt "doActionAltForSlot(4, 4)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3212,6 +3395,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 4)"
 +@0 		tooltip lua "getTooltipForSlot(4, 4)"
 +@0 		action "doActionForSlot(4, 4)"
++@0 		actionAlt "doActionAltForSlot(4, 4)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3224,6 +3408,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 5)"
 +@0 		tooltip lua "getTooltipForSlot(4, 5)"
 +@0 		action "doActionForSlot(4, 5)"
++@0 		actionAlt "doActionAltForSlot(4, 5)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3237,6 +3422,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 5)"
 +@0 		tooltip lua "getTooltipForSlot(4, 5)"
 +@0 		action "doActionForSlot(4, 5)"
++@0 		actionAlt "doActionAltForSlot(4, 5)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3249,6 +3435,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 6)"
 +@0 		tooltip lua "getTooltipForSlot(4, 6)"
 +@0 		action "doActionForSlot(4, 6)"
++@0 		actionAlt "doActionAltForSlot(4, 6)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3262,6 +3449,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 6)"
 +@0 		tooltip lua "getTooltipForSlot(4, 6)"
 +@0 		action "doActionForSlot(4, 6)"
++@0 		actionAlt "doActionAltForSlot(4, 6)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3274,6 +3462,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 7)"
 +@0 		tooltip lua "getTooltipForSlot(4, 7)"
 +@0 		action "doActionForSlot(4, 7)"
++@0 		actionAlt "doActionAltForSlot(4, 7)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3287,6 +3476,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 7)"
 +@0 		tooltip lua "getTooltipForSlot(4, 7)"
 +@0 		action "doActionForSlot(4, 7)"
++@0 		actionAlt "doActionAltForSlot(4, 7)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3299,6 +3489,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 8)"
 +@0 		tooltip lua "getTooltipForSlot(4, 8)"
 +@0 		action "doActionForSlot(4, 8)"
++@0 		actionAlt "doActionAltForSlot(4, 8)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3312,6 +3503,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 8)"
 +@0 		tooltip lua "getTooltipForSlot(4, 8)"
 +@0 		action "doActionForSlot(4, 8)"
++@0 		actionAlt "doActionAltForSlot(4, 8)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3324,6 +3516,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 9)"
 +@0 		tooltip lua "getTooltipForSlot(4, 9)"
 +@0 		action "doActionForSlot(4, 9)"
++@0 		actionAlt "doActionAltForSlot(4, 9)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3337,6 +3530,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 9)"
 +@0 		tooltip lua "getTooltipForSlot(4, 9)"
 +@0 		action "doActionForSlot(4, 9)"
++@0 		actionAlt "doActionAltForSlot(4, 9)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3349,6 +3543,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 10)"
 +@0 		tooltip lua "getTooltipForSlot(4, 10)"
 +@0 		action "doActionForSlot(4, 10)"
++@0 		actionAlt "doActionAltForSlot(4, 10)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3362,6 +3557,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 10)"
 +@0 		tooltip lua "getTooltipForSlot(4, 10)"
 +@0 		action "doActionForSlot(4, 10)"
++@0 		actionAlt "doActionAltForSlot(4, 10)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3374,6 +3570,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 11)"
 +@0 		tooltip lua "getTooltipForSlot(4, 11)"
 +@0 		action "doActionForSlot(4, 11)"
++@0 		actionAlt "doActionAltForSlot(4, 11)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3387,6 +3584,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 11)"
 +@0 		tooltip lua "getTooltipForSlot(4, 11)"
 +@0 		action "doActionForSlot(4, 11)"
++@0 		actionAlt "doActionAltForSlot(4, 11)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3399,6 +3597,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 12)"
 +@0 		tooltip lua "getTooltipForSlot(4, 12)"
 +@0 		action "doActionForSlot(4, 12)"
++@0 		actionAlt "doActionAltForSlot(4, 12)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3412,6 +3611,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 12)"
 +@0 		tooltip lua "getTooltipForSlot(4, 12)"
 +@0 		action "doActionForSlot(4, 12)"
++@0 		actionAlt "doActionAltForSlot(4, 12)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3424,6 +3624,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 13)"
 +@0 		tooltip lua "getTooltipForSlot(4, 13)"
 +@0 		action "doActionForSlot(4, 13)"
++@0 		actionAlt "doActionAltForSlot(4, 13)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3437,6 +3638,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 13)"
 +@0 		tooltip lua "getTooltipForSlot(4, 13)"
 +@0 		action "doActionForSlot(4, 13)"
++@0 		actionAlt "doActionAltForSlot(4, 13)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3449,6 +3651,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 14)"
 +@0 		tooltip lua "getTooltipForSlot(4, 14)"
 +@0 		action "doActionForSlot(4, 14)"
++@0 		actionAlt "doActionAltForSlot(4, 14)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3462,6 +3665,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 14)"
 +@0 		tooltip lua "getTooltipForSlot(4, 14)"
 +@0 		action "doActionForSlot(4, 14)"
++@0 		actionAlt "doActionAltForSlot(4, 14)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3474,6 +3678,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 15)"
 +@0 		tooltip lua "getTooltipForSlot(4, 15)"
 +@0 		action "doActionForSlot(4, 15)"
++@0 		actionAlt "doActionAltForSlot(4, 15)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3487,6 +3692,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 15)"
 +@0 		tooltip lua "getTooltipForSlot(4, 15)"
 +@0 		action "doActionForSlot(4, 15)"
++@0 		actionAlt "doActionAltForSlot(4, 15)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3499,6 +3705,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 16)"
 +@0 		tooltip lua "getTooltipForSlot(4, 16)"
 +@0 		action "doActionForSlot(4, 16)"
++@0 		actionAlt "doActionAltForSlot(4, 16)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3512,6 +3719,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 16)"
 +@0 		tooltip lua "getTooltipForSlot(4, 16)"
 +@0 		action "doActionForSlot(4, 16)"
++@0 		actionAlt "doActionAltForSlot(4, 16)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3524,6 +3732,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 17)"
 +@0 		tooltip lua "getTooltipForSlot(4, 17)"
 +@0 		action "doActionForSlot(4, 17)"
++@0 		actionAlt "doActionAltForSlot(4, 17)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3537,6 +3746,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 17)"
 +@0 		tooltip lua "getTooltipForSlot(4, 17)"
 +@0 		action "doActionForSlot(4, 17)"
++@0 		actionAlt "doActionAltForSlot(4, 17)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3549,6 +3759,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 18)"
 +@0 		tooltip lua "getTooltipForSlot(4, 18)"
 +@0 		action "doActionForSlot(4, 18)"
++@0 		actionAlt "doActionAltForSlot(4, 18)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3562,6 +3773,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 18)"
 +@0 		tooltip lua "getTooltipForSlot(4, 18)"
 +@0 		action "doActionForSlot(4, 18)"
++@0 		actionAlt "doActionAltForSlot(4, 18)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3574,6 +3786,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 19)"
 +@0 		tooltip lua "getTooltipForSlot(4, 19)"
 +@0 		action "doActionForSlot(4, 19)"
++@0 		actionAlt "doActionAltForSlot(4, 19)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3587,6 +3800,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 19)"
 +@0 		tooltip lua "getTooltipForSlot(4, 19)"
 +@0 		action "doActionForSlot(4, 19)"
++@0 		actionAlt "doActionAltForSlot(4, 19)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3599,6 +3813,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 20)"
 +@0 		tooltip lua "getTooltipForSlot(4, 20)"
 +@0 		action "doActionForSlot(4, 20)"
++@0 		actionAlt "doActionAltForSlot(4, 20)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3612,6 +3827,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 20)"
 +@0 		tooltip lua "getTooltipForSlot(4, 20)"
 +@0 		action "doActionForSlot(4, 20)"
++@0 		actionAlt "doActionAltForSlot(4, 20)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3624,6 +3840,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 21)"
 +@0 		tooltip lua "getTooltipForSlot(4, 21)"
 +@0 		action "doActionForSlot(4, 21)"
++@0 		actionAlt "doActionAltForSlot(4, 21)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3637,6 +3854,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 21)"
 +@0 		tooltip lua "getTooltipForSlot(4, 21)"
 +@0 		action "doActionForSlot(4, 21)"
++@0 		actionAlt "doActionAltForSlot(4, 21)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3649,6 +3867,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 22)"
 +@0 		tooltip lua "getTooltipForSlot(4, 22)"
 +@0 		action "doActionForSlot(4, 22)"
++@0 		actionAlt "doActionAltForSlot(4, 22)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3662,6 +3881,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 22)"
 +@0 		tooltip lua "getTooltipForSlot(4, 22)"
 +@0 		action "doActionForSlot(4, 22)"
++@0 		actionAlt "doActionAltForSlot(4, 22)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3674,6 +3894,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 23)"
 +@0 		tooltip lua "getTooltipForSlot(4, 23)"
 +@0 		action "doActionForSlot(4, 23)"
++@0 		actionAlt "doActionAltForSlot(4, 23)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3687,6 +3908,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 23)"
 +@0 		tooltip lua "getTooltipForSlot(4, 23)"
 +@0 		action "doActionForSlot(4, 23)"
++@0 		actionAlt "doActionAltForSlot(4, 23)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3699,6 +3921,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 24)"
 +@0 		tooltip lua "getTooltipForSlot(4, 24)"
 +@0 		action "doActionForSlot(4, 24)"
++@0 		actionAlt "doActionAltForSlot(4, 24)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3712,6 +3935,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 24)"
 +@0 		tooltip lua "getTooltipForSlot(4, 24)"
 +@0 		action "doActionForSlot(4, 24)"
++@0 		actionAlt "doActionAltForSlot(4, 24)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3724,6 +3948,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 25)"
 +@0 		tooltip lua "getTooltipForSlot(4, 25)"
 +@0 		action "doActionForSlot(4, 25)"
++@0 		actionAlt "doActionAltForSlot(4, 25)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3737,6 +3962,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 25)"
 +@0 		tooltip lua "getTooltipForSlot(4, 25)"
 +@0 		action "doActionForSlot(4, 25)"
++@0 		actionAlt "doActionAltForSlot(4, 25)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3749,6 +3975,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 26)"
 +@0 		tooltip lua "getTooltipForSlot(4, 26)"
 +@0 		action "doActionForSlot(4, 26)"
++@0 		actionAlt "doActionAltForSlot(4, 26)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3762,6 +3989,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 26)"
 +@0 		tooltip lua "getTooltipForSlot(4, 26)"
 +@0 		action "doActionForSlot(4, 26)"
++@0 		actionAlt "doActionAltForSlot(4, 26)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3774,6 +4002,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(4, 27)"
 +@0 		tooltip lua "getTooltipForSlot(4, 27)"
 +@0 		action "doActionForSlot(4, 27)"
++@0 		actionAlt "doActionAltForSlot(4, 27)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3787,6 +4016,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(4, 27)"
 +@0 		tooltip lua "getTooltipForSlot(4, 27)"
 +@0 		action "doActionForSlot(4, 27)"
++@0 		actionAlt "doActionAltForSlot(4, 27)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3799,6 +4029,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 1)"
 +@0 		tooltip lua "getTooltipForSlot(5, 1)"
 +@0 		action "doActionForSlot(5, 1)"
++@0 		actionAlt "doActionAltForSlot(5, 1)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3812,6 +4043,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 1)"
 +@0 		tooltip lua "getTooltipForSlot(5, 1)"
 +@0 		action "doActionForSlot(5, 1)"
++@0 		actionAlt "doActionAltForSlot(5, 1)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3824,6 +4056,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 2)"
 +@0 		tooltip lua "getTooltipForSlot(5, 2)"
 +@0 		action "doActionForSlot(5, 2)"
++@0 		actionAlt "doActionAltForSlot(5, 2)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3837,6 +4070,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 2)"
 +@0 		tooltip lua "getTooltipForSlot(5, 2)"
 +@0 		action "doActionForSlot(5, 2)"
++@0 		actionAlt "doActionAltForSlot(5, 2)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3849,6 +4083,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 3)"
 +@0 		tooltip lua "getTooltipForSlot(5, 3)"
 +@0 		action "doActionForSlot(5, 3)"
++@0 		actionAlt "doActionAltForSlot(5, 3)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3862,6 +4097,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 3)"
 +@0 		tooltip lua "getTooltipForSlot(5, 3)"
 +@0 		action "doActionForSlot(5, 3)"
++@0 		actionAlt "doActionAltForSlot(5, 3)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3874,6 +4110,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 4)"
 +@0 		tooltip lua "getTooltipForSlot(5, 4)"
 +@0 		action "doActionForSlot(5, 4)"
++@0 		actionAlt "doActionAltForSlot(5, 4)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3887,6 +4124,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 4)"
 +@0 		tooltip lua "getTooltipForSlot(5, 4)"
 +@0 		action "doActionForSlot(5, 4)"
++@0 		actionAlt "doActionAltForSlot(5, 4)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3899,6 +4137,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 5)"
 +@0 		tooltip lua "getTooltipForSlot(5, 5)"
 +@0 		action "doActionForSlot(5, 5)"
++@0 		actionAlt "doActionAltForSlot(5, 5)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3912,6 +4151,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 5)"
 +@0 		tooltip lua "getTooltipForSlot(5, 5)"
 +@0 		action "doActionForSlot(5, 5)"
++@0 		actionAlt "doActionAltForSlot(5, 5)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3924,6 +4164,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 6)"
 +@0 		tooltip lua "getTooltipForSlot(5, 6)"
 +@0 		action "doActionForSlot(5, 6)"
++@0 		actionAlt "doActionAltForSlot(5, 6)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3937,6 +4178,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 6)"
 +@0 		tooltip lua "getTooltipForSlot(5, 6)"
 +@0 		action "doActionForSlot(5, 6)"
++@0 		actionAlt "doActionAltForSlot(5, 6)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3949,6 +4191,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 7)"
 +@0 		tooltip lua "getTooltipForSlot(5, 7)"
 +@0 		action "doActionForSlot(5, 7)"
++@0 		actionAlt "doActionAltForSlot(5, 7)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3962,6 +4205,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 7)"
 +@0 		tooltip lua "getTooltipForSlot(5, 7)"
 +@0 		action "doActionForSlot(5, 7)"
++@0 		actionAlt "doActionAltForSlot(5, 7)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3974,6 +4218,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 8)"
 +@0 		tooltip lua "getTooltipForSlot(5, 8)"
 +@0 		action "doActionForSlot(5, 8)"
++@0 		actionAlt "doActionAltForSlot(5, 8)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -3987,6 +4232,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 8)"
 +@0 		tooltip lua "getTooltipForSlot(5, 8)"
 +@0 		action "doActionForSlot(5, 8)"
++@0 		actionAlt "doActionAltForSlot(5, 8)"
 +@0 	}
 +@0 
 +@0 	button
@@ -3999,6 +4245,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 9)"
 +@0 		tooltip lua "getTooltipForSlot(5, 9)"
 +@0 		action "doActionForSlot(5, 9)"
++@0 		actionAlt "doActionAltForSlot(5, 9)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4012,6 +4259,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 9)"
 +@0 		tooltip lua "getTooltipForSlot(5, 9)"
 +@0 		action "doActionForSlot(5, 9)"
++@0 		actionAlt "doActionAltForSlot(5, 9)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4024,6 +4272,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 10)"
 +@0 		tooltip lua "getTooltipForSlot(5, 10)"
 +@0 		action "doActionForSlot(5, 10)"
++@0 		actionAlt "doActionAltForSlot(5, 10)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4037,6 +4286,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 10)"
 +@0 		tooltip lua "getTooltipForSlot(5, 10)"
 +@0 		action "doActionForSlot(5, 10)"
++@0 		actionAlt "doActionAltForSlot(5, 10)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4049,6 +4299,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 11)"
 +@0 		tooltip lua "getTooltipForSlot(5, 11)"
 +@0 		action "doActionForSlot(5, 11)"
++@0 		actionAlt "doActionAltForSlot(5, 11)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4062,6 +4313,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 11)"
 +@0 		tooltip lua "getTooltipForSlot(5, 11)"
 +@0 		action "doActionForSlot(5, 11)"
++@0 		actionAlt "doActionAltForSlot(5, 11)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4074,6 +4326,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 12)"
 +@0 		tooltip lua "getTooltipForSlot(5, 12)"
 +@0 		action "doActionForSlot(5, 12)"
++@0 		actionAlt "doActionAltForSlot(5, 12)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4087,6 +4340,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 12)"
 +@0 		tooltip lua "getTooltipForSlot(5, 12)"
 +@0 		action "doActionForSlot(5, 12)"
++@0 		actionAlt "doActionAltForSlot(5, 12)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4099,6 +4353,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 13)"
 +@0 		tooltip lua "getTooltipForSlot(5, 13)"
 +@0 		action "doActionForSlot(5, 13)"
++@0 		actionAlt "doActionAltForSlot(5, 13)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4112,6 +4367,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 13)"
 +@0 		tooltip lua "getTooltipForSlot(5, 13)"
 +@0 		action "doActionForSlot(5, 13)"
++@0 		actionAlt "doActionAltForSlot(5, 13)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4124,6 +4380,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 14)"
 +@0 		tooltip lua "getTooltipForSlot(5, 14)"
 +@0 		action "doActionForSlot(5, 14)"
++@0 		actionAlt "doActionAltForSlot(5, 14)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4137,6 +4394,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 14)"
 +@0 		tooltip lua "getTooltipForSlot(5, 14)"
 +@0 		action "doActionForSlot(5, 14)"
++@0 		actionAlt "doActionAltForSlot(5, 14)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4149,6 +4407,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 15)"
 +@0 		tooltip lua "getTooltipForSlot(5, 15)"
 +@0 		action "doActionForSlot(5, 15)"
++@0 		actionAlt "doActionAltForSlot(5, 15)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4162,6 +4421,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 15)"
 +@0 		tooltip lua "getTooltipForSlot(5, 15)"
 +@0 		action "doActionForSlot(5, 15)"
++@0 		actionAlt "doActionAltForSlot(5, 15)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4174,6 +4434,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 16)"
 +@0 		tooltip lua "getTooltipForSlot(5, 16)"
 +@0 		action "doActionForSlot(5, 16)"
++@0 		actionAlt "doActionAltForSlot(5, 16)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4187,6 +4448,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 16)"
 +@0 		tooltip lua "getTooltipForSlot(5, 16)"
 +@0 		action "doActionForSlot(5, 16)"
++@0 		actionAlt "doActionAltForSlot(5, 16)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4199,6 +4461,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 17)"
 +@0 		tooltip lua "getTooltipForSlot(5, 17)"
 +@0 		action "doActionForSlot(5, 17)"
++@0 		actionAlt "doActionAltForSlot(5, 17)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4212,6 +4475,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 17)"
 +@0 		tooltip lua "getTooltipForSlot(5, 17)"
 +@0 		action "doActionForSlot(5, 17)"
++@0 		actionAlt "doActionAltForSlot(5, 17)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4224,6 +4488,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 18)"
 +@0 		tooltip lua "getTooltipForSlot(5, 18)"
 +@0 		action "doActionForSlot(5, 18)"
++@0 		actionAlt "doActionAltForSlot(5, 18)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4237,6 +4502,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 18)"
 +@0 		tooltip lua "getTooltipForSlot(5, 18)"
 +@0 		action "doActionForSlot(5, 18)"
++@0 		actionAlt "doActionAltForSlot(5, 18)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4249,6 +4515,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 19)"
 +@0 		tooltip lua "getTooltipForSlot(5, 19)"
 +@0 		action "doActionForSlot(5, 19)"
++@0 		actionAlt "doActionAltForSlot(5, 19)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4262,6 +4529,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 19)"
 +@0 		tooltip lua "getTooltipForSlot(5, 19)"
 +@0 		action "doActionForSlot(5, 19)"
++@0 		actionAlt "doActionAltForSlot(5, 19)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4274,6 +4542,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 20)"
 +@0 		tooltip lua "getTooltipForSlot(5, 20)"
 +@0 		action "doActionForSlot(5, 20)"
++@0 		actionAlt "doActionAltForSlot(5, 20)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4287,6 +4556,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 20)"
 +@0 		tooltip lua "getTooltipForSlot(5, 20)"
 +@0 		action "doActionForSlot(5, 20)"
++@0 		actionAlt "doActionAltForSlot(5, 20)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4299,6 +4569,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 21)"
 +@0 		tooltip lua "getTooltipForSlot(5, 21)"
 +@0 		action "doActionForSlot(5, 21)"
++@0 		actionAlt "doActionAltForSlot(5, 21)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4312,6 +4583,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 21)"
 +@0 		tooltip lua "getTooltipForSlot(5, 21)"
 +@0 		action "doActionForSlot(5, 21)"
++@0 		actionAlt "doActionAltForSlot(5, 21)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4324,6 +4596,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 22)"
 +@0 		tooltip lua "getTooltipForSlot(5, 22)"
 +@0 		action "doActionForSlot(5, 22)"
++@0 		actionAlt "doActionAltForSlot(5, 22)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4337,6 +4610,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 22)"
 +@0 		tooltip lua "getTooltipForSlot(5, 22)"
 +@0 		action "doActionForSlot(5, 22)"
++@0 		actionAlt "doActionAltForSlot(5, 22)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4349,6 +4623,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 23)"
 +@0 		tooltip lua "getTooltipForSlot(5, 23)"
 +@0 		action "doActionForSlot(5, 23)"
++@0 		actionAlt "doActionAltForSlot(5, 23)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4362,6 +4637,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 23)"
 +@0 		tooltip lua "getTooltipForSlot(5, 23)"
 +@0 		action "doActionForSlot(5, 23)"
++@0 		actionAlt "doActionAltForSlot(5, 23)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4374,6 +4650,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 24)"
 +@0 		tooltip lua "getTooltipForSlot(5, 24)"
 +@0 		action "doActionForSlot(5, 24)"
++@0 		actionAlt "doActionAltForSlot(5, 24)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4387,6 +4664,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 24)"
 +@0 		tooltip lua "getTooltipForSlot(5, 24)"
 +@0 		action "doActionForSlot(5, 24)"
++@0 		actionAlt "doActionAltForSlot(5, 24)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4399,6 +4677,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 25)"
 +@0 		tooltip lua "getTooltipForSlot(5, 25)"
 +@0 		action "doActionForSlot(5, 25)"
++@0 		actionAlt "doActionAltForSlot(5, 25)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4412,6 +4691,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 25)"
 +@0 		tooltip lua "getTooltipForSlot(5, 25)"
 +@0 		action "doActionForSlot(5, 25)"
++@0 		actionAlt "doActionAltForSlot(5, 25)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4424,6 +4704,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 26)"
 +@0 		tooltip lua "getTooltipForSlot(5, 26)"
 +@0 		action "doActionForSlot(5, 26)"
++@0 		actionAlt "doActionAltForSlot(5, 26)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4437,6 +4718,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 26)"
 +@0 		tooltip lua "getTooltipForSlot(5, 26)"
 +@0 		action "doActionForSlot(5, 26)"
++@0 		actionAlt "doActionAltForSlot(5, 26)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4449,6 +4731,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(5, 27)"
 +@0 		tooltip lua "getTooltipForSlot(5, 27)"
 +@0 		action "doActionForSlot(5, 27)"
++@0 		actionAlt "doActionAltForSlot(5, 27)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4462,6 +4745,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(5, 27)"
 +@0 		tooltip lua "getTooltipForSlot(5, 27)"
 +@0 		action "doActionForSlot(5, 27)"
++@0 		actionAlt "doActionAltForSlot(5, 27)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4474,6 +4758,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 1)"
 +@0 		tooltip lua "getTooltipForSlot(6, 1)"
 +@0 		action "doActionForSlot(6, 1)"
++@0 		actionAlt "doActionAltForSlot(6, 1)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4487,6 +4772,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 1)"
 +@0 		tooltip lua "getTooltipForSlot(6, 1)"
 +@0 		action "doActionForSlot(6, 1)"
++@0 		actionAlt "doActionAltForSlot(6, 1)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4499,6 +4785,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 2)"
 +@0 		tooltip lua "getTooltipForSlot(6, 2)"
 +@0 		action "doActionForSlot(6, 2)"
++@0 		actionAlt "doActionAltForSlot(6, 2)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4512,6 +4799,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 2)"
 +@0 		tooltip lua "getTooltipForSlot(6, 2)"
 +@0 		action "doActionForSlot(6, 2)"
++@0 		actionAlt "doActionAltForSlot(6, 2)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4524,6 +4812,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 3)"
 +@0 		tooltip lua "getTooltipForSlot(6, 3)"
 +@0 		action "doActionForSlot(6, 3)"
++@0 		actionAlt "doActionAltForSlot(6, 3)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4537,6 +4826,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 3)"
 +@0 		tooltip lua "getTooltipForSlot(6, 3)"
 +@0 		action "doActionForSlot(6, 3)"
++@0 		actionAlt "doActionAltForSlot(6, 3)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4549,6 +4839,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 4)"
 +@0 		tooltip lua "getTooltipForSlot(6, 4)"
 +@0 		action "doActionForSlot(6, 4)"
++@0 		actionAlt "doActionAltForSlot(6, 4)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4562,6 +4853,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 4)"
 +@0 		tooltip lua "getTooltipForSlot(6, 4)"
 +@0 		action "doActionForSlot(6, 4)"
++@0 		actionAlt "doActionAltForSlot(6, 4)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4574,6 +4866,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 5)"
 +@0 		tooltip lua "getTooltipForSlot(6, 5)"
 +@0 		action "doActionForSlot(6, 5)"
++@0 		actionAlt "doActionAltForSlot(6, 5)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4587,6 +4880,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 5)"
 +@0 		tooltip lua "getTooltipForSlot(6, 5)"
 +@0 		action "doActionForSlot(6, 5)"
++@0 		actionAlt "doActionAltForSlot(6, 5)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4599,6 +4893,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 6)"
 +@0 		tooltip lua "getTooltipForSlot(6, 6)"
 +@0 		action "doActionForSlot(6, 6)"
++@0 		actionAlt "doActionAltForSlot(6, 6)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4612,6 +4907,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 6)"
 +@0 		tooltip lua "getTooltipForSlot(6, 6)"
 +@0 		action "doActionForSlot(6, 6)"
++@0 		actionAlt "doActionAltForSlot(6, 6)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4624,6 +4920,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 7)"
 +@0 		tooltip lua "getTooltipForSlot(6, 7)"
 +@0 		action "doActionForSlot(6, 7)"
++@0 		actionAlt "doActionAltForSlot(6, 7)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4637,6 +4934,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 7)"
 +@0 		tooltip lua "getTooltipForSlot(6, 7)"
 +@0 		action "doActionForSlot(6, 7)"
++@0 		actionAlt "doActionAltForSlot(6, 7)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4649,6 +4947,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 8)"
 +@0 		tooltip lua "getTooltipForSlot(6, 8)"
 +@0 		action "doActionForSlot(6, 8)"
++@0 		actionAlt "doActionAltForSlot(6, 8)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4662,6 +4961,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 8)"
 +@0 		tooltip lua "getTooltipForSlot(6, 8)"
 +@0 		action "doActionForSlot(6, 8)"
++@0 		actionAlt "doActionAltForSlot(6, 8)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4674,6 +4974,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 9)"
 +@0 		tooltip lua "getTooltipForSlot(6, 9)"
 +@0 		action "doActionForSlot(6, 9)"
++@0 		actionAlt "doActionAltForSlot(6, 9)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4687,6 +4988,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 9)"
 +@0 		tooltip lua "getTooltipForSlot(6, 9)"
 +@0 		action "doActionForSlot(6, 9)"
++@0 		actionAlt "doActionAltForSlot(6, 9)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4699,6 +5001,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 10)"
 +@0 		tooltip lua "getTooltipForSlot(6, 10)"
 +@0 		action "doActionForSlot(6, 10)"
++@0 		actionAlt "doActionAltForSlot(6, 10)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4712,6 +5015,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 10)"
 +@0 		tooltip lua "getTooltipForSlot(6, 10)"
 +@0 		action "doActionForSlot(6, 10)"
++@0 		actionAlt "doActionAltForSlot(6, 10)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4724,6 +5028,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 11)"
 +@0 		tooltip lua "getTooltipForSlot(6, 11)"
 +@0 		action "doActionForSlot(6, 11)"
++@0 		actionAlt "doActionAltForSlot(6, 11)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4737,6 +5042,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 11)"
 +@0 		tooltip lua "getTooltipForSlot(6, 11)"
 +@0 		action "doActionForSlot(6, 11)"
++@0 		actionAlt "doActionAltForSlot(6, 11)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4749,6 +5055,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 12)"
 +@0 		tooltip lua "getTooltipForSlot(6, 12)"
 +@0 		action "doActionForSlot(6, 12)"
++@0 		actionAlt "doActionAltForSlot(6, 12)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4762,6 +5069,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 12)"
 +@0 		tooltip lua "getTooltipForSlot(6, 12)"
 +@0 		action "doActionForSlot(6, 12)"
++@0 		actionAlt "doActionAltForSlot(6, 12)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4774,6 +5082,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 13)"
 +@0 		tooltip lua "getTooltipForSlot(6, 13)"
 +@0 		action "doActionForSlot(6, 13)"
++@0 		actionAlt "doActionAltForSlot(6, 13)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4787,6 +5096,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 13)"
 +@0 		tooltip lua "getTooltipForSlot(6, 13)"
 +@0 		action "doActionForSlot(6, 13)"
++@0 		actionAlt "doActionAltForSlot(6, 13)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4799,6 +5109,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 14)"
 +@0 		tooltip lua "getTooltipForSlot(6, 14)"
 +@0 		action "doActionForSlot(6, 14)"
++@0 		actionAlt "doActionAltForSlot(6, 14)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4812,6 +5123,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 14)"
 +@0 		tooltip lua "getTooltipForSlot(6, 14)"
 +@0 		action "doActionForSlot(6, 14)"
++@0 		actionAlt "doActionAltForSlot(6, 14)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4824,6 +5136,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 15)"
 +@0 		tooltip lua "getTooltipForSlot(6, 15)"
 +@0 		action "doActionForSlot(6, 15)"
++@0 		actionAlt "doActionAltForSlot(6, 15)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4837,6 +5150,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 15)"
 +@0 		tooltip lua "getTooltipForSlot(6, 15)"
 +@0 		action "doActionForSlot(6, 15)"
++@0 		actionAlt "doActionAltForSlot(6, 15)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4849,6 +5163,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 16)"
 +@0 		tooltip lua "getTooltipForSlot(6, 16)"
 +@0 		action "doActionForSlot(6, 16)"
++@0 		actionAlt "doActionAltForSlot(6, 16)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4862,6 +5177,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 16)"
 +@0 		tooltip lua "getTooltipForSlot(6, 16)"
 +@0 		action "doActionForSlot(6, 16)"
++@0 		actionAlt "doActionAltForSlot(6, 16)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4874,6 +5190,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 17)"
 +@0 		tooltip lua "getTooltipForSlot(6, 17)"
 +@0 		action "doActionForSlot(6, 17)"
++@0 		actionAlt "doActionAltForSlot(6, 17)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4887,6 +5204,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 17)"
 +@0 		tooltip lua "getTooltipForSlot(6, 17)"
 +@0 		action "doActionForSlot(6, 17)"
++@0 		actionAlt "doActionAltForSlot(6, 17)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4899,6 +5217,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 18)"
 +@0 		tooltip lua "getTooltipForSlot(6, 18)"
 +@0 		action "doActionForSlot(6, 18)"
++@0 		actionAlt "doActionAltForSlot(6, 18)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4912,6 +5231,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 18)"
 +@0 		tooltip lua "getTooltipForSlot(6, 18)"
 +@0 		action "doActionForSlot(6, 18)"
++@0 		actionAlt "doActionAltForSlot(6, 18)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4924,6 +5244,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 19)"
 +@0 		tooltip lua "getTooltipForSlot(6, 19)"
 +@0 		action "doActionForSlot(6, 19)"
++@0 		actionAlt "doActionAltForSlot(6, 19)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4937,6 +5258,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 19)"
 +@0 		tooltip lua "getTooltipForSlot(6, 19)"
 +@0 		action "doActionForSlot(6, 19)"
++@0 		actionAlt "doActionAltForSlot(6, 19)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4949,6 +5271,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 20)"
 +@0 		tooltip lua "getTooltipForSlot(6, 20)"
 +@0 		action "doActionForSlot(6, 20)"
++@0 		actionAlt "doActionAltForSlot(6, 20)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4962,6 +5285,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 20)"
 +@0 		tooltip lua "getTooltipForSlot(6, 20)"
 +@0 		action "doActionForSlot(6, 20)"
++@0 		actionAlt "doActionAltForSlot(6, 20)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4974,6 +5298,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 21)"
 +@0 		tooltip lua "getTooltipForSlot(6, 21)"
 +@0 		action "doActionForSlot(6, 21)"
++@0 		actionAlt "doActionAltForSlot(6, 21)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -4987,6 +5312,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 21)"
 +@0 		tooltip lua "getTooltipForSlot(6, 21)"
 +@0 		action "doActionForSlot(6, 21)"
++@0 		actionAlt "doActionAltForSlot(6, 21)"
 +@0 	}
 +@0 
 +@0 	button
@@ -4999,6 +5325,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 22)"
 +@0 		tooltip lua "getTooltipForSlot(6, 22)"
 +@0 		action "doActionForSlot(6, 22)"
++@0 		actionAlt "doActionAltForSlot(6, 22)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5012,6 +5339,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 22)"
 +@0 		tooltip lua "getTooltipForSlot(6, 22)"
 +@0 		action "doActionForSlot(6, 22)"
++@0 		actionAlt "doActionAltForSlot(6, 22)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5024,6 +5352,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 23)"
 +@0 		tooltip lua "getTooltipForSlot(6, 23)"
 +@0 		action "doActionForSlot(6, 23)"
++@0 		actionAlt "doActionAltForSlot(6, 23)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5037,6 +5366,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 23)"
 +@0 		tooltip lua "getTooltipForSlot(6, 23)"
 +@0 		action "doActionForSlot(6, 23)"
++@0 		actionAlt "doActionAltForSlot(6, 23)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5049,6 +5379,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 24)"
 +@0 		tooltip lua "getTooltipForSlot(6, 24)"
 +@0 		action "doActionForSlot(6, 24)"
++@0 		actionAlt "doActionAltForSlot(6, 24)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5062,6 +5393,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 24)"
 +@0 		tooltip lua "getTooltipForSlot(6, 24)"
 +@0 		action "doActionForSlot(6, 24)"
++@0 		actionAlt "doActionAltForSlot(6, 24)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5074,6 +5406,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 25)"
 +@0 		tooltip lua "getTooltipForSlot(6, 25)"
 +@0 		action "doActionForSlot(6, 25)"
++@0 		actionAlt "doActionAltForSlot(6, 25)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5087,6 +5420,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 25)"
 +@0 		tooltip lua "getTooltipForSlot(6, 25)"
 +@0 		action "doActionForSlot(6, 25)"
++@0 		actionAlt "doActionAltForSlot(6, 25)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5099,6 +5433,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 26)"
 +@0 		tooltip lua "getTooltipForSlot(6, 26)"
 +@0 		action "doActionForSlot(6, 26)"
++@0 		actionAlt "doActionAltForSlot(6, 26)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5112,6 +5447,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 26)"
 +@0 		tooltip lua "getTooltipForSlot(6, 26)"
 +@0 		action "doActionForSlot(6, 26)"
++@0 		actionAlt "doActionAltForSlot(6, 26)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5124,6 +5460,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(6, 27)"
 +@0 		tooltip lua "getTooltipForSlot(6, 27)"
 +@0 		action "doActionForSlot(6, 27)"
++@0 		actionAlt "doActionAltForSlot(6, 27)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5137,6 +5474,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(6, 27)"
 +@0 		tooltip lua "getTooltipForSlot(6, 27)"
 +@0 		action "doActionForSlot(6, 27)"
++@0 		actionAlt "doActionAltForSlot(6, 27)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5149,6 +5487,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 1)"
 +@0 		tooltip lua "getTooltipForSlot(7, 1)"
 +@0 		action "doActionForSlot(7, 1)"
++@0 		actionAlt "doActionAltForSlot(7, 1)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5162,6 +5501,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 1)"
 +@0 		tooltip lua "getTooltipForSlot(7, 1)"
 +@0 		action "doActionForSlot(7, 1)"
++@0 		actionAlt "doActionAltForSlot(7, 1)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5174,6 +5514,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 2)"
 +@0 		tooltip lua "getTooltipForSlot(7, 2)"
 +@0 		action "doActionForSlot(7, 2)"
++@0 		actionAlt "doActionAltForSlot(7, 2)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5187,6 +5528,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 2)"
 +@0 		tooltip lua "getTooltipForSlot(7, 2)"
 +@0 		action "doActionForSlot(7, 2)"
++@0 		actionAlt "doActionAltForSlot(7, 2)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5199,6 +5541,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 3)"
 +@0 		tooltip lua "getTooltipForSlot(7, 3)"
 +@0 		action "doActionForSlot(7, 3)"
++@0 		actionAlt "doActionAltForSlot(7, 3)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5212,6 +5555,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 3)"
 +@0 		tooltip lua "getTooltipForSlot(7, 3)"
 +@0 		action "doActionForSlot(7, 3)"
++@0 		actionAlt "doActionAltForSlot(7, 3)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5224,6 +5568,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 4)"
 +@0 		tooltip lua "getTooltipForSlot(7, 4)"
 +@0 		action "doActionForSlot(7, 4)"
++@0 		actionAlt "doActionAltForSlot(7, 4)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5237,6 +5582,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 4)"
 +@0 		tooltip lua "getTooltipForSlot(7, 4)"
 +@0 		action "doActionForSlot(7, 4)"
++@0 		actionAlt "doActionAltForSlot(7, 4)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5249,6 +5595,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 5)"
 +@0 		tooltip lua "getTooltipForSlot(7, 5)"
 +@0 		action "doActionForSlot(7, 5)"
++@0 		actionAlt "doActionAltForSlot(7, 5)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5262,6 +5609,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 5)"
 +@0 		tooltip lua "getTooltipForSlot(7, 5)"
 +@0 		action "doActionForSlot(7, 5)"
++@0 		actionAlt "doActionAltForSlot(7, 5)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5274,6 +5622,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 6)"
 +@0 		tooltip lua "getTooltipForSlot(7, 6)"
 +@0 		action "doActionForSlot(7, 6)"
++@0 		actionAlt "doActionAltForSlot(7, 6)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5287,6 +5636,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 6)"
 +@0 		tooltip lua "getTooltipForSlot(7, 6)"
 +@0 		action "doActionForSlot(7, 6)"
++@0 		actionAlt "doActionAltForSlot(7, 6)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5299,6 +5649,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 7)"
 +@0 		tooltip lua "getTooltipForSlot(7, 7)"
 +@0 		action "doActionForSlot(7, 7)"
++@0 		actionAlt "doActionAltForSlot(7, 7)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5312,6 +5663,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 7)"
 +@0 		tooltip lua "getTooltipForSlot(7, 7)"
 +@0 		action "doActionForSlot(7, 7)"
++@0 		actionAlt "doActionAltForSlot(7, 7)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5324,6 +5676,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 8)"
 +@0 		tooltip lua "getTooltipForSlot(7, 8)"
 +@0 		action "doActionForSlot(7, 8)"
++@0 		actionAlt "doActionAltForSlot(7, 8)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5337,6 +5690,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 8)"
 +@0 		tooltip lua "getTooltipForSlot(7, 8)"
 +@0 		action "doActionForSlot(7, 8)"
++@0 		actionAlt "doActionAltForSlot(7, 8)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5349,6 +5703,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 9)"
 +@0 		tooltip lua "getTooltipForSlot(7, 9)"
 +@0 		action "doActionForSlot(7, 9)"
++@0 		actionAlt "doActionAltForSlot(7, 9)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5362,6 +5717,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 9)"
 +@0 		tooltip lua "getTooltipForSlot(7, 9)"
 +@0 		action "doActionForSlot(7, 9)"
++@0 		actionAlt "doActionAltForSlot(7, 9)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5374,6 +5730,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 10)"
 +@0 		tooltip lua "getTooltipForSlot(7, 10)"
 +@0 		action "doActionForSlot(7, 10)"
++@0 		actionAlt "doActionAltForSlot(7, 10)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5387,6 +5744,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 10)"
 +@0 		tooltip lua "getTooltipForSlot(7, 10)"
 +@0 		action "doActionForSlot(7, 10)"
++@0 		actionAlt "doActionAltForSlot(7, 10)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5399,6 +5757,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 11)"
 +@0 		tooltip lua "getTooltipForSlot(7, 11)"
 +@0 		action "doActionForSlot(7, 11)"
++@0 		actionAlt "doActionAltForSlot(7, 11)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5412,6 +5771,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 11)"
 +@0 		tooltip lua "getTooltipForSlot(7, 11)"
 +@0 		action "doActionForSlot(7, 11)"
++@0 		actionAlt "doActionAltForSlot(7, 11)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5424,6 +5784,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 12)"
 +@0 		tooltip lua "getTooltipForSlot(7, 12)"
 +@0 		action "doActionForSlot(7, 12)"
++@0 		actionAlt "doActionAltForSlot(7, 12)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5437,6 +5798,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 12)"
 +@0 		tooltip lua "getTooltipForSlot(7, 12)"
 +@0 		action "doActionForSlot(7, 12)"
++@0 		actionAlt "doActionAltForSlot(7, 12)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5449,6 +5811,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 13)"
 +@0 		tooltip lua "getTooltipForSlot(7, 13)"
 +@0 		action "doActionForSlot(7, 13)"
++@0 		actionAlt "doActionAltForSlot(7, 13)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5462,6 +5825,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 13)"
 +@0 		tooltip lua "getTooltipForSlot(7, 13)"
 +@0 		action "doActionForSlot(7, 13)"
++@0 		actionAlt "doActionAltForSlot(7, 13)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5474,6 +5838,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 14)"
 +@0 		tooltip lua "getTooltipForSlot(7, 14)"
 +@0 		action "doActionForSlot(7, 14)"
++@0 		actionAlt "doActionAltForSlot(7, 14)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5487,6 +5852,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 14)"
 +@0 		tooltip lua "getTooltipForSlot(7, 14)"
 +@0 		action "doActionForSlot(7, 14)"
++@0 		actionAlt "doActionAltForSlot(7, 14)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5499,6 +5865,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 15)"
 +@0 		tooltip lua "getTooltipForSlot(7, 15)"
 +@0 		action "doActionForSlot(7, 15)"
++@0 		actionAlt "doActionAltForSlot(7, 15)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5512,6 +5879,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 15)"
 +@0 		tooltip lua "getTooltipForSlot(7, 15)"
 +@0 		action "doActionForSlot(7, 15)"
++@0 		actionAlt "doActionAltForSlot(7, 15)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5524,6 +5892,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 16)"
 +@0 		tooltip lua "getTooltipForSlot(7, 16)"
 +@0 		action "doActionForSlot(7, 16)"
++@0 		actionAlt "doActionAltForSlot(7, 16)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5537,6 +5906,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 16)"
 +@0 		tooltip lua "getTooltipForSlot(7, 16)"
 +@0 		action "doActionForSlot(7, 16)"
++@0 		actionAlt "doActionAltForSlot(7, 16)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5549,6 +5919,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 17)"
 +@0 		tooltip lua "getTooltipForSlot(7, 17)"
 +@0 		action "doActionForSlot(7, 17)"
++@0 		actionAlt "doActionAltForSlot(7, 17)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5562,6 +5933,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 17)"
 +@0 		tooltip lua "getTooltipForSlot(7, 17)"
 +@0 		action "doActionForSlot(7, 17)"
++@0 		actionAlt "doActionAltForSlot(7, 17)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5574,6 +5946,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 18)"
 +@0 		tooltip lua "getTooltipForSlot(7, 18)"
 +@0 		action "doActionForSlot(7, 18)"
++@0 		actionAlt "doActionAltForSlot(7, 18)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5587,6 +5960,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 18)"
 +@0 		tooltip lua "getTooltipForSlot(7, 18)"
 +@0 		action "doActionForSlot(7, 18)"
++@0 		actionAlt "doActionAltForSlot(7, 18)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5599,6 +5973,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 19)"
 +@0 		tooltip lua "getTooltipForSlot(7, 19)"
 +@0 		action "doActionForSlot(7, 19)"
++@0 		actionAlt "doActionAltForSlot(7, 19)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5612,6 +5987,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 19)"
 +@0 		tooltip lua "getTooltipForSlot(7, 19)"
 +@0 		action "doActionForSlot(7, 19)"
++@0 		actionAlt "doActionAltForSlot(7, 19)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5624,6 +6000,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 20)"
 +@0 		tooltip lua "getTooltipForSlot(7, 20)"
 +@0 		action "doActionForSlot(7, 20)"
++@0 		actionAlt "doActionAltForSlot(7, 20)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5637,6 +6014,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 20)"
 +@0 		tooltip lua "getTooltipForSlot(7, 20)"
 +@0 		action "doActionForSlot(7, 20)"
++@0 		actionAlt "doActionAltForSlot(7, 20)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5649,6 +6027,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 21)"
 +@0 		tooltip lua "getTooltipForSlot(7, 21)"
 +@0 		action "doActionForSlot(7, 21)"
++@0 		actionAlt "doActionAltForSlot(7, 21)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5662,6 +6041,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 21)"
 +@0 		tooltip lua "getTooltipForSlot(7, 21)"
 +@0 		action "doActionForSlot(7, 21)"
++@0 		actionAlt "doActionAltForSlot(7, 21)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5674,6 +6054,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 22)"
 +@0 		tooltip lua "getTooltipForSlot(7, 22)"
 +@0 		action "doActionForSlot(7, 22)"
++@0 		actionAlt "doActionAltForSlot(7, 22)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5687,6 +6068,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 22)"
 +@0 		tooltip lua "getTooltipForSlot(7, 22)"
 +@0 		action "doActionForSlot(7, 22)"
++@0 		actionAlt "doActionAltForSlot(7, 22)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5699,6 +6081,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 23)"
 +@0 		tooltip lua "getTooltipForSlot(7, 23)"
 +@0 		action "doActionForSlot(7, 23)"
++@0 		actionAlt "doActionAltForSlot(7, 23)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5712,6 +6095,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 23)"
 +@0 		tooltip lua "getTooltipForSlot(7, 23)"
 +@0 		action "doActionForSlot(7, 23)"
++@0 		actionAlt "doActionAltForSlot(7, 23)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5724,6 +6108,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 24)"
 +@0 		tooltip lua "getTooltipForSlot(7, 24)"
 +@0 		action "doActionForSlot(7, 24)"
++@0 		actionAlt "doActionAltForSlot(7, 24)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5737,6 +6122,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 24)"
 +@0 		tooltip lua "getTooltipForSlot(7, 24)"
 +@0 		action "doActionForSlot(7, 24)"
++@0 		actionAlt "doActionAltForSlot(7, 24)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5749,6 +6135,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 25)"
 +@0 		tooltip lua "getTooltipForSlot(7, 25)"
 +@0 		action "doActionForSlot(7, 25)"
++@0 		actionAlt "doActionAltForSlot(7, 25)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5762,6 +6149,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 25)"
 +@0 		tooltip lua "getTooltipForSlot(7, 25)"
 +@0 		action "doActionForSlot(7, 25)"
++@0 		actionAlt "doActionAltForSlot(7, 25)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5774,6 +6162,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 26)"
 +@0 		tooltip lua "getTooltipForSlot(7, 26)"
 +@0 		action "doActionForSlot(7, 26)"
++@0 		actionAlt "doActionAltForSlot(7, 26)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5787,6 +6176,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 26)"
 +@0 		tooltip lua "getTooltipForSlot(7, 26)"
 +@0 		action "doActionForSlot(7, 26)"
++@0 		actionAlt "doActionAltForSlot(7, 26)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5799,6 +6189,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(7, 27)"
 +@0 		tooltip lua "getTooltipForSlot(7, 27)"
 +@0 		action "doActionForSlot(7, 27)"
++@0 		actionAlt "doActionAltForSlot(7, 27)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5812,6 +6203,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(7, 27)"
 +@0 		tooltip lua "getTooltipForSlot(7, 27)"
 +@0 		action "doActionForSlot(7, 27)"
++@0 		actionAlt "doActionAltForSlot(7, 27)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5824,6 +6216,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 1)"
 +@0 		tooltip lua "getTooltipForSlot(8, 1)"
 +@0 		action "doActionForSlot(8, 1)"
++@0 		actionAlt "doActionAltForSlot(8, 1)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5837,6 +6230,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 1)"
 +@0 		tooltip lua "getTooltipForSlot(8, 1)"
 +@0 		action "doActionForSlot(8, 1)"
++@0 		actionAlt "doActionAltForSlot(8, 1)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5849,6 +6243,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 2)"
 +@0 		tooltip lua "getTooltipForSlot(8, 2)"
 +@0 		action "doActionForSlot(8, 2)"
++@0 		actionAlt "doActionAltForSlot(8, 2)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5862,6 +6257,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 2)"
 +@0 		tooltip lua "getTooltipForSlot(8, 2)"
 +@0 		action "doActionForSlot(8, 2)"
++@0 		actionAlt "doActionAltForSlot(8, 2)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5874,6 +6270,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 3)"
 +@0 		tooltip lua "getTooltipForSlot(8, 3)"
 +@0 		action "doActionForSlot(8, 3)"
++@0 		actionAlt "doActionAltForSlot(8, 3)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5887,6 +6284,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 3)"
 +@0 		tooltip lua "getTooltipForSlot(8, 3)"
 +@0 		action "doActionForSlot(8, 3)"
++@0 		actionAlt "doActionAltForSlot(8, 3)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5899,6 +6297,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 4)"
 +@0 		tooltip lua "getTooltipForSlot(8, 4)"
 +@0 		action "doActionForSlot(8, 4)"
++@0 		actionAlt "doActionAltForSlot(8, 4)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5912,6 +6311,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 4)"
 +@0 		tooltip lua "getTooltipForSlot(8, 4)"
 +@0 		action "doActionForSlot(8, 4)"
++@0 		actionAlt "doActionAltForSlot(8, 4)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5924,6 +6324,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 5)"
 +@0 		tooltip lua "getTooltipForSlot(8, 5)"
 +@0 		action "doActionForSlot(8, 5)"
++@0 		actionAlt "doActionAltForSlot(8, 5)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5937,6 +6338,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 5)"
 +@0 		tooltip lua "getTooltipForSlot(8, 5)"
 +@0 		action "doActionForSlot(8, 5)"
++@0 		actionAlt "doActionAltForSlot(8, 5)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5949,6 +6351,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 6)"
 +@0 		tooltip lua "getTooltipForSlot(8, 6)"
 +@0 		action "doActionForSlot(8, 6)"
++@0 		actionAlt "doActionAltForSlot(8, 6)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5962,6 +6365,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 6)"
 +@0 		tooltip lua "getTooltipForSlot(8, 6)"
 +@0 		action "doActionForSlot(8, 6)"
++@0 		actionAlt "doActionAltForSlot(8, 6)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5974,6 +6378,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 7)"
 +@0 		tooltip lua "getTooltipForSlot(8, 7)"
 +@0 		action "doActionForSlot(8, 7)"
++@0 		actionAlt "doActionAltForSlot(8, 7)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -5987,6 +6392,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 7)"
 +@0 		tooltip lua "getTooltipForSlot(8, 7)"
 +@0 		action "doActionForSlot(8, 7)"
++@0 		actionAlt "doActionAltForSlot(8, 7)"
 +@0 	}
 +@0 
 +@0 	button
@@ -5999,6 +6405,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 8)"
 +@0 		tooltip lua "getTooltipForSlot(8, 8)"
 +@0 		action "doActionForSlot(8, 8)"
++@0 		actionAlt "doActionAltForSlot(8, 8)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6012,6 +6419,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 8)"
 +@0 		tooltip lua "getTooltipForSlot(8, 8)"
 +@0 		action "doActionForSlot(8, 8)"
++@0 		actionAlt "doActionAltForSlot(8, 8)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6024,6 +6432,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 9)"
 +@0 		tooltip lua "getTooltipForSlot(8, 9)"
 +@0 		action "doActionForSlot(8, 9)"
++@0 		actionAlt "doActionAltForSlot(8, 9)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6037,6 +6446,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 9)"
 +@0 		tooltip lua "getTooltipForSlot(8, 9)"
 +@0 		action "doActionForSlot(8, 9)"
++@0 		actionAlt "doActionAltForSlot(8, 9)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6049,6 +6459,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 10)"
 +@0 		tooltip lua "getTooltipForSlot(8, 10)"
 +@0 		action "doActionForSlot(8, 10)"
++@0 		actionAlt "doActionAltForSlot(8, 10)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6062,6 +6473,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 10)"
 +@0 		tooltip lua "getTooltipForSlot(8, 10)"
 +@0 		action "doActionForSlot(8, 10)"
++@0 		actionAlt "doActionAltForSlot(8, 10)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6074,6 +6486,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 11)"
 +@0 		tooltip lua "getTooltipForSlot(8, 11)"
 +@0 		action "doActionForSlot(8, 11)"
++@0 		actionAlt "doActionAltForSlot(8, 11)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6087,6 +6500,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 11)"
 +@0 		tooltip lua "getTooltipForSlot(8, 11)"
 +@0 		action "doActionForSlot(8, 11)"
++@0 		actionAlt "doActionAltForSlot(8, 11)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6099,6 +6513,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 12)"
 +@0 		tooltip lua "getTooltipForSlot(8, 12)"
 +@0 		action "doActionForSlot(8, 12)"
++@0 		actionAlt "doActionAltForSlot(8, 12)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6112,6 +6527,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 12)"
 +@0 		tooltip lua "getTooltipForSlot(8, 12)"
 +@0 		action "doActionForSlot(8, 12)"
++@0 		actionAlt "doActionAltForSlot(8, 12)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6124,6 +6540,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 13)"
 +@0 		tooltip lua "getTooltipForSlot(8, 13)"
 +@0 		action "doActionForSlot(8, 13)"
++@0 		actionAlt "doActionAltForSlot(8, 13)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6137,6 +6554,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 13)"
 +@0 		tooltip lua "getTooltipForSlot(8, 13)"
 +@0 		action "doActionForSlot(8, 13)"
++@0 		actionAlt "doActionAltForSlot(8, 13)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6149,6 +6567,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 14)"
 +@0 		tooltip lua "getTooltipForSlot(8, 14)"
 +@0 		action "doActionForSlot(8, 14)"
++@0 		actionAlt "doActionAltForSlot(8, 14)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6162,6 +6581,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 14)"
 +@0 		tooltip lua "getTooltipForSlot(8, 14)"
 +@0 		action "doActionForSlot(8, 14)"
++@0 		actionAlt "doActionAltForSlot(8, 14)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6174,6 +6594,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 15)"
 +@0 		tooltip lua "getTooltipForSlot(8, 15)"
 +@0 		action "doActionForSlot(8, 15)"
++@0 		actionAlt "doActionAltForSlot(8, 15)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6187,6 +6608,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 15)"
 +@0 		tooltip lua "getTooltipForSlot(8, 15)"
 +@0 		action "doActionForSlot(8, 15)"
++@0 		actionAlt "doActionAltForSlot(8, 15)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6199,6 +6621,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 16)"
 +@0 		tooltip lua "getTooltipForSlot(8, 16)"
 +@0 		action "doActionForSlot(8, 16)"
++@0 		actionAlt "doActionAltForSlot(8, 16)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6212,6 +6635,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 16)"
 +@0 		tooltip lua "getTooltipForSlot(8, 16)"
 +@0 		action "doActionForSlot(8, 16)"
++@0 		actionAlt "doActionAltForSlot(8, 16)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6224,6 +6648,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 17)"
 +@0 		tooltip lua "getTooltipForSlot(8, 17)"
 +@0 		action "doActionForSlot(8, 17)"
++@0 		actionAlt "doActionAltForSlot(8, 17)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6237,6 +6662,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 17)"
 +@0 		tooltip lua "getTooltipForSlot(8, 17)"
 +@0 		action "doActionForSlot(8, 17)"
++@0 		actionAlt "doActionAltForSlot(8, 17)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6249,6 +6675,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 18)"
 +@0 		tooltip lua "getTooltipForSlot(8, 18)"
 +@0 		action "doActionForSlot(8, 18)"
++@0 		actionAlt "doActionAltForSlot(8, 18)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6262,6 +6689,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 18)"
 +@0 		tooltip lua "getTooltipForSlot(8, 18)"
 +@0 		action "doActionForSlot(8, 18)"
++@0 		actionAlt "doActionAltForSlot(8, 18)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6274,6 +6702,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 19)"
 +@0 		tooltip lua "getTooltipForSlot(8, 19)"
 +@0 		action "doActionForSlot(8, 19)"
++@0 		actionAlt "doActionAltForSlot(8, 19)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6287,6 +6716,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 19)"
 +@0 		tooltip lua "getTooltipForSlot(8, 19)"
 +@0 		action "doActionForSlot(8, 19)"
++@0 		actionAlt "doActionAltForSlot(8, 19)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6299,6 +6729,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 20)"
 +@0 		tooltip lua "getTooltipForSlot(8, 20)"
 +@0 		action "doActionForSlot(8, 20)"
++@0 		actionAlt "doActionAltForSlot(8, 20)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6312,6 +6743,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 20)"
 +@0 		tooltip lua "getTooltipForSlot(8, 20)"
 +@0 		action "doActionForSlot(8, 20)"
++@0 		actionAlt "doActionAltForSlot(8, 20)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6324,6 +6756,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 21)"
 +@0 		tooltip lua "getTooltipForSlot(8, 21)"
 +@0 		action "doActionForSlot(8, 21)"
++@0 		actionAlt "doActionAltForSlot(8, 21)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6337,6 +6770,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 21)"
 +@0 		tooltip lua "getTooltipForSlot(8, 21)"
 +@0 		action "doActionForSlot(8, 21)"
++@0 		actionAlt "doActionAltForSlot(8, 21)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6349,6 +6783,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 22)"
 +@0 		tooltip lua "getTooltipForSlot(8, 22)"
 +@0 		action "doActionForSlot(8, 22)"
++@0 		actionAlt "doActionAltForSlot(8, 22)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6362,6 +6797,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 22)"
 +@0 		tooltip lua "getTooltipForSlot(8, 22)"
 +@0 		action "doActionForSlot(8, 22)"
++@0 		actionAlt "doActionAltForSlot(8, 22)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6374,6 +6810,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 23)"
 +@0 		tooltip lua "getTooltipForSlot(8, 23)"
 +@0 		action "doActionForSlot(8, 23)"
++@0 		actionAlt "doActionAltForSlot(8, 23)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6387,6 +6824,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 23)"
 +@0 		tooltip lua "getTooltipForSlot(8, 23)"
 +@0 		action "doActionForSlot(8, 23)"
++@0 		actionAlt "doActionAltForSlot(8, 23)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6399,6 +6837,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 24)"
 +@0 		tooltip lua "getTooltipForSlot(8, 24)"
 +@0 		action "doActionForSlot(8, 24)"
++@0 		actionAlt "doActionAltForSlot(8, 24)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6412,6 +6851,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 24)"
 +@0 		tooltip lua "getTooltipForSlot(8, 24)"
 +@0 		action "doActionForSlot(8, 24)"
++@0 		actionAlt "doActionAltForSlot(8, 24)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6424,6 +6864,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 25)"
 +@0 		tooltip lua "getTooltipForSlot(8, 25)"
 +@0 		action "doActionForSlot(8, 25)"
++@0 		actionAlt "doActionAltForSlot(8, 25)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6437,6 +6878,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 25)"
 +@0 		tooltip lua "getTooltipForSlot(8, 25)"
 +@0 		action "doActionForSlot(8, 25)"
++@0 		actionAlt "doActionAltForSlot(8, 25)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6449,6 +6891,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 26)"
 +@0 		tooltip lua "getTooltipForSlot(8, 26)"
 +@0 		action "doActionForSlot(8, 26)"
++@0 		actionAlt "doActionAltForSlot(8, 26)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6462,6 +6905,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 26)"
 +@0 		tooltip lua "getTooltipForSlot(8, 26)"
 +@0 		action "doActionForSlot(8, 26)"
++@0 		actionAlt "doActionAltForSlot(8, 26)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6474,6 +6918,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(8, 27)"
 +@0 		tooltip lua "getTooltipForSlot(8, 27)"
 +@0 		action "doActionForSlot(8, 27)"
++@0 		actionAlt "doActionAltForSlot(8, 27)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6487,6 +6932,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(8, 27)"
 +@0 		tooltip lua "getTooltipForSlot(8, 27)"
 +@0 		action "doActionForSlot(8, 27)"
++@0 		actionAlt "doActionAltForSlot(8, 27)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6499,6 +6945,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 1)"
 +@0 		tooltip lua "getTooltipForSlot(9, 1)"
 +@0 		action "doActionForSlot(9, 1)"
++@0 		actionAlt "doActionAltForSlot(9, 1)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6512,6 +6959,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 1)"
 +@0 		tooltip lua "getTooltipForSlot(9, 1)"
 +@0 		action "doActionForSlot(9, 1)"
++@0 		actionAlt "doActionAltForSlot(9, 1)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6524,6 +6972,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 2)"
 +@0 		tooltip lua "getTooltipForSlot(9, 2)"
 +@0 		action "doActionForSlot(9, 2)"
++@0 		actionAlt "doActionAltForSlot(9, 2)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6537,6 +6986,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 2)"
 +@0 		tooltip lua "getTooltipForSlot(9, 2)"
 +@0 		action "doActionForSlot(9, 2)"
++@0 		actionAlt "doActionAltForSlot(9, 2)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6549,6 +6999,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 3)"
 +@0 		tooltip lua "getTooltipForSlot(9, 3)"
 +@0 		action "doActionForSlot(9, 3)"
++@0 		actionAlt "doActionAltForSlot(9, 3)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6562,6 +7013,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 3)"
 +@0 		tooltip lua "getTooltipForSlot(9, 3)"
 +@0 		action "doActionForSlot(9, 3)"
++@0 		actionAlt "doActionAltForSlot(9, 3)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6574,6 +7026,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 4)"
 +@0 		tooltip lua "getTooltipForSlot(9, 4)"
 +@0 		action "doActionForSlot(9, 4)"
++@0 		actionAlt "doActionAltForSlot(9, 4)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6587,6 +7040,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 4)"
 +@0 		tooltip lua "getTooltipForSlot(9, 4)"
 +@0 		action "doActionForSlot(9, 4)"
++@0 		actionAlt "doActionAltForSlot(9, 4)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6599,6 +7053,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 5)"
 +@0 		tooltip lua "getTooltipForSlot(9, 5)"
 +@0 		action "doActionForSlot(9, 5)"
++@0 		actionAlt "doActionAltForSlot(9, 5)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6612,6 +7067,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 5)"
 +@0 		tooltip lua "getTooltipForSlot(9, 5)"
 +@0 		action "doActionForSlot(9, 5)"
++@0 		actionAlt "doActionAltForSlot(9, 5)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6624,6 +7080,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 6)"
 +@0 		tooltip lua "getTooltipForSlot(9, 6)"
 +@0 		action "doActionForSlot(9, 6)"
++@0 		actionAlt "doActionAltForSlot(9, 6)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6637,6 +7094,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 6)"
 +@0 		tooltip lua "getTooltipForSlot(9, 6)"
 +@0 		action "doActionForSlot(9, 6)"
++@0 		actionAlt "doActionAltForSlot(9, 6)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6649,6 +7107,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 7)"
 +@0 		tooltip lua "getTooltipForSlot(9, 7)"
 +@0 		action "doActionForSlot(9, 7)"
++@0 		actionAlt "doActionAltForSlot(9, 7)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6662,6 +7121,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 7)"
 +@0 		tooltip lua "getTooltipForSlot(9, 7)"
 +@0 		action "doActionForSlot(9, 7)"
++@0 		actionAlt "doActionAltForSlot(9, 7)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6674,6 +7134,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 8)"
 +@0 		tooltip lua "getTooltipForSlot(9, 8)"
 +@0 		action "doActionForSlot(9, 8)"
++@0 		actionAlt "doActionAltForSlot(9, 8)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6687,6 +7148,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 8)"
 +@0 		tooltip lua "getTooltipForSlot(9, 8)"
 +@0 		action "doActionForSlot(9, 8)"
++@0 		actionAlt "doActionAltForSlot(9, 8)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6699,6 +7161,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 9)"
 +@0 		tooltip lua "getTooltipForSlot(9, 9)"
 +@0 		action "doActionForSlot(9, 9)"
++@0 		actionAlt "doActionAltForSlot(9, 9)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6712,6 +7175,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 9)"
 +@0 		tooltip lua "getTooltipForSlot(9, 9)"
 +@0 		action "doActionForSlot(9, 9)"
++@0 		actionAlt "doActionAltForSlot(9, 9)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6724,6 +7188,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 10)"
 +@0 		tooltip lua "getTooltipForSlot(9, 10)"
 +@0 		action "doActionForSlot(9, 10)"
++@0 		actionAlt "doActionAltForSlot(9, 10)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6737,6 +7202,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 10)"
 +@0 		tooltip lua "getTooltipForSlot(9, 10)"
 +@0 		action "doActionForSlot(9, 10)"
++@0 		actionAlt "doActionAltForSlot(9, 10)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6749,6 +7215,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 11)"
 +@0 		tooltip lua "getTooltipForSlot(9, 11)"
 +@0 		action "doActionForSlot(9, 11)"
++@0 		actionAlt "doActionAltForSlot(9, 11)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6762,6 +7229,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 11)"
 +@0 		tooltip lua "getTooltipForSlot(9, 11)"
 +@0 		action "doActionForSlot(9, 11)"
++@0 		actionAlt "doActionAltForSlot(9, 11)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6774,6 +7242,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 12)"
 +@0 		tooltip lua "getTooltipForSlot(9, 12)"
 +@0 		action "doActionForSlot(9, 12)"
++@0 		actionAlt "doActionAltForSlot(9, 12)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6787,6 +7256,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 12)"
 +@0 		tooltip lua "getTooltipForSlot(9, 12)"
 +@0 		action "doActionForSlot(9, 12)"
++@0 		actionAlt "doActionAltForSlot(9, 12)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6799,6 +7269,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 13)"
 +@0 		tooltip lua "getTooltipForSlot(9, 13)"
 +@0 		action "doActionForSlot(9, 13)"
++@0 		actionAlt "doActionAltForSlot(9, 13)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6812,6 +7283,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 13)"
 +@0 		tooltip lua "getTooltipForSlot(9, 13)"
 +@0 		action "doActionForSlot(9, 13)"
++@0 		actionAlt "doActionAltForSlot(9, 13)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6824,6 +7296,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 14)"
 +@0 		tooltip lua "getTooltipForSlot(9, 14)"
 +@0 		action "doActionForSlot(9, 14)"
++@0 		actionAlt "doActionAltForSlot(9, 14)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6837,6 +7310,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 14)"
 +@0 		tooltip lua "getTooltipForSlot(9, 14)"
 +@0 		action "doActionForSlot(9, 14)"
++@0 		actionAlt "doActionAltForSlot(9, 14)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6849,6 +7323,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 15)"
 +@0 		tooltip lua "getTooltipForSlot(9, 15)"
 +@0 		action "doActionForSlot(9, 15)"
++@0 		actionAlt "doActionAltForSlot(9, 15)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6862,6 +7337,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 15)"
 +@0 		tooltip lua "getTooltipForSlot(9, 15)"
 +@0 		action "doActionForSlot(9, 15)"
++@0 		actionAlt "doActionAltForSlot(9, 15)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6874,6 +7350,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 16)"
 +@0 		tooltip lua "getTooltipForSlot(9, 16)"
 +@0 		action "doActionForSlot(9, 16)"
++@0 		actionAlt "doActionAltForSlot(9, 16)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6887,6 +7364,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 16)"
 +@0 		tooltip lua "getTooltipForSlot(9, 16)"
 +@0 		action "doActionForSlot(9, 16)"
++@0 		actionAlt "doActionAltForSlot(9, 16)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6899,6 +7377,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 17)"
 +@0 		tooltip lua "getTooltipForSlot(9, 17)"
 +@0 		action "doActionForSlot(9, 17)"
++@0 		actionAlt "doActionAltForSlot(9, 17)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6912,6 +7391,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 17)"
 +@0 		tooltip lua "getTooltipForSlot(9, 17)"
 +@0 		action "doActionForSlot(9, 17)"
++@0 		actionAlt "doActionAltForSlot(9, 17)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6924,6 +7404,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 18)"
 +@0 		tooltip lua "getTooltipForSlot(9, 18)"
 +@0 		action "doActionForSlot(9, 18)"
++@0 		actionAlt "doActionAltForSlot(9, 18)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6937,6 +7418,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 18)"
 +@0 		tooltip lua "getTooltipForSlot(9, 18)"
 +@0 		action "doActionForSlot(9, 18)"
++@0 		actionAlt "doActionAltForSlot(9, 18)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6949,6 +7431,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 19)"
 +@0 		tooltip lua "getTooltipForSlot(9, 19)"
 +@0 		action "doActionForSlot(9, 19)"
++@0 		actionAlt "doActionAltForSlot(9, 19)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6962,6 +7445,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 19)"
 +@0 		tooltip lua "getTooltipForSlot(9, 19)"
 +@0 		action "doActionForSlot(9, 19)"
++@0 		actionAlt "doActionAltForSlot(9, 19)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6974,6 +7458,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 20)"
 +@0 		tooltip lua "getTooltipForSlot(9, 20)"
 +@0 		action "doActionForSlot(9, 20)"
++@0 		actionAlt "doActionAltForSlot(9, 20)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -6987,6 +7472,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 20)"
 +@0 		tooltip lua "getTooltipForSlot(9, 20)"
 +@0 		action "doActionForSlot(9, 20)"
++@0 		actionAlt "doActionAltForSlot(9, 20)"
 +@0 	}
 +@0 
 +@0 	button
@@ -6999,6 +7485,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 21)"
 +@0 		tooltip lua "getTooltipForSlot(9, 21)"
 +@0 		action "doActionForSlot(9, 21)"
++@0 		actionAlt "doActionAltForSlot(9, 21)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -7012,6 +7499,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 21)"
 +@0 		tooltip lua "getTooltipForSlot(9, 21)"
 +@0 		action "doActionForSlot(9, 21)"
++@0 		actionAlt "doActionAltForSlot(9, 21)"
 +@0 	}
 +@0 
 +@0 	button
@@ -7024,6 +7512,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 22)"
 +@0 		tooltip lua "getTooltipForSlot(9, 22)"
 +@0 		action "doActionForSlot(9, 22)"
++@0 		actionAlt "doActionAltForSlot(9, 22)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -7037,6 +7526,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 22)"
 +@0 		tooltip lua "getTooltipForSlot(9, 22)"
 +@0 		action "doActionForSlot(9, 22)"
++@0 		actionAlt "doActionAltForSlot(9, 22)"
 +@0 	}
 +@0 
 +@0 	button
@@ -7049,6 +7539,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 23)"
 +@0 		tooltip lua "getTooltipForSlot(9, 23)"
 +@0 		action "doActionForSlot(9, 23)"
++@0 		actionAlt "doActionAltForSlot(9, 23)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -7062,6 +7553,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 23)"
 +@0 		tooltip lua "getTooltipForSlot(9, 23)"
 +@0 		action "doActionForSlot(9, 23)"
++@0 		actionAlt "doActionAltForSlot(9, 23)"
 +@0 	}
 +@0 
 +@0 	button
@@ -7074,6 +7566,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 24)"
 +@0 		tooltip lua "getTooltipForSlot(9, 24)"
 +@0 		action "doActionForSlot(9, 24)"
++@0 		actionAlt "doActionAltForSlot(9, 24)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -7087,6 +7580,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 24)"
 +@0 		tooltip lua "getTooltipForSlot(9, 24)"
 +@0 		action "doActionForSlot(9, 24)"
++@0 		actionAlt "doActionAltForSlot(9, 24)"
 +@0 	}
 +@0 
 +@0 	button
@@ -7099,6 +7593,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 25)"
 +@0 		tooltip lua "getTooltipForSlot(9, 25)"
 +@0 		action "doActionForSlot(9, 25)"
++@0 		actionAlt "doActionAltForSlot(9, 25)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -7112,6 +7607,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 25)"
 +@0 		tooltip lua "getTooltipForSlot(9, 25)"
 +@0 		action "doActionForSlot(9, 25)"
++@0 		actionAlt "doActionAltForSlot(9, 25)"
 +@0 	}
 +@0 
 +@0 	button
@@ -7124,6 +7620,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 26)"
 +@0 		tooltip lua "getTooltipForSlot(9, 26)"
 +@0 		action "doActionForSlot(9, 26)"
++@0 		actionAlt "doActionAltForSlot(9, 26)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -7137,6 +7634,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 26)"
 +@0 		tooltip lua "getTooltipForSlot(9, 26)"
 +@0 		action "doActionForSlot(9, 26)"
++@0 		actionAlt "doActionAltForSlot(9, 26)"
 +@0 	}
 +@0 
 +@0 	button
@@ -7149,6 +7647,7 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		frame lua "getFrameForSlot(9, 27)"
 +@0 		tooltip lua "getTooltipForSlot(9, 27)"
 +@0 		action "doActionForSlot(9, 27)"
++@0 		actionAlt "doActionAltForSlot(9, 27)"
 +@0 	}
 +@0 	button
 +@0 	{
@@ -7162,9 +7661,12 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 		count lua "getCountForSlot(9, 27)"
 +@0 		tooltip lua "getTooltipForSlot(9, 27)"
 +@0 		action "doActionForSlot(9, 27)"
++@0 		actionAlt "doActionAltForSlot(9, 27)"
 +@0 	}
 +@0 }
 CHARACTER
+-@198 				text		lua "Infinity_FetchString(statusEffects[rowNumber].strRef)"
++@199 				text		lua "replaceSpellUUIDs(Infinity_FetchString(statusEffects[rowNumber].strRef))"
 -@298 				text		lua " otherlist[rowNumber][2]"				
 +@299 
 +@299 				-- BUBB EDIT SPELL START
@@ -7194,6 +7696,9 @@ CHARGEN_CHOOSE_SPELLS
 +@61 
 +@61 				-- BUBB EDIT SPELL END
 +@61 
+CHARGEN_HIGH_LEVEL_ABILITIES
+-@57 				text lua "Infinity_FetchString(chargen.HLAs[rowNumber].name)"
++@58 				text lua "replaceSpellUUIDs(Infinity_FetchString(chargen.HLAs[rowNumber].name))"
 CHARGEN_MEMORIZE_MAGE
 -@48 				text lua "Infinity_FetchString(mageSpells[chargen.currentSpellLevelChoice][chargen.choose_spell[rowNumber].key].name)"
 +@49 
@@ -7224,6 +7729,9 @@ MAGE
 +@175 
 +@175 				-- BUBB EDIT SPELL END
 +@175 
+POPUP_DETAILS
+-@20 		text lua "Infinity_FetchString(PopupDetails.name)"
++@21 		text lua "replaceSpellUUIDs(Infinity_FetchString(PopupDetails.name))"
 PRIEST
 -@146 				text lua "Infinity_FetchString( characters[id].priestSpells[currentSpellLevel][rowNumber].name)"
 +@147 

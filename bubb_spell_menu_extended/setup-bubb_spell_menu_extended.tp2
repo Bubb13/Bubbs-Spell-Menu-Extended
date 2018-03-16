@@ -66,7 +66,7 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 	OUTER_SET spell_count = 0
 	APPEND ~BGEE.LUA~ ~spellInfo =~
 	APPEND ~BGEE.LUA~ ~{~
-
+	
 	COPY_EXISTING_REGEXP ~.*\.SPL~ ~override~
 
 		LPF TO_HEX_NUMBER INT_VAR value = spell_count minDigits = 3 RET hex_uuid = hexNumber END
@@ -85,7 +85,19 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 
 				READ_SHORT 0x001c spell_type
 				READ_LONG 0x0034 spell_level
-				READ_ASCII 0x003a spell_icon
+				
+				//Get Spell Icon
+				
+				READ_SHORT 0x0068 extended_header_count
+				PATCH_IF extended_header_count > 0 BEGIN
+					READ_LONG 0x0064 extended_header_offset
+					SET memorized_icon_offset = extended_header_offset + 0x0004
+					READ_ASCII %memorized_icon_offset% spell_icon
+				END ELSE BEGIN
+					READ_ASCII 0x003a spell_icon
+				END
+				
+				//Get Spell Icon
 
 				INNER_ACTION BEGIN
 
@@ -116,7 +128,19 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 
 				READ_SHORT 0x001c spell_type
 				READ_LONG 0x0034 spell_level
-				READ_ASCII 0x003a spell_icon
+				
+				//Get Spell Icon
+				
+				READ_SHORT 0x0068 extended_header_count
+				PATCH_IF extended_header_count > 0 BEGIN
+					READ_LONG 0x0064 extended_header_offset
+					SET memorized_icon_offset = extended_header_offset + 0x0004
+					READ_ASCII %memorized_icon_offset% spell_icon
+				END ELSE BEGIN
+					READ_ASCII 0x003a spell_icon
+				END
+				
+				//Get Spell Icon
 
 				INNER_ACTION BEGIN
 

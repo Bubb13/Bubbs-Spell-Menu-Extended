@@ -9,6 +9,7 @@ IGNORED+
 +@0 worldMessageBoxTextOverride = ""
 +@0 previousWorldMessageBoxText = ""
 +@0 maximumSize = 0
++@0 previousWorldNPCDialogText = nil
 +@0 --BUBB EDIT MESSAGE BOX END
 +@0 
 +@0 --BUBB EDIT SPELL START
@@ -945,6 +946,19 @@ worldMessageBoxOverride+
 +@0 
 +@0 	updateMessageBox()
 +@0 	return worldMessageBoxTextOverride
++@0 end
+worldNPCDialogTextOverride+
++@0 function worldNPCDialogTextOverride()
++@0 	if worldNPCDialogText ~= previousWorldNPCDialogText then
++@0 		if worldNPCDialogText ~= "^0xffffffff|^-" then
++@0 			previousWorldNPCDialogText = worldNPCDialogText
++@0 			return worldNPCDialogText
++@0 		else
++@0 			return previousWorldNPCDialogText
++@0 		end
++@0 	else
++@0 		return previousWorldNPCDialogText
++@0 	end
 +@0 end
 :menus
 BUBB_SPELL_MENU_SLOTS+
@@ -7665,8 +7679,6 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 	}
 +@0 }
 CHARACTER
--@198 				text		lua "Infinity_FetchString(statusEffects[rowNumber].strRef)"
-+@199 				text		lua "replaceSpellUUIDs(Infinity_FetchString(statusEffects[rowNumber].strRef))"
 -@298 				text		lua " otherlist[rowNumber][2]"				
 +@299 
 +@299 				-- BUBB EDIT SPELL START
@@ -7974,6 +7986,8 @@ WORLD_ACTIONBAR
 +@144 		-- BUBB EDIT SPELL END
 +@144 				
 WORLD_DIALOG
+-@62 		text lua "worldNPCDialogText"
++@63 		text lua "worldNPCDialogTextOverride()"
 -@71 		text lua "worldMessageBoxText"
 +@72 		
 +@72 		--BUBB EDIT MESSAGE BOX START

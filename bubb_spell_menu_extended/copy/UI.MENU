@@ -381,6 +381,21 @@ function worldMessageBoxOverride()
 	return worldMessageBoxTextOverride
 end
 
+previousWorldNPCDialogText = nil
+
+function worldNPCDialogTextOverride()
+	if worldNPCDialogText ~= previousWorldNPCDialogText then
+		if worldNPCDialogText ~= "^0xffffffff|^-" then
+			previousWorldNPCDialogText = worldNPCDialogText
+			return worldNPCDialogText
+		else
+			return previousWorldNPCDialogText
+		end
+	else
+		return previousWorldNPCDialogText
+	end
+end
+
 --BUBB EDIT MESSAGE BOX END
 
 --BUBB EDIT SPELL START
@@ -8271,7 +8286,7 @@ menu
 			label
 			{
 				area		0 0 -1 -1
-				text		lua "replaceSpellUUIDs(Infinity_FetchString(statusEffects[rowNumber].strRef))"
+				text		lua "Infinity_FetchString(statusEffects[rowNumber].strRef)"
 				text style  'normal'
 				text align	left center
 			}
@@ -19836,7 +19851,7 @@ menu
 	{
 		name "worldNPCDialog"
 		area 84 22 749 38
-		text lua "worldNPCDialogText"
+		text lua "worldNPCDialogTextOverride()"
 		text style "normal"
 		scrollbar	'GUISCRC'
 	}

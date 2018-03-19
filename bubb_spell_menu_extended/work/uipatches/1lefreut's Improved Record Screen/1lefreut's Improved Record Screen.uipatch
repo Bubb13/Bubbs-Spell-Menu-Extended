@@ -1,13 +1,8 @@
-:disable 0base menus CHARACTER @198 
-:disable 0base menus CHARACTER @199
 :disable 0base menus CHARACTER @298
 :disable 0base menus CHARACTER @299
 :lua
 :functions
 :menus
-CHARACTER
--@107 				text		lua "Infinity_FetchString(recordInfos[rowNumber][2].strRef)"
-+@108 				text		lua "replaceSpellUUIDs(Infinity_FetchString(recordInfos[rowNumber][2].strRef))"
 CHARACTER_INFORMATION
 -@70 		text lua "characters[currentID].Stats.favspell.current"
 +@71 		text lua "replaceSpellUUIDs(characters[currentID].Stats.favspell.current)"

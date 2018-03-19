@@ -73,7 +73,7 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 
 		READ_LONG 0x0008 unidentified_name_strref
 
-		PATCH_IF (unidentified_name_strref != (0 - 1)) BEGIN
+		PATCH_IF unidentified_name_strref != 0 AND unidentified_name_strref != (0 - 1) BEGIN
 
 			GET_STRREF unidentified_name_strref unidentified_name
 
@@ -82,6 +82,8 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 			PATCH_IF (already_processed == 0) BEGIN
 
 				TEXT_SPRINT unidentified_name_altered ~SPELL_UUID:%hex_uuid%~
+				SET inserted_strref = RESOLVE_STR_REF (~%unidentified_name_altered%~)
+				WRITE_LONG 0x0008 inserted_strref
 
 				READ_SHORT 0x001c spell_type
 				READ_LONG 0x0034 spell_level
@@ -100,8 +102,6 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 				//Get Spell Icon
 
 				INNER_ACTION BEGIN
-
-					STRING_SET_EVALUATE unidentified_name_strref ~%unidentified_name_altered%~
 
 					LAF STRING_REPLACE STR_VAR string = EVAL ~%unidentified_name%~ to_replace = ~\~ with = ~\\~ RET unidentified_name_escaped = replaced_string END
 					LAF STRING_REPLACE STR_VAR string = EVAL ~%unidentified_name_escaped%~ to_replace = ~'~ with = ~\'~ RET unidentified_name_escaped = replaced_string END
@@ -123,7 +123,6 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 			END ELSE BEGIN
 
 				TEXT_SPRINT unidentified_name_altered ~SPELL_UUID:%hex_uuid%~
-
 				SET inserted_strref = RESOLVE_STR_REF (~%unidentified_name_altered%~)
 				WRITE_LONG 0x0008 inserted_strref
 

@@ -220,10 +220,6 @@ end
 
 --BUBB EDIT MESSAGE BOX START
 
-worldMessageBoxTextOverride = ""
-
-function charAt(string, index) return string.sub(string, index, index) end
-
 function findFirst(string, toFind)
 
 	indexLimit = #string - #toFind + 1
@@ -254,146 +250,15 @@ function findAllPairs(string, toFind)
 	return foundIndexPairs
 end
 
-function removeFirstLine(string)
-
-	firstIndex = findFirst(string, "\n")
-
-	if(firstIndex == nil) then
-		return ""
-	else
-		return string.sub(string, firstIndex + 1, #string)
-	end
-end
-
-function processLineAdded(workingWith, line)
-
-	line = replaceSpellUUIDs(line)
-	toSet = nil
-
-	if(worldMessageBoxTextOverride == "") then
-		toSet = worldMessageBoxTextOverride..line
-	else
-		toSet = worldMessageBoxTextOverride..'\n'..line
-	end
-
-	size = #toSet
-	while(size > #workingWith) do
-
-		toSet = removeFirstLine(toSet)
-		size = #toSet
-	end
-
-	worldMessageBoxTextOverride = toSet
-end
-
-function getUnprocessedPoint(workingWith)
-
-	previousWasNewline = false
-	toReturn = 1
-	
-	i = 1
-	loopLimit = #workingWith
-	while i <= loopLimit do
-		--For every character in the messageBox
-		character = charAt(workingWith, i)
-
-		if(previousWasNewline or i == 1) then
-			--I am at the beginning of a line
-			substring = string.sub(workingWith, i, i + 11)
-
-			if(substring == "^0xffffffff|") then
-				toReturn = i + 15
-			end
-		end
-
-		if(character == '\n') then
-			--Hit newline
-			previousWasNewline = true
-		else
-			--Character was nothing special, append to constructedLine
-			previousWasNewline = false
-		end
-		--Standard iteration of loop
-		i = i + 1
-	end
-
-	return toReturn
-end
-
+worldMessageBoxTextOverride = ""
 previousWorldMessageBoxText = ""
 
-function seperateLines(workingWith)
-
-	startIndex = getUnprocessedPoint(workingWith)
-	previousWasNewline = false
-	constructedLine = ""
-	
-	i = startIndex
-	loopLimit = #workingWith
-	while i <= loopLimit do
-		--For every character in the messageBox
-		character = charAt(workingWith, i)
-
-		if(character == '\n') then
-			--Hit newline
-			processLineAdded(workingWith, constructedLine)
-			constructedLine = ""
-			previousWasNewline = true
-		elseif(i == #workingWith) then
-			--Hit end of message box
-			constructedLine = constructedLine..character
-			processLineAdded(workingWith, constructedLine)
-			constructedLine = ""
-		else
-			--Character was nothing special, append to constructedLine
-			constructedLine = constructedLine..character
-			previousWasNewline = false
-		end
-		--Standard iteration of loop
-		i = i + 1
-	end
-	--Safe from concurrency crashes?
-	Infinity_DisplayString("|")
-	previousWorldMessageBoxText = worldMessageBoxText
-end
-
-maximumSize = 0
-
-function updateMessageBox()
-
-	workingWith = worldMessageBoxText
-
-	if(workingWith ~= previousWorldMessageBoxText) then
-
-		size = #workingWith
-		if(size > maximumSize) then
-
-			maximumSize = size
-		end
-
-		seperateLines(workingWith)
-	end
-end
-
 function worldMessageBoxOverride()
-
-	updateMessageBox()
-	return worldMessageBoxTextOverride
-end
-
-previousWorldNPCDialogText = nil
-
-function worldNPCDialogTextOverride()
-	if worldNPCDialogText ~= previousWorldNPCDialogText then
-		if worldNPCDialogText ~= "^0xffffffff|^-" then
-			previousWorldNPCDialogText = worldNPCDialogText
-			return worldNPCDialogText
-		else
-			return previousWorldNPCDialogText
-		end
-	else
-		return previousWorldNPCDialogText
+	if worldMessageBoxText ~= previousWorldMessageBoxText then
+		worldMessageBoxTextOverride = replaceSpellUUIDs(worldMessageBoxText)
+		previousWorldMessageBoxText = worldMessageBoxText
 	end
+	return worldMessageBoxTextOverride
 end
 
 --BUBB EDIT MESSAGE BOX END
@@ -19851,7 +19716,7 @@ menu
 	{
 		name "worldNPCDialog"
 		area 84 22 749 38
-		text lua "worldNPCDialogTextOverride()"
+		text lua "worldNPCDialogText"
 		text style "normal"
 		scrollbar	'GUISCRC'
 	}

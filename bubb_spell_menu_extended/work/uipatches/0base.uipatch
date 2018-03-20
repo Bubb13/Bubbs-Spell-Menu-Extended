@@ -7884,3 +7884,2443 @@ WORLD_MESSAGES
 +@46 
 +@46 		--BUBB EDIT MESSAGE BOX END
 +@46 
+:function_references
+0
+:menu_references
+13
+CHARACTER
+8936
+menu
+{
+	name	'CHARACTER'
+	modal lua "not CurrentlyInGame()"
+	align center center
+	ignoreEsc
+	onopen
+	"
+		currentTab = 1
+		currentTabIndex = 1
+		currentItem = 0
+		showStats = 0
+		showJustText = 0
+		showClassInfo = 0
+		showAbilityBonuses = 0
+		showMemorized = 0
+		showBothLists = 0
+		
+		if(CurrentlyInGame()) then
+			pushSidebars()
+		end
+		updateAttrTable()
+		
+		if(currentPanelID == const.EXPORT_ID) then 
+			Infinity_PushMenu('CHARACTER_EXPORT')
+		else 
+			if(currentPanelID == const.CUSTOMIZE_ID) then 
+				Infinity_PushMenu('CHARACTER_CUSTOMIZE')
+			else
+				currentPanelID = 0
+			end
+		end
+	"
+	onclose
+	"
+		popSidebars()
+	"
+
+	label
+	{
+		area	0 0 864 709
+		mosaic	"GUIREC2"
+	}
+	
+	
+	label
+	{
+		name		"LABEL_2_268435495"
+		area		200 10 454 38
+		text		lua "characters[currentID].name"
+		text style  	'title'
+		text align	center center
+	}
+
+	label
+	{
+		area		622 450 166 18
+		progressbar lua "getPercent(characters[currentID].level.xp, characters[currentID].level.nextLvlXp)" --progress percentage, number 0-100
+		greyscale	0 --display greyscale or not, number 0-1
+		progressbar color	128 0 0 255	 --color when percentage != 100
+		progressbar full	128 0 0 255	 --color when percentage == 100
+	}
+	label
+	{
+		area		622 450 166 18
+		text		lua "getNextLevelString()"
+		text style  'normal'
+		text align	center center
+		text shadow 1
+	}
+
+
+
+	button
+	{
+		area 78 56 140 42
+		bam	'GUIOSTSM'
+		text 'INFORMATION_BUTTON'
+		text style "button"
+		pad 10 4 10 4
+		action "currentTab = 1; updateAttrTable()"
+	}
+	button
+	{
+		area 218 56 140 42
+		bam	'GUIOSTSM'
+		text 'CLASS_LABEL'
+		text style "button"
+		pad 10 4 10 4
+		action "currentTab = 2; updateAttrTable()"
+	}
+	button
+	{
+		area 358 56 140 42
+		bam	'GUIOSTSM'
+		text 'COMBAT_STATS_LABEL'
+		text style "button"
+		pad 10 4 10 4
+		action "currentTab = 9; updateAttrTable()"
+	}
+	button
+	{
+		area 498 56 140 42
+		bam	'GUIOSTSM'
+		text 'SKILLS_LABEL'
+		text style "button"
+		pad 10 4 10 4
+		action "currentTab = 3; updateAttrTable()"
+	}
+
+	button
+	{
+		area 638 56 140 42
+		bam	'GUIOSTSM'
+		text 'ABILITIES_BUTTON'
+		text style "button"
+		pad 10 4 10 4
+		action "currentTab = 8; updateAttrTable()"
+	}
+
+	button
+	{
+		area 66 130 140 42
+		bam	'GUIOSTSM'
+		text 'STATS_LABEL'
+		text style "button"
+		pad 10 4 10 4
+		action "currentTab = 6; updateAttrTable()"
+	}
+
+	button
+	{
+		area 238 130 140 42
+		bam	'GUIOSTSM'
+		text 'BIOGRAPHY_LABEL'
+		text style "button"
+		pad 10 4 10 4
+		action "currentTab = 7; updateAttrTable()"
+	}
+
+	list
+	{
+		column 
+		{ 
+			width 65
+			label
+			{
+				area		0 0 -1 36 
+				text		lua "Infinity_FetchString( attributeItems[rowNumber][1].strRef)"
+				text style  'normal'
+				text align	left center
+			}
+		}
+		column 
+		{ 
+			width 35
+			label
+			{
+				area		0 0 -1 36 
+				text		lua  "displayAttr(rowNumber)" --"listItems[rowNumber][1].current"
+				text style  'label'
+				text align right center
+				text shadow lua "isStatModified(rowNumber)"
+				
+			}
+		}
+
+		area 426 144 152 216
+		
+		rowheight	36
+		table		"attributeItems"
+		var			currentItem
+		hidehighlight
+		action
+		"
+			helpTextString = Infinity_FetchString( attributeItems[currentItem][2])
+		"		
+	}
+
+	list
+	{
+		column 
+		{ 
+			width 13
+			label
+			{
+				area		0 0 22 -1
+				bam			lua "statusEffects[rowNumber].bam"
+				sequence	lua "statusEffects[rowNumber].current"
+				text align	center center				
+			}
+		}
+		column 
+		{ 
+			width 87
+			label
+			{
+				area		0 0 -1 -1
+				text		lua "Infinity_FetchString(statusEffects[rowNumber].strRef)"
+				text style  'normal'
+				text align	left center
+			}
+		}
+
+		area 420 486 164 94
+		rowheight	dynamic
+		table		"statusEffects"
+		var		notrealValue
+		scrollbar	'GUISCRC'
+		hidehighlight	
+	}
+
+	button
+	{
+		name		"BUTTON_2_2"
+		area		618 147 180 279
+		--text		lua "characters[currentID].portrait"
+		text align	center center
+		text point	10
+		text color	B
+		bitmap		lua "characters[currentID].portrait"
+		action
+		"
+			Infinity_Log(dump(characters, 0))
+		"
+	}
+	label
+	{
+		area 610 492 194 92
+		text lua "characterDescString(characters[currentID])"
+		text style 'normal'
+		text align center center
+		
+	}
+	
+	-- class section
+		
+	text
+	{
+		enabled		"showClassInfo"
+		area		50 182 342 412
+		text		lua "getClassString()"
+		text style  'normal'
+		scrollbar	'GUISCRC'
+	}
+
+	-- ability bonus stuff
+	
+	list
+	{		
+		column 
+		{ 
+			width 100
+			label
+			{
+				area		0 0 -1 -1
+				text		lua "listItems[rowNumber][2]" 
+				text style  'normal'
+				text align	left center
+
+			}
+		}
+
+		area 50 182 342 418
+		
+		enabled		"showAbilityBonuses"
+		rowheight	45
+		table		"listItems"
+		var			currentItem
+		scrollbar	'GUISCRC'		
+		hidehighlight
+		action
+		"
+			--helpTextString = Infinity_FetchString( listItems[currentItem][1].helpStrRef)
+		"		
+	}
+
+	-- Stats screen stuff
+	list
+	{		
+		column 
+		{ 
+			width 65
+			label
+			{
+				area		0 0 -1 -1
+				text		lua "Infinity_FetchString(otherlist[rowNumber][1])" 
+				text style  'normal'
+				text align	left center
+
+			}
+		}
+		column 
+		{ 
+			width 35
+			label
+			{
+				area		0 0 -1 -1
+				text		lua " otherlist[rowNumber][2]"				
+				text style  'normal'
+				text align	center center
+			}
+		}
+
+		area 50 182 346 186
+		
+		enabled		"showStats"
+		rowheight	45
+		table		"otherlist"
+		var			currentItem
+		scrollbar	'GUISCRC'		
+		hidehighlight
+		action
+		"
+			--helpTextString = Infinity_FetchString( listItems[currentItem][1].helpStrRef)
+		"		
+	}
+
+	label
+	{
+		enabled		"showStats"
+		area		338 368 54 38
+		text		"GAME_LABEL"
+		text style  'label'
+		text align	center center
+	}
+	label
+	{
+		enabled		"showStats"
+		area		262 368 76 38
+		text		"CHAPTER_LABEL"
+		text style  'label'
+		text align	center center
+	}
+
+	list
+	{		
+		column 
+		{ 
+			width 65
+			label
+			{
+				area		0 0 -1 -1
+				text		lua "Infinity_FetchString(listItems[rowNumber][1])"  --lua " '^M' .. Infinity_FetchString(listItems[rowNumber][1]) .. '^-' .. '\n'  .. trunc(Infinity_FetchString( listItems[rowNumber][3]), 140)"
+				text style  'normal'
+				text align	left center
+
+			}
+		}
+		column 
+		{ 
+			width 20
+			label
+			{
+				area		0 0 -1 -1
+				text		lua " listItems[rowNumber][2]"				
+				text style  'normal'
+				text align	center center
+				
+			}
+		}
+		column 
+		{ 
+			width 15
+			label
+			{
+				area		0 0 -1 -1
+				text		lua " listItems[rowNumber][3]"				
+				text style  'normal'
+				text align	center center
+				
+			}
+		}
+
+		area 54 406 350 188
+		
+		enabled		"showStats"
+		rowheight	45
+		table		"listItems"
+		var			currentItem
+		scrollbar	'GUISCRC'		
+		hidehighlight
+		action
+		"
+			--helpTextString = Infinity_FetchString( listItems[currentItem][1].helpStrRef)
+		"		
+	}
+
+
+	-- Biography section 	
+
+	text
+	{
+		enabled		"showJustText"
+		area		54 186 342 408
+		text		lua "helpTextString"
+		text style  'normal'
+		text align	left top
+		scrollbar	'GUISCRC'
+	}
+
+	button
+	{
+		enabled 	"CurrentlyInGame()"
+		name		"BUTTON_2_50"
+		area		73 634 239 53
+		text		"CUSTOMIZE_BUTTON"
+		text style "button"
+		bam		GUIOSTLL
+		sequence	0
+		action 
+		"
+			characterScreen:OnCustomizeButtonClick();
+		"
+	}
+	button
+	{
+		enabled 	"CurrentlyInGame()"
+		name		"BUTTON_2_36"
+		area		558 634 239 53
+		text		"EXPORT_BUTTON"
+		text style "button"
+		bam		GUIOSTLR
+		sequence	0
+		action 
+		"
+			characterScreen:OnExportButtonClick();
+		"
+	}
+	
+	button
+	{
+		enabled 	"CurrentlyInGame()"
+		clickable	lua "characterScreen:IsReformPartyButtonClickable()"
+		name		"BUTTON_2_51"
+		area		335 637 204 44
+		text		"REFORM_PARTY_BUTTON"
+		text style "button"
+		bam		GUIOSTLM
+		sequence	3
+		action		"characterScreen:OnReformPartyButtonClick();"
+	}
+	button
+	{
+		enabled 	"CurrentlyInGame()"
+		name		"BUTTON_2_0"
+		area		430 374 140 42
+		text		"DUAL_CLASS_BUTTON"
+		text style "button"
+		pad 10 4 10 4
+		bam	'GUIOSTSM'
+		sequence	2
+		clickable	lua "characterScreen:IsDualClassButtonClickable()"
+		action 		
+		"
+			popup2Button('DUALCLASS_CONFIRMATION', 'YES_BUTTON', function() characterScreen:OnDualClassButtonClick() end, 'NO_BUTTON')
+		"
+	}
+	button
+	{
+		enabled 	"CurrentlyInGame()"
+		name		"BUTTON_2_37"
+		area		430 422 140 42
+		text		"LEVEL_UP_BUTTON"
+		text style "button"
+		pad 10 4 10 4
+		bam		'GUIOSTSM'
+		sequence	3
+		clickable	lua "characterScreen:IsLevelUpButtonClickable()"
+		action		" characterScreen:OnLevelUpButtonClick();"
+	}
+	
+	button
+	{
+		enabled 	"CurrentlyInGame()"
+		on escape
+		area		811 0 53 44
+		action
+		"
+			e:SelectEngine(worldScreen)
+		"
+	}
+
+	button
+	{
+		enabled 	"not CurrentlyInGame()"
+		area		335 637 204 44
+		text		"DONE_BUTTON"
+		text style 	"button"
+		bam		GUIOSTLM
+		sequence	3
+		action		"Infinity_PopMenu()"
+	}
+}
+CHARGEN
+3917
+menu
+{
+	name 'CHARGEN'
+	align center center
+	ignoreesc
+	label
+	{
+		area 0 0 1024 768
+		mosaic 'GUICGB'
+	}
+	label
+	{
+		area 64 16 898 44
+		text "CHARGEN_TITLE"
+		text style "title"
+	}
+	text
+	{
+		area 412 180 288 416
+		text lua "chargen.information"
+		scrollbar 'GUISCRC'
+		text style "normal"
+	}
+	label
+	{
+		area 775 171 210 330
+		bitmap lua "chargen.portrait"
+	}
+
+	button
+	{
+		area 22 226 340 30
+		bam GUICHLNG
+		sequence 0
+		clickable lua "createCharScreen:GetCurrentStep() == 0"
+		glow lua "createCharScreen:GetCurrentStep() == 0"
+		text "GENDER_BUTTON"
+		text style "button"
+		action "createCharScreen:OnMenuButtonClick()"
+	}
+	button
+	{
+		area 22 256 340 30
+		bam GUICHLNG
+		sequence 1
+		clickable lua "createCharScreen:GetCurrentStep() == 3"
+		glow lua "createCharScreen:GetCurrentStep() == 3"
+		text "RACE_BUTTON"
+		text style "button"
+		action "createCharScreen:OnMenuButtonClick()"
+	}
+	button
+	{
+		area 22 286 340 30
+		bam GUICHLNG
+		sequence 2
+		clickable lua "createCharScreen:GetCurrentStep() == 4"
+		glow lua "createCharScreen:GetCurrentStep() == 4"
+		text "CLASS_BUTTON"
+		text style "button"
+		action "createCharScreen:OnMenuButtonClick()"
+	}
+	button
+	{
+		area 22 316 340 30
+		bam GUICHLNG
+		sequence 1
+		clickable lua "createCharScreen:GetCurrentStep() == 7"
+		glow lua "createCharScreen:GetCurrentStep() == 7"
+		text "ALIGNMENT_BUTTON"
+		text style "button"
+		action "createCharScreen:OnMenuButtonClick()"
+	}
+
+	button
+	{
+		area 22 346 340 30
+		bam GUICHLNG
+		sequence 0
+		clickable lua "createCharScreen:GetCurrentStep() == 8"
+		glow lua "createCharScreen:GetCurrentStep() == 8"
+		text "ABILITIES_BUTTON"
+		text style "button"
+		action "createCharScreen:OnMenuButtonClick()"
+	}
+	button
+	{
+		area 22 376 340 30
+		bam GUICHLNG
+		sequence 1
+		clickable lua "createCharScreen:GetCurrentStep() == 9"
+		glow lua "createCharScreen:GetCurrentStep() == 9"
+		text "SKILLS_BUTTON"
+		text style "button"
+		action "createCharScreen:OnMenuButtonClick()"
+	}
+	button
+	{
+		area 22 406 340 30
+		bam GUICHLNG
+		sequence 2
+		clickable lua "createCharScreen:GetCurrentStep() == 15"
+		glow lua "createCharScreen:GetCurrentStep() == 15"
+		text "APPEARANCE_BUTTON"
+		text style "button"
+		action "createCharScreen:OnMenuButtonClick()"
+	}
+	button
+	{
+		area 22 436 340 30
+		bam GUICHLNG
+		sequence 1
+		clickable lua "createCharScreen:GetCurrentStep() == 17"
+		glow lua "createCharScreen:GetCurrentStep() == 17"
+		text "NAME_BUTTON"
+		text style "button"
+		action "createCharScreen:OnMenuButtonClick()"
+	}
+
+	button
+	{
+		area 770 552 204 44
+		text "IMPORT_BUTTON"
+		text style "button"
+		bam GUIOSTUM
+		action "createCharScreen:OnImportCharacterButtonClick()"
+	}
+	button
+	{
+		area 770 604 204 44
+		text "BIOGRAPHY_BUTTON"
+		text style "button"
+		bam GUIOSTLM
+		clickable lua "createCharScreen:GetCurrentStep() >= 17"
+		action "createCharScreen:OnBiographyButtonClick()"
+	}
+	button
+	{
+		on escape
+		area 194 718 232 44
+		text "BACK_BUTTON"
+		text style "button"
+		bam GUIOSTUL
+		clickable lua "createCharScreen:IsMainBackButtonClickable()"
+		action "createCharScreen:OnMainBackButtonClick()"
+	}
+	button
+	{
+		on escape
+		area 194 718 232 44
+		text "CANCEL_BUTTON"
+		text style "button"
+		bam GUIOSTUL
+		enabled "not createCharScreen:IsMainBackButtonClickable()"
+		action "createCharScreen:OnMainCancelButtonClick()"
+	}
+	button
+	{
+		area 438 718 206 44
+		text lua "chargenAcceptOrExport()"
+		text style "button"
+		bam GUIOSTUM
+		clickable lua "createCharScreen:IsChargenComplete()"
+		action "createCharScreen:AcceptCharacter(-1)"
+	}
+	button
+	{
+		area 650 718 238 44
+		text "CREATE_PARTY_BUTTON"
+		text style "button"
+		bam GUIOSTUR
+		clickable lua "createCharScreen:IsAdvancedButtonClickable() == true"
+		action "createCharScreen:OnAdvancedButtonClick()"
+	}
+}
+CHARGEN_CHOOSE_SPELLS
+2822
+menu
+{
+	name 'CHARGEN_CHOOSE_SPELLS'
+	align center center
+	ignoreesc
+	onOpen "
+		table.sort(chargen.choose_spell, sortBySpellName)
+		currentChargenChooseMageSpell = nil
+		"
+	label
+	{
+		area 0 0 1024 768
+		mosaic 'GUICGB'
+		enabled "CurrentlyInGame()"
+	}
+	label
+	{
+		area 0 156 1024 612
+		mosaic GUISMS
+	}
+	label
+	{
+		area 32 170 270 52
+		text lua "t(chargen.title) .. ': ' .. t('LEVEL_LABEL') .. ' ' .. chargen.currentSpellLevelChoice"
+		text style "title"
+	}
+	list
+	{
+		column
+		{
+			width 16
+
+			label
+			{
+				bam GUIPFC
+				area 4 19 16 16
+				align center center
+				enabled "chargen.choose_spell[rowNumber].enabled or chargen.choose_spell[rowNumber].known"
+			}
+			label
+			{
+				bam GUIBTBUT
+				area 20 0 52 52 
+				align center center
+				frame lua "specialistFrame(rowNumber)"
+			}
+			label
+			{
+				area 20 0 52 52
+				greyscale lua "chargen.choose_spell[rowNumber].enabled == false"
+				bam lua "spellBook[chargen.currentSpellLevelChoice][chargen.choose_spell[rowNumber].key].groundicon"
+				align center center
+			}
+		}
+		column
+		{
+			width 84
+			label
+			{
+				area 4 0 -1 -1
+				text lua "Infinity_FetchString(spellBook[chargen.currentSpellLevelChoice][chargen.choose_spell[rowNumber].key].name)"
+				text style "normal"
+
+				glow lua "chargen.choose_spell[rowNumber].enabled"
+				align left center
+				
+			}
+		}
+
+		scrollbar	'GUISCRC'
+		rowheight 52
+		area 32 244 492 376
+		table "chargen.choose_spell"
+		var currentChargenChooseMageSpell
+		action "
+			if cellNumber == 1 and not chargen.choose_spell[currentChargenChooseMageSpell].known then
+				createCharScreen:OnLearnMageSpellButtonClick(currentChargenChooseMageSpell)
+			end
+		"
+	}
+	text
+	{
+		area 580 196 406 334
+		text lua "chooseSpellOrGeneralHelp()"
+		text style "normal"
+		scrollbar	'GUISCRC'
+	}
+
+	label
+	{
+		area 316 174 168 48
+		text "SPELLS_REMAINING_NORMAL"
+		text style "normal"
+		text align right center
+	}
+	label
+	{
+		area 484 174 36 48
+		text lua "chargen.extraSpells"
+		text style "normal"
+		text align center center
+	}
+
+	button
+	{
+		area 566 636 206 44
+		bam GUIOSTUM
+		text lua "spellLearnOrUnlearnText()"
+		text style "button"
+		clickable lua "spellLearnOrUnlearnClickable()"
+		action "createCharScreen:OnLearnMageSpellButtonClick(currentChargenChooseMageSpell)"
+	}
+
+	button
+	{
+		on escape
+		area 192 718 232 44
+		bam GUIOSTUL
+		text "BACK_BUTTON"
+		text style "button"
+		clickable lua "not chargen.levelingUp"
+		action "Infinity_PopMenu(); createCharScreen:OnCancelButtonClick()"
+	}
+	button
+	{
+		on return
+		area 438 718 206 44
+		bam GUIOSTUM
+		text "DONE_BUTTON"
+		text style "button"
+		clickable lua "createCharScreen:IsDoneButtonClickable()"
+		action "createCharScreen:OnDoneButtonClick()"
+	}
+
+}
+CHARGEN_HIGH_LEVEL_ABILITIES
+2060
+menu
+{
+	name 'CHARGEN_HIGH_LEVEL_ABILITIES'
+	align center center
+	ignoreesc
+	modal
+	onOpen 
+	"
+		currentHLASelection = nil
+	"
+	label
+	{
+		area 0 0 864 710
+		mosaic GUIHSBS
+	}
+	label
+	{
+		area 74 10 716 52
+		text "ABILITIES_TITLE"
+		text style "title"
+	}
+	label
+	{
+		area 36 114 448 52
+		text lua "chargen.numHLAs"
+		text style "title"
+	}
+	text
+	{
+		area 522 118 302 494
+		text lua "Infinity_FetchString(chargenHLADescription())"
+		text style "normal"
+		scrollbar	'GUISCRC'
+	}
+	
+	list
+	{
+		column
+		{
+			width 15
+
+			label
+			{
+				bam GUIBTBUT
+				area 0 0 52 52 
+				align center center
+				icon lua "chargen.HLAs[rowNumber].icon"
+				glow lua "chargen.HLAs[rowNumber].count > 0"
+				count lua "chargen.HLAs[rowNumber].count"
+			}
+		}
+		column
+		{
+			width 61
+			label
+			{
+				area 4 0 -1 -1
+				text lua "Infinity_FetchString(chargen.HLAs[rowNumber].name)"
+				text style "normal"
+				align left center
+				
+			}
+		}
+		column
+		{
+			width 12
+			label
+			{
+				area 0 4 45 42
+				bam GUIOSW
+				frame lua "chargenHLAPlusMinusFrame(3, rowNumber)"
+				sequence 0
+			}
+		}
+		column
+		{
+			width 12
+			label
+			{
+				area 0 4 45 42
+				bam GUIOSW
+				frame lua "chargenHLAPlusMinusFrame(4, rowNumber)"
+				sequence 1
+
+			}
+		}
+
+
+		scrollbar	'GUISCRC'
+		rowheight 52
+		area 58 194 404 404
+		table "chargen.HLAs"
+		var currentHLASelection
+		action 
+		"
+			print(chargen.HLAs[currentHLASelection].count)
+			if cellNumber == 3 and chargenHLAPlusMinusFrame(3, currentHLASelection) ~= 3 then
+				createCharScreen:OnHLAButtonClick(currentHLASelection, 1)
+			elseif cellNumber == 4 and chargenHLAPlusMinusFrame(4, currentHLASelection) ~= 3 then
+				createCharScreen:OnHLAButtonClick(currentHLASelection, -1)
+			end
+			cellNumber = nil
+		"
+	}
+	button
+	{
+		area 210 652 238 44
+		bam GUIOSTUL
+		text "DONE_BUTTON"
+		text style "button"
+		clickable lua "createCharScreen:IsDoneButtonClickable()"
+		action 
+		"
+			createCharScreen:OnDoneButtonClick()
+		"
+	}
+}
+CHARGEN_MEMORIZE_MAGE
+2583
+menu
+{
+	name 'CHARGEN_MEMORIZE_MAGE'
+	align center center
+	ignoreesc
+	onOpen "
+		table.sort(chargen.choose_spell, sortByMageSpellName)
+		currentChargenMemorizeMageSpell = nil
+		"
+	label
+	{
+		area 0 0 1024 768
+		mosaic 'GUICGB'
+		enabled "CurrentlyInGame()"
+	}
+	label
+	{
+		area 0 156 1024 612
+		mosaic GUISMS
+	}
+	label
+	{
+		area 32 170 270 52
+		text lua "chargen.title"
+		text style "title"
+	}
+	list
+	{
+		column
+		{
+			width 12
+
+			label
+			{
+				bam GUIBTBUT
+				area 0 0 52 52 
+				align center center
+				icon lua "mageSpells[chargen.currentSpellLevelChoice][chargen.choose_spell[rowNumber].key].groundicon"
+				frame lua "specialistFrame(rowNumber)"
+				count lua "chargen.choose_spell[rowNumber].count"
+			}
+		}
+		column
+		{
+			width 68
+			label
+			{
+				area 4 0 -1 -1
+				text lua "Infinity_FetchString(mageSpells[chargen.currentSpellLevelChoice][chargen.choose_spell[rowNumber].key].name)"
+				text style "normal"
+
+				glow lua "chargen.choose_spell[rowNumber].enabled"
+				align left center
+				
+			}
+		}
+		column
+		{
+			width 10
+			label
+			{
+				area 0 4 45 42
+				bam GUIOSW
+				frame lua "currentCellCheck(3)"
+				sequence 0
+			}
+		}
+		column
+		{
+			width 10
+			label
+			{
+				area 0 4 45 42
+				bam GUIOSW
+				frame lua "currentCellCheck(4)"
+				sequence 1
+
+			}
+		}
+
+
+		scrollbar	'GUISCRC'
+		rowheight 52
+		area 34 248 492 370
+		table "chargen.choose_spell"
+		var currentChargenMemorizeMageSpell
+		action "
+			if cellNumber == 3 then
+				createCharScreen:OnMemorizeMageSpellButtonClick(currentChargenMemorizeMageSpell, 1)
+			elseif cellNumber == 4 then
+				createCharScreen:OnMemorizeMageSpellButtonClick(currentChargenMemorizeMageSpell, -1)
+			end
+			cellNumber = nil
+		"
+	}
+	text
+	{
+		area 580 196 404 334
+		text lua "mageMemorizeSpellOrGeneralHelp()"
+		text style "normal"
+		scrollbar	'GUISCRC'
+	}
+
+	label
+	{
+		area 316 174 168 48
+		text "SPELLS_REMAINING_NORMAL"
+		text style "normal"
+		text align right center
+	}
+	label
+	{
+		area 484 174 36 48
+		text lua "chargen.extraSpells"
+		text style "normal"
+		text align center center
+	}
+
+	button
+	{
+		on escape
+		area 192 718 232 44
+		bam GUIOSTUL
+		text "BACK_BUTTON"
+		text style "button"
+		action "Infinity_PopMenu(); createCharScreen:OnCancelButtonClick()"
+	}
+	button
+	{
+		on return
+		area 438 718 206 44
+		bam GUIOSTUM
+		text lua "nextOrDone()"
+		text style "button"
+		clickable lua "createCharScreen:IsDoneButtonClickable()"
+		action "createCharScreen:OnDoneButtonClick()"
+	}
+
+}
+CHARGEN_MEMORIZE_PRIEST
+2479
+menu
+{
+	name 'CHARGEN_MEMORIZE_PRIEST'
+	align center center
+	ignoreesc
+	onOpen "
+		table.sort(chargen.choose_spell, sortByPriestSpellName)
+		currentChargenMemorizePriestSpell = nil
+		"
+	label
+	{
+		area 0 0 1024 768
+		mosaic 'GUICGB'
+		enabled "CurrentlyInGame()"
+	}
+	label
+	{
+		area 0 156 1024 612
+		mosaic GUISMS
+	}
+	label
+	{
+		area 32 170 270 52
+		text lua "chargen.title"
+		text style "title"
+	}
+	list
+	{
+		column
+		{
+			width 12
+
+			label
+			{
+				bam GUIBTBUT
+				area 0 0 52 52 
+				align center center
+				icon lua "priestSpells[chargen.currentSpellLevelChoice][chargen.choose_spell[rowNumber].key].groundicon"
+				frame 0
+				count lua "chargen.choose_spell[rowNumber].count"
+			}
+		}
+		column
+		{
+			width 68
+			label
+			{
+				area 4 0 -1 -1
+				text lua "Infinity_FetchString(priestSpells[chargen.currentSpellLevelChoice][chargen.choose_spell[rowNumber].key].name)"
+				text style "normal"
+
+				glow lua "chargen.choose_spell[rowNumber].enabled"
+				align left center
+				
+			}
+		}
+		column
+		{
+			width 10
+			label
+			{
+				area 0 4 45 42
+				bam GUIOSW
+				sequence 0
+			}
+		}
+		column
+		{
+			width 10
+			label
+			{
+				area 0 4 45 42
+				bam GUIOSW
+				sequence 1
+
+			}
+		}
+
+
+		scrollbar	'GUISCRC'
+		rowheight 52
+		area 34 246 492 374
+		table "chargen.choose_spell"
+		var currentChargenMemorizePriestSpell
+		action "
+			if cellNumber == 3 then
+				createCharScreen:OnMemorizePriestSpellButtonClick(currentChargenMemorizePriestSpell, 1)
+			elseif cellNumber == 4 then
+				createCharScreen:OnMemorizePriestSpellButtonClick(currentChargenMemorizePriestSpell, -1)
+			end
+		"
+	}
+	text
+	{
+		area 572 190 420 346
+		text lua "priestMemorizeSpellOrGeneralHelp()"
+		text style "normal"
+		scrollbar	'GUISCRC'
+	}
+
+	label
+	{
+		area 316 174 168 48
+		text "SPELLS_REMAINING_NORMAL"
+		text style "normal"
+		text align right center
+	}
+	label
+	{
+		area 484 174 36 48
+		text lua "chargen.extraSpells"
+		text style "normal"
+		text align center center
+	}
+
+	button
+	{
+		on escape
+		area 192 718 232 44
+		bam GUIOSTUL
+		text "BACK_BUTTON"
+		text style "button"
+		action "Infinity_PopMenu(); createCharScreen:OnCancelButtonClick()"
+	}
+	button
+	{
+		on return
+		area 438 718 206 44
+		bam GUIOSTUM
+		text lua "nextOrDone()"
+		text style "button"
+		clickable lua "createCharScreen:IsDoneButtonClickable()"
+		action "createCharScreen:OnDoneButtonClick()"
+	}
+
+}
+MAGE
+8575
+menu
+{
+	name 'MAGE'
+	align center center
+	greyscale lua "mageBookEnabled == false"
+	modal lua "bookMode == 1"
+
+	onopen "
+		showMageMemorizationFlash = false
+		mgpage = nil
+		setMageBookLevel(1)
+		if showContingency then
+			Infinity_SetArea('bookListMage', nil, 412, nil, 156)
+			Infinity_SetArea('bookDescription', nil, 412, nil, 156)
+		else
+			Infinity_SetArea('bookListMage', nil, 186, nil, 384)
+			Infinity_SetArea('bookDescription', nil, 186, nil, 384)
+		end
+		if bookMode == 1 then
+			contingencyDescription = mageBookStrings[contingencyResRef].tip
+		end
+		currentContingencyCondition = 0
+		currentContingencyTarget = 0
+		currentAnimationID = 1
+		updateCounterMemorizationSparkles = 1
+		"
+	onclose "
+	"
+
+	button
+	{
+		enabled 	"CurrentlyInGame()"
+		on escape
+		action
+		"
+			--Return to world screen on escape 
+			e:SelectEngine(worldScreen)
+		"
+	}
+
+	template
+	{
+		label
+		{
+			enabled "showMemorizationSparkle(instanceId)"
+			ignoreEvents
+			area 0 0 45 42
+			bam "FLASHBR"
+			usealpha lua "true"
+			frame lua "memorizationFlashes[instanceId][2]"
+			align center center
+		}
+		name "TEMPLATE_mageMemorizationSparkle"
+	}
+
+
+
+	label
+	{
+		area 0 0 864 710
+		mosaic "GUIMGB"
+	}
+	label
+	{
+		area		82 10 700 44
+		text lua	"mageBookTitle()"
+		text style	"title"
+	}
+	label
+	{
+		area 		210 59 446 30
+		text lua	"mageBookAction()"
+		text style	"label"
+	}
+	button
+	{
+		area		168 110 54 54
+		bam		GUIPRTC
+		highlightgroup	mgpage
+		sequence	0
+		enabled		"maxMagePage > 0"
+		action		"setMageBookLevel(1)"
+	}
+	button
+	{
+		area		227 110 54 54
+		bam		GUIPRTC
+		highlightgroup	mgpage
+		sequence	1
+		enabled		"maxMagePage > 1"
+		action		"setMageBookLevel(2)"
+	}
+	button
+	{
+		area		286 110 54 54
+		bam		GUIPRTC
+		highlightgroup	mgpage
+		sequence	2
+		enabled		"maxMagePage > 2"
+		action		"setMageBookLevel(3)"
+	}
+	button
+	{
+		area		345 110 54 54
+		bam		GUIPRTC
+		highlightgroup	mgpage
+		sequence	3
+		enabled		"maxMagePage > 3"
+		action		"setMageBookLevel(4)"
+	}
+	button
+	{
+		area		404 110 54 54
+		bam		GUIPRTC
+		highlightgroup	mgpage
+		sequence	4
+		enabled		"maxMagePage > 4"
+		action		"setMageBookLevel(5)"
+	}
+	button
+	{
+		area		464 110 54 54
+		bam		GUIPRTC
+		highlightgroup	mgpage
+		sequence	5
+		enabled		"maxMagePage > 5"
+		action		"setMageBookLevel(6)"
+	}
+	button
+	{
+		area		523 110 54 54
+		bam		GUIPRTC
+		highlightgroup	mgpage
+		sequence	6
+		enabled		"maxMagePage > 6"
+		action		"setMageBookLevel(7)"
+	}
+	button
+	{
+		area		583 110 54 54
+		bam		GUIPRTC
+		highlightgroup	mgpage
+		sequence	7
+		enabled		"maxMagePage > 7"
+		action		"setMageBookLevel(8)"
+	}
+	button
+	{
+		area		644 110 54 54
+		bam		GUIPRTC
+		highlightgroup	mgpage
+		sequence	8
+		enabled		"maxMagePage > 8"
+		action		"setMageBookLevel(9)"
+	}
+
+	list
+	{
+		column 
+		{ 
+			width 15
+			label
+			{
+				area	0 0 -1 -1
+				bam	lua "bookSpells[rowNumber].icon"
+				align	center center
+			}
+		}
+		column 
+		{ 
+			width 85
+			label
+			{
+				area		0 0 -1 -1
+				text lua "Infinity_FetchString( bookSpells[rowNumber].name)"
+				text style "normal_parchment"
+				text align left center
+			}
+		}
+
+		area 112 186 302 384
+		
+		name 		"bookListMage"
+		rowheight	40
+		table		"bookSpells"
+		var		currentBookSpell
+		scrollbar	'GUISCRC'
+		action		
+		"
+			contingencyDescription = 0
+			if cellNumber == 1 then
+				if bookMode == 0 then
+					if #bottomSpells < #bottomSpellsPlaceHolder then
+						createMageMemorizationSparkle(0, 0, 40, 40, 'bookListMage', -1)
+						Infinity_PlaySound('GAM_24')
+						showMageMemorizationFlash = true
+					end
+					mageScreen:MemorizeSpell( bookSpells[currentBookSpell].level, bookSpells[currentBookSpell].index )
+				elseif bookMode == 1 and #bottomSpells < #bottomSpellsPlaceHolder then
+					mageScreen:SequenceSpell( bookSpells[currentBookSpell].resref )
+				end
+			end
+			if lastCurrentBookSpell == currentBookSpell and cellNumber == 2 then
+				currentBookSpell = 0
+				contingencyDescription = mageBookStrings[contingencyResRef].tip
+			end
+			lastCurrentBookSpell = currentBookSpell
+		"
+		actionalt
+		"
+			if cellNumber == 1 and bookMode == 0 and characters[id].hasSorcererBook == false then
+				popup2Button(63745, 'REMOVE_BUTTON', function() mageScreen:EraseKnownSpell(bookSpells[currentBookSpell].resref) end)
+			end
+		"
+
+	}
+	label
+	{
+		area 146 178 268 224
+		rectangle 1
+		rectangle opacity 200 
+		enabled "showContingency"
+	}
+
+	label
+	{
+		area 152 182 262 28
+		enabled "showContingency"
+		text "CONDITION_NORMAL"
+		text style "normal"
+	}
+	list
+	{
+		column 
+		{ 
+			width 100
+			label
+			{
+				area		10 0 -1 -1
+				text lua "Infinity_FetchString( contingencyConditions[rowNumber].strref)"
+				text style "normal"
+				text align left center
+			}
+		}
+
+		area 152 210 262 186
+		
+		enabled 	"showContingency"
+		rowheight	40
+		table		"contingencyConditions"
+		var		currentContingencyCondition
+		scrollbar	'GUISCRC'
+		action
+		"
+			contingencyDescription = contingencyConditions[currentContingencyCondition].desc
+		"
+
+	}
+	label
+	{
+		area 452 176 254 226
+		rectangle 1
+		rectangle opacity 200 
+		enabled "showContingency"
+	}
+	label
+	{
+		area 458 182 240 28
+		enabled "showContingency"
+		text "TARGET_NORMAL"
+		text style "normal"
+	}
+	list
+	{
+		column 
+		{ 
+			width 100
+			label
+			{
+				area		10 0 -1 -1
+				text lua "Infinity_FetchString( contingencyTargets[rowNumber].strref)"
+				text style "normal"
+				text align left center
+			}
+		}
+
+		area 458 210 240 186
+		
+		enabled 	"showContingency"
+		rowheight	40
+		table		"contingencyTargets"
+		var		currentContingencyTarget
+		scrollbar	'GUISCRC'
+		action
+		"
+			contingencyDescription = contingencyTargets[currentContingencyTarget].desc
+		"
+	}
+
+	text
+	{
+		name		"bookDescription"
+		area		448 186 322 384
+		text lua 	"mageBookDescription()"
+		text style	"normal_parchment"
+		scrollbar	'GUISCRC'
+	}
+
+	list
+	{
+		column 
+		{ 
+			width 100
+			label
+			{
+				area	0 0 -1 -1
+				bam	"SPELFRMS"
+				sequence 0
+				align	center center
+			}
+		}
+
+		area 70 654 718 36
+		
+		enabled "#bottomSpellsPlaceHolder ~= 0 or bookMode == 1"
+		rowwidth	36
+		table		"bottomSpellsPlaceHolder"
+	}
+	list
+	{
+		column 
+		{ 
+			width 100
+			label
+			{
+				area	0 0 -1 -1
+				bam	lua "bottomSpells[rowNumber].icon"
+				align	center center
+				greyscale lua "bottomSpells[rowNumber].castable == 0"
+			}
+		}
+
+		area 70 654 718 36
+		
+		name 		"memorizedListMage"
+		enabled 	"#bottomSpells ~= 0"
+		rowwidth	36
+		table		"bottomSpells"
+		var		currentBottomSpell
+		action		
+		"
+			if bookMode == 0 then
+				showMageMemorizationFlash = false
+				mageScreen:UnmemorizeSpell( bottomSpells[currentBottomSpell].level, bottomSpells[currentBottomSpell].memorizedIndex )
+				Infinity_PlaySound('GAM_44')
+			elseif bookMode == 1 then
+				mageScreen:UnSequenceSpell( bottomSpells[currentBottomSpell].resref )
+				table.remove(sequencerSpells, currentBottomSpell)
+				bottomSpells = sequencerSpells
+				currentBottomSpell = 0
+			end
+		"
+	}
+
+
+	label
+	{
+		area 296 588 272 42
+		text lua "magePageInfo()"
+		text style "label"
+		rectangle 0
+	}
+
+	button
+	{
+		area 588 584 236 52
+		enabled "bookMode == 0 and (#characters[id].contingencySpells > 0 or #characters[id].sequencerSpells > 0)"
+		bam GUIOSTLR
+		text "CONTINGENCY_BUTTON"
+		text style "button"
+		action "Infinity_PushMenu('MAGE_CONTINGENCY')"
+		
+	}
+	button
+	{
+		area 60 588 204 44
+		bam GUIOSTLM
+		enabled "bookMode == 1 or characters[id].hasMageBook"
+		clickable lua "#bottomSpells < #bottomSpellsPlaceHolder and currentBookSpell ~= 0"
+		text "MEMORIZE_BUTTON"
+		text style "button"
+		action 
+		"
+			if bookMode == 0 then
+				createMageMemorizationSparkle(0, 0, 40, 40, 'bookListMage', -1)
+				showMageMemorizationFlash = true
+				mageScreen:MemorizeSpell( characters[id].mageSpells[currentSpellLevel][currentBookSpell].level, characters[id].mageSpells[currentSpellLevel][currentBookSpell].index )
+			elseif bookMode == 1 then
+				mageScreen:SequenceSpell( bookSpells[currentBookSpell].resref )
+			end
+
+		"
+		
+	}
+
+	button
+	{
+		area 588 584 236 52
+		enabled "bookMode == 1"
+		bam GUIOSTLR
+		text lua "contingencyDoneButtonText()"
+
+		text style "button"
+		action 
+		"
+			if contingencyComplete() then
+				mageScreen:DoneSequencingSpells()
+			else
+				mageScreen:CancelSequencingSpells()
+			end
+			e:SelectEngine(worldScreen)
+		"
+		
+	}
+
+}
+POPUP_DETAILS
+781
+menu
+{
+	name "POPUP_DETAILS"
+	align center center
+	modal
+
+	label
+	{
+		area 0 0 864 710
+		mosaic "GUIINVHI"
+	}
+	label
+	{
+		area 82 10 700 44
+		text lua "Infinity_FetchString(PopupDetails.title)"
+		text style "title"
+	}
+	label
+	{
+		area 310 65 310 50
+		text lua "Infinity_FetchString(PopupDetails.name)"
+		text style "label"
+	}
+	text
+	{
+		area 62 178 736 348
+		text lua "Infinity_FetchString(PopupDetails.description)"
+		text style "parchment"
+		scrollbar 'GUISCRC'
+	}
+	label
+	{
+		area 254 65 52 52
+		bam lua "PopupDetails.icon"
+		align center center
+		sequence 0
+	}
+	button
+	{
+		area 326 638 205 44
+		bam GUIOSTUM
+		text "DONE_BUTTON"
+		text style "button"
+		
+		on escape
+		action
+		"
+			Infinity_PopMenu('POPUP_DETAILS')
+		"
+	}
+
+}
+PRIEST
+5036
+menu
+{
+	name 'PRIEST'
+	align center center
+	greyscale lua "priestBookEnabled == false"
+
+	onopen 
+	"
+		showPriestMemorizationFlash = false
+		pushSidebars()
+		prpage = nil
+		setPriestBookLevel(1)
+		currentAnimationID = 1
+		updateCounterMemorizationSparkles = 1
+	"
+	onclose 
+	"
+		popSidebars()
+	"
+
+	button
+	{
+		on escape
+		action
+		"
+			--Return to world screen on escape 
+			e:SelectEngine(worldScreen)
+		"
+	}
+
+	template
+	{
+		label
+		{
+			enabled "showMemorizationSparkle(instanceId)"
+			ignoreEvents
+			area 0 0 45 42
+			bam "FLASHBR"
+			usealpha lua "true"
+			frame lua "memorizationFlashes[instanceId][2]"
+			align center center
+		}
+		name "TEMPLATE_priestMemorizationSparkle"
+	}
+
+
+
+	label
+	{
+		area 0 0 864 710
+		mosaic "GUIPRB"
+	}
+	label
+	{
+		area		82 10 700 44
+		text		"PRIEST_SCROLL_TITLE" 
+		text style	"title"
+	}
+	label
+	{
+		area 		210 59 446 30
+		text lua	"priestName"
+		text style	"label"
+	}
+	button
+	{
+		area		168 110 54 54
+		bam		GUIPRTC
+		highlightgroup	prpage
+		sequence	0
+		enabled		"maxPriestPage > 0"
+		action		"setPriestBookLevel(1)"
+	}
+	button
+	{
+		area		246 110 54 54
+		bam		GUIPRTC
+		highlightgroup	prpage
+		sequence	1
+		enabled		"maxPriestPage > 1"
+		action		"setPriestBookLevel(2)"
+	}
+	button
+	{
+		area		328 110 54 54
+		bam		GUIPRTC
+		highlightgroup	prpage
+		sequence	2
+		enabled		"maxPriestPage > 2"
+		action		"setPriestBookLevel(3)"
+	}
+	button
+	{
+		area		403 110 54 54
+		bam		GUIPRTC
+		highlightgroup	prpage
+		sequence	3
+		enabled		"maxPriestPage > 3"
+		action		"setPriestBookLevel(4)"
+	}
+	button
+	{
+		area		484 110 54 54
+		bam		GUIPRTC
+		highlightgroup	prpage
+		sequence	4
+		enabled		"maxPriestPage > 4"
+		action		"setPriestBookLevel(5)"
+	}
+	button
+	{
+		area		566 110 54 54
+		bam		GUIPRTC
+		highlightgroup	prpage
+		sequence	5
+		enabled		"maxPriestPage > 5"
+		action		"setPriestBookLevel(6)"
+	}
+	button
+	{
+		area		642 110 54 54
+		bam		GUIPRTC
+		highlightgroup	prpage
+		sequence	6
+		enabled		"maxPriestPage > 6"
+		action		"setPriestBookLevel(7)"
+	}
+
+	list
+	{
+		column 
+		{ 
+			width 15
+			label
+			{
+				area	0 0 -1 -1
+				bam	lua "characters[id].priestSpells[currentSpellLevel][rowNumber].icon"
+				align	center center
+			}
+		}
+		column 
+		{ 
+			width 85
+			label
+			{
+				area		0 0 -1 -1
+				text lua "Infinity_FetchString( characters[id].priestSpells[currentSpellLevel][rowNumber].name)"
+				text style "normal_parchment"
+				text align left center
+			}
+		}
+
+		area 82 182 326 370
+		
+		name "bookListPriest"
+		rowheight	40
+		table		"characters[id].priestSpells[currentSpellLevel]"
+		var		currentBookSpell
+		scrollbar	'GUISCRC'
+		action		"
+			if cellNumber == 1 then
+				if #bottomSpells < #bottomSpellsPlaceHolder then
+					createPriestMemorizationSparkle(0, 0, 40, 40, 'bookListPriest', -1)
+					Infinity_PlaySound('GAM_24')
+					showPriestMemorizationFlash = true
+				end
+				priestScreen:MemorizeSpell( characters[id].priestSpells[currentSpellLevel][currentBookSpell].level, characters[id].priestSpells[currentSpellLevel][currentBookSpell].index )
+			end
+			if lastCurrentBookSpell == currentBookSpell and cellNumber == 2 then
+				currentBookSpell = 0
+			end
+			lastCurrentBookSpell = currentBookSpell
+		"
+
+	}
+
+	text
+	{
+		area		438 182 340 370
+		text lua 	"priestBookDescription()"
+		text style	"normal_parchment"
+		scrollbar	'GUISCRC'
+	}
+
+	list
+	{
+		column 
+		{ 
+			width 100
+			label
+			{
+				area	0 0 -1 -1
+				bam	"SPELFRMS"
+				sequence 0
+				align	center center
+			}
+		}
+
+		area 70 654 718 36
+		
+		rowwidth	36
+		table		"bottomSpellsPlaceHolder"
+	}
+	list
+	{
+		column 
+		{ 
+			width 100
+			label
+			{
+				area	0 0 -1 -1
+				bam	lua "bottomSpells[rowNumber].icon"
+				align	center center
+				greyscale lua "bottomSpells[rowNumber].castable == 0"
+			}
+		}
+
+		area 70 654 718 36
+		
+		name "memorizedListPriest"
+		enabled 	"#bottomSpells ~= 0"
+		rowwidth	36
+		table		"bottomSpells"
+		var		currentBottomSpell
+		action		
+		"
+			if bottomSpells[currentBottomSpell] then
+				showPriestMemorizationFlash = false
+				priestScreen:UnmemorizeSpell( bottomSpells[currentBottomSpell].level, bottomSpells[currentBottomSpell].memorizedIndex )
+				Infinity_PlaySound('GAM_44')
+			end
+		"
+	}
+
+
+	label
+	{
+		area 272 598 276 40
+		text lua "priestPageInfo()"
+		text style "label"
+		rectangle 0
+	}
+
+	button
+	{
+		area 60 594 204 44
+		bam GUIOSTLM
+		enabled "characters[id].hasClericBook"
+		clickable lua "#bottomSpells < characters[id].priestDetails[currentSpellLevel].maxMemorized and currentBookSpell ~= 0"
+		text "MEMORIZE_LABEL"
+		text style "button"
+		action 
+		"
+			createPriestMemorizationSparkle(0, 0, 40, 40, 'bookListPriest', -1)
+			showPriestMemorizationFlash = true
+			priestScreen:MemorizeSpell( characters[id].priestSpells[currentSpellLevel][currentBookSpell].level, characters[id].priestSpells[currentSpellLevel][currentBookSpell].index )
+
+		"
+		
+	}
+}
+STORE_HEALING
+2316
+menu
+{
+	name 'STORE_HEALING'
+	align center top
+	onOpen "storeScreen:UpdateBuySpellPanel()"
+	ignoreEsc
+	label
+	{
+		area 0 0 864 598
+		mosaic GUISTIDB
+	}
+	label
+	{
+		area 48 6 768 52
+		text "HEALING_TITLE"
+		text style "title"
+	}
+	label
+	{
+		area 274 62 314 24
+		text lua "Infinity_FetchString(storeScreen:GetStoreName())"
+		text style "label"
+	}
+	label
+	{
+		area 274 90 314 22
+		text lua "game:GetPartyGold()"
+		text style "gold"
+	}
+	label
+	{
+		area 68 126 144 32
+		text "COST_LABEL"
+		text style "label"
+		align left center
+	}
+	label
+	{
+		area 282 126 90 32
+		text lua "storeScreen:GetSpellCost()"
+		text style "gold"
+	}
+	list
+	{
+		column 
+		{ 
+			width 100
+			label
+			{
+				area 5 0 64 60
+				bam STONSLOT
+				frame lua "getStoreSlotHighlight(store.healingSpells[rowNumber].highlight)"
+				icon lua "store.healingSpells[rowNumber].icon"
+				tint lua "store.healingSpells[rowNumber].tint"
+				align center center
+			}
+			label
+			{
+				area 80 0 150 60
+				text lua "Infinity_FetchString(store.healingSpells[rowNumber].name)"
+				text style "normal"
+				text align left center
+			}
+			label
+			{
+				area 230 0 54 60
+				text style "gold"
+				text align center center
+				text lua "store.healingSpells[rowNumber].value"
+			}
+			label
+			{
+				enabled "store.healingSpells[rowNumber].valid == 0"
+				area 0 0 308 60
+				rectangle 1
+				rectangle opacity 150
+			}
+		}
+		area 64 164 308 386
+		hidehighlight
+		rowheight	60
+		table		"store.healingSpells"
+		var			"healingSpellsVar"
+		scrollbar 'GUISCRC'
+		action
+		"
+			local highlight = true
+			if(store.healingSpells[healingSpellsVar].highlight == 1) then highlight = false end
+			if(highlight == true and store.healingSpells[healingSpellsVar].valid == 0) then return end
+			storeScreen:SelectSpellItem( healingSpellsVar - 1,  highlight)
+		"
+		actionAlt
+		"
+			local spell = store.healingSpells[healingSpellsVar]
+			popupDetails(16189, spell.name, spell.description,spell.icon)
+		"
+	}
+	button
+	{
+		area 120 554 200 44
+		bam GUIOSTUM
+		text "BUY_BUTTON"
+		text style "button"
+		action
+		"
+			storeScreen:OnBuySpellButtonClick()
+		"
+	}
+	text
+	{
+		area 461 150 350 412
+		text lua "store.spellText"
+		text style "normal_parchment"
+		scrollbar 'GUISCRC'
+	}
+}
+WORLD_ACTIONBAR
+3329
+menu
+{
+	name "WORLD_ACTIONBAR"
+	align center bottom
+	onOpen 
+	"
+		toolbarTop = 50
+		Infinity_PushMenu('WORLD_MESSAGES')
+		if(groundItemsButtonToggle == 1) then
+			worldScreen:StartGroundItems()
+		end
+	"
+	onClose 
+	"
+		Infinity_PopMenu('WORLD_QUICKLOOT');
+		Infinity_PopMenu('WORLD_MESSAGES');
+	"
+	ignoreEsc
+	label
+	{
+		area 0 0 746 57
+		mosaic GUWBTP10
+	}
+	button
+	{
+		area 21 12 32 32
+		bam ROUNDBUT
+		toggle groundItemsButtonToggle
+		action
+		"
+			if(groundItemsButtonToggle == 1) then
+				worldScreen:StartGroundItems()
+			else
+				worldScreen:StopGroundItems()
+			end
+		"
+	}
+	button
+	{
+		area 68 1 52 52
+		actionBar 0
+		enabled "buttonArray:GetButtonEnabled(0)"
+		tooltip lua "actionBarTooltip[0]"
+		action "buttonArray:OnLButtonPressed(0)"
+		actionAlt "buttonArray:OnRButtonPressed(0)"
+	}
+	button
+	{
+		area 122 1 52 52
+		actionBar 1
+		enabled "buttonArray:GetButtonEnabled(1)"
+		tooltip lua "actionBarTooltip[1]"
+		action "buttonArray:OnLButtonPressed(1)"
+		actionAlt "buttonArray:OnRButtonPressed(1)"
+	}
+	button
+	{
+		area 177 1 52 52
+		actionBar 2
+		enabled "buttonArray:GetButtonEnabled(2)"
+		tooltip lua "actionBarTooltip[2]"
+		action "buttonArray:OnLButtonPressed(2)"
+		actionAlt "buttonArray:OnRButtonPressed(2)"
+	}
+	button
+	{
+		area 231 1 52 52
+		actionBar 3
+		enabled "buttonArray:GetButtonEnabled(3)"
+		tooltip lua "actionBarTooltip[3]"
+		action "buttonArray:OnLButtonPressed(3)"
+		actionAlt "buttonArray:OnRButtonPressed(3)"
+	}
+	button
+	{
+		area 299 1 52 52
+		actionBar 4
+		enabled "buttonArray:GetButtonEnabled(4)"
+		tooltip lua "actionBarTooltip[4]"
+		action "buttonArray:OnLButtonPressed(4)"
+		actionAlt "buttonArray:OnRButtonPressed(4)"
+	}
+	button
+	{
+		area 353 1 52 52
+		actionBar 5
+		enabled "buttonArray:GetButtonEnabled(5)"
+		tooltip lua "actionBarTooltip[5]"
+		action "buttonArray:OnLButtonPressed(5)"
+		actionAlt "buttonArray:OnRButtonPressed(5)"
+	}
+	button
+	{
+		area 407 1 52 52
+		actionBar 6
+		enabled "buttonArray:GetButtonEnabled(6)"
+		tooltip lua "actionBarTooltip[6]"
+		action "buttonArray:OnLButtonPressed(6)"
+		actionAlt "buttonArray:OnRButtonPressed(6)"
+	}
+	button
+	{
+		area 461 1 52 52
+		actionBar 7
+		enabled "buttonArray:GetButtonEnabled(7)"
+		tooltip lua "actionBarTooltip[7]"
+		action "buttonArray:OnLButtonPressed(7)"
+		actionAlt "buttonArray:OnRButtonPressed(7)"
+	}
+	
+	button
+	{
+		area 528 1 52 52
+		actionBar 8
+		enabled "buttonArray:GetButtonEnabled(8)"
+		tooltip lua "actionBarTooltip[8]"
+		action "buttonArray:OnLButtonPressed(8)"
+		actionAlt "buttonArray:OnRButtonPressed(8)"
+	}
+	button
+	{
+		area 582 1 52 52
+		actionBar 9
+		enabled "buttonArray:GetButtonEnabled(9)"
+		tooltip lua "actionBarTooltip[9]"
+		action "buttonArray:OnLButtonPressed(9)"
+		actionAlt "buttonArray:OnRButtonPressed(9)"
+	}
+	button
+	{
+		area 636 1 52 52
+		actionBar 10
+		enabled "buttonArray:GetButtonEnabled(10)"
+		tooltip lua "actionBarTooltip[10]"
+		action "buttonArray:OnLButtonPressed(10)"
+		actionAlt "buttonArray:OnRButtonPressed(10)"
+	}
+	button
+	{
+		area 689 1 52 52
+		actionBar 11
+		enabled "buttonArray:GetButtonEnabled(11)"
+		tooltip lua "actionBarTooltip[11]"
+		action "buttonArray:OnLButtonPressed(11)"
+		actionAlt "buttonArray:OnRButtonPressed(11)"
+	}
+}
+WORLD_DIALOG
+2903
+menu
+{
+	name 'WORLD_DIALOG'
+	offset 0 -57
+	align center bottom
+	ignoreEsc
+	onOpen
+	"	
+		local x,y,w,h = Infinity_GetArea('worldDialogBackground')
+		toolbarTop = toolbarTop + h
+		
+		Infinity_PushMenu('WORLD_DIALOG_CONFIRM')
+		greySidebars()
+	"
+	onClose
+	"
+		
+		local x,y,w,h = Infinity_GetArea('worldDialogBackground')
+		toolbarTop = toolbarTop - h
+		resizeDialogContent(h - 253)
+		
+		Infinity_PopMenu('WORLD_DIALOG_CONFIRM')
+		ungreySidebars()
+	"
+	label
+	{
+		name "worldDialogBackground"
+		area 0 0 863 253
+		rectangle 4
+	}
+	button
+	{
+		enabled "showWorldMessages"
+		area 28 152 816 85
+		on pageup
+		action
+		"
+			local x,y,w,h = Infinity_GetArea('worldDialogBackground')
+			dragDialogMessagesY(-20)
+		"
+	}
+	button
+	{
+		enabled "showWorldMessages"
+	 	area 28 152 816 85
+		on pagedown
+		action
+		"
+			local x,y,w,h = Infinity_GetArea('worldDialogBackground')
+			dragDialogMessagesY(20)
+		"
+	}
+	label
+	{
+		name "worldDialogPortraitArea"
+		area 22 22 54 84
+		bitmap lua "worldNPCDialogPortrait"
+	}
+	text
+	{
+		name "worldNPCDialog"
+		area 84 22 749 38
+		text lua "worldNPCDialogText"
+		text style "normal"
+		scrollbar	'GUISCRC'
+	}
+	text
+	{
+		name "worldDialogMessageBox"
+		enabled "showWorldMessages"
+		area 20 -124 813 124
+		text lua "worldMessageBoxText"
+		text style "normal"
+		scrollbar	'GUISCRC'
+		scrollbar func "chatboxScroll"
+	}
+	handle
+	{
+		enabled "showWorldMessages"
+		name "dialogHandleY"
+		area 0 0 863 32
+		actionDrag
+		"
+			dragDialogMessagesY(motionY)
+		"
+	}
+	text
+	{
+		name "worldDialogShowMessagesButton"
+		area 754 16 62 28
+		bam "CHATHIST"
+		frame lua "showMessagesButtonFrame()"
+		action 
+		"
+			toggleDialogShowMessages()
+		"
+	}
+	text
+	{
+		name "worldDialogMessageDivider"
+		enabled "showWorldMessages"
+		area 33 0 800 8
+		mosaic "DLGDIVI"
+	}
+	list
+	{
+		column
+		{
+			width 100
+			label
+			{
+				area 0 0 -1 -1
+				enabled "dialogEntryGreyed()"
+				rectangle 1
+				rectangle opacity 100
+			}
+			text
+			{
+				area 0 0 -1 -1
+				text lua "getDialogEntryText(rowNumber)"
+				text style "normal"
+			}
+		}
+		name "worldPlayerDialogChoicesList"
+		area 84 76 749 177
+		rowheight dynamic
+		hideHighlight
+		table "worldPlayerDialogChoices"
+		var "worldPlayerDialogSelection"
+		scrollbar	'GUISCRC'
+		actionEnter
+		"
+			if(gameOptions.m_bConfirmDialog == true) then return end
+			glowTest = mouseoverRow
+			worldPlayerDialogSelection = mouseoverRow
+		"
+		actionExit
+		"
+			if(gameOptions.m_bConfirmDialog == true) then return end
+			glowTest = nil
+			worldPlayerDialogSelection = 0
+		"
+		action
+		"
+			--In confirm mode, just highlight the choice.
+			if(gameOptions.m_bConfirmDialog == true) then return end
+			worldScreen:OnDialogReplyClick(worldPlayerDialogChoices[worldPlayerDialogSelection].marker)
+			worldPlayerDialogSelection = 0
+		"
+	}
+}
+WORLD_MESSAGES
+974
+menu
+{
+	name 'WORLD_MESSAGES'
+	align center bottom
+	ignoreEsc
+	onOpen
+	"
+		Infinity_SetOffset('WORLD_MESSAGES', 0, -toolbarTop)
+		local x,y,w,h = Infinity_GetArea('messagesRect')
+		toolbarTop = toolbarTop + h
+		setMessagesY(worldMessageBoxTop - y)	
+	"
+	onClose
+	"
+		local x,y,w,h = Infinity_GetArea('messagesRect')
+		toolbarTop = toolbarTop - h
+	"
+	label
+	{
+		name 'messagesRect'
+		area 0 111 863 142
+		rectangle 4
+	}
+	button
+	{
+		area 28 152 816 85
+		on pageup
+		action
+		"
+			dragMessagesY(-20)
+		"
+	}
+	button
+	{
+	 	area 28 152 816 85
+		on pagedown
+		action
+		"
+			dragMessagesY(20)
+		"
+	}
+	text
+	{
+		name "worldMessageBox"
+		area 28 135 816 102
+		text lua "worldMessageBoxText"
+		text style "normal"
+		scrollbar	'GUISCRC'
+		scrollbar func "chatboxScroll"
+	}
+	handle
+	{
+		name 'messagesHandleY'
+		area 0 111 863 22
+		pulse lua "worldMessageBoxClickedOnce == 0"
+		actionDrag
+		"
+			dragMessagesY(motionY)
+		"
+	}
+}

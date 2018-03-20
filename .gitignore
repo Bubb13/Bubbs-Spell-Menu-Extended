@@ -3,7 +3,6 @@
 !bubb_spell_menu_extended/*.*
 !bubb_spell_menu_extended/copy/*.*
 !bubb_spell_menu_extended/work/*.*
-!bubb_spell_menu_extended/work/uipatches/0base/*.*
-!bubb_spell_menu_extended/work/uipatches/1lefreut's Improved Record Screen/*.*
+!bubb_spell_menu_extended/work/uipatches/*.*
 bubb_spell_menu_extended/work/out.MENU
 bubb_spell_menu_extended/work/to_patch.MENU

@@ -645,6 +645,8 @@ function getTooltipForSlot(slot_row, slot_column)
 	end
 end
 
+checkForSpellMenuClose = false
+
 function doActionForSlot(slot_row, slot_column)
 	if getSlotIsArrow(slot_row, slot_column) then
 		if slot_column == 1 then
@@ -656,7 +658,7 @@ function doActionForSlot(slot_row, slot_column)
 		local spell = getSpellForSlot(slot_row, slot_column)
 		if spell ~= nil then
 			selectSpellWithUUID(spell.spellUUID, true)
-			Infinity_PopMenu('BUBB_SPELL_MENU_SLOTS')
+			checkForSpellMenuClose = true
 		end
 	end
 end
@@ -810,6 +812,17 @@ function filterSpellListInfoSearch()
 end
 
 function customSpellMenuWatchdog()
+
+	if checkForSpellMenuClose then
+		if isFirstTooltipTalk() then
+			Infinity_PopMenu("BUBB_SPELL_MENU_SLOTS")
+		else
+			fillSpellListInfo()
+			initializeSlots()
+		end
+		checkForSpellMenuClose = false
+	end
+
 	if spellSearchEdit ~= oldSpellSearchEdit then
 		startingWithSize = #filteredSpellListInfo
 		if spellSearchEdit ~= '' then

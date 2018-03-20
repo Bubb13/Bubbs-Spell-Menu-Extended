@@ -27,6 +27,7 @@ IGNORED+
 +@0 oldSpellSearchEdit = ''
 +@0 spellSearchEdit = ''
 +@0 -- BUBB EDIT Slot Functions START
++@0 checkForSpellMenuClose = false
 +@0 -- BUBB EDIT Slot Functions END
 :functions
 alphanumericSortEntries+
@@ -54,6 +55,17 @@ alphanumericSortEntries+
 +@0 end
 customSpellMenuWatchdog+
 +@0 function customSpellMenuWatchdog()
++@0 
++@0 	if checkForSpellMenuClose then
++@0 		if isFirstTooltipTalk() then
++@0 			Infinity_PopMenu("BUBB_SPELL_MENU_SLOTS")
++@0 		else
++@0 			fillSpellListInfo()
++@0 			initializeSlots()
++@0 		end
++@0 		checkForSpellMenuClose = false
++@0 	end
++@0 
 +@0 	if spellSearchEdit ~= oldSpellSearchEdit then
 +@0 		startingWithSize = #filteredSpellListInfo
 +@0 		if spellSearchEdit ~= '' then
@@ -91,7 +103,7 @@ doActionForSlot+
 +@0 		local spell = getSpellForSlot(slot_row, slot_column)
 +@0 		if spell ~= nil then
 +@0 			selectSpellWithUUID(spell.spellUUID, true)
-+@0 			Infinity_PopMenu('BUBB_SPELL_MENU_SLOTS')
++@0 			checkForSpellMenuClose = true
 +@0 		end
 +@0 	end
 +@0 end

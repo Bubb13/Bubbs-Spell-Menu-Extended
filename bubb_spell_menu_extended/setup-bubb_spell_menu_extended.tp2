@@ -36,7 +36,7 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 	
 		//Patch UI.MENU
 		
-		AT_NOW ~bubb_spell_menu_extended/work/UIUtilGUI.exe cleanup~
+		AT_NOW ~bubb_spell_menu_extended/work/UIUtil.exe cleanup~
 		
 		COPY ~bubb_spell_menu_extended\work\uipatches\0base.uipatch~ ~bubb_spell_menu_extended\work~
 		
@@ -45,7 +45,7 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 		END
 		
 		COPY_EXISTING ~UI.MENU~ ~bubb_spell_menu_extended/work/to_patch.MENU~ IF_EXISTS
-		AT_NOW ~bubb_spell_menu_extended/work/UIUtilGUI.exe applypatches to_patch.MENU out.MENU~
+		AT_NOW ~bubb_spell_menu_extended/work/UIUtil.exe applypatches to_patch.MENU out.MENU~
 		
 		ACTION_IF FILE_EXISTS ~bubb_spell_menu_extended/work/failed.mrk~ BEGIN
 			FAIL ~Could not patch UI.MENU.~
@@ -53,7 +53,7 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 		
 		COPY ~bubb_spell_menu_extended/work/out.MENU~ ~override/UI.MENU~
 		
-		AT_NOW ~bubb_spell_menu_extended/work/UIUtilGUI.exe cleanup~
+		AT_NOW ~bubb_spell_menu_extended/work/UIUtil.exe cleanup~
 		
 		//Patch UI.MENU
 	

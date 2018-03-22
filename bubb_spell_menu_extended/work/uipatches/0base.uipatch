@@ -1,5 +1,8 @@
 :lua
-IGNORED+
+1
+IGNORED
+ADD
+29
 +@0 
 +@0 -- BUBB EDIT DEBUG DUMP START
 +@0 -- BUBB EDIT DEBUG DUMP END
@@ -30,7 +33,10 @@ IGNORED+
 +@0 checkForSpellMenuClose = false
 +@0 -- BUBB EDIT Slot Functions END
 :functions
-alphanumericSortEntries+
+48
+alphanumericSortEntries
+ADD
+22
 +@0 function alphanumericSortEntries(o)
 +@0    local function conv(s)
 +@0       local res, dot = "", ""
@@ -53,7 +59,9 @@ alphanumericSortEntries+
 +@0       end)
 +@0    return o
 +@0 end
-customSpellMenuWatchdog+
+customSpellMenuWatchdog
+ADD
+22
 +@0 function customSpellMenuWatchdog()
 +@0 
 +@0 	if checkForSpellMenuClose then
@@ -76,13 +84,17 @@ customSpellMenuWatchdog+
 +@0 		oldSpellSearchEdit = spellSearchEdit
 +@0 	end
 +@0 end
-decrementRowOffset+
+decrementRowOffset
+ADD
+5
 +@0 function decrementRowOffset(slot_row)
 +@0 	local rowOffset = slotRowOffsets[slot_row] - slotsAvailable + 2
 +@0 	if rowOffset < 0 then rowOffset = 0 end
 +@0 	slotRowOffsets[slot_row] = rowOffset
 +@0 end
-doActionAltForSlot+
+doActionAltForSlot
+ADD
+8
 +@0 function doActionAltForSlot(slot_row, slot_column)
 +@0 	if not getSlotIsArrow(slot_row, slot_column) then
 +@0 		local spell = getSpellForSlot(slot_row, slot_column)
@@ -91,7 +103,9 @@ doActionAltForSlot+
 +@0 		end
 +@0 	end
 +@0 end
-doActionForSlot+
+doActionForSlot
+ADD
+15
 +@0 function doActionForSlot(slot_row, slot_column)
 +@0 	if getSlotIsArrow(slot_row, slot_column) then
 +@0 		if slot_column == 1 then
@@ -107,7 +121,9 @@ doActionForSlot+
 +@0 		end
 +@0 	end
 +@0 end
-dump+
+dump
+ADD
+33
 +@0 function dump(key, valueToDump)
 +@0 
 +@0 	valueToDumpType = type(valueToDump)
@@ -141,7 +157,9 @@ dump+
 +@0 		print(valueToDumpType..' '..key)
 +@0 	end
 +@0 end
-extractSpellTooltipContents+
+extractSpellTooltipContents
+ADD
+7
 +@0 function extractSpellTooltipContents()
 +@0 	toReturn = {}
 +@0 	for i = 1, 10, 1 do
@@ -149,7 +167,9 @@ extractSpellTooltipContents+
 +@0 	end
 +@0 	return toReturn
 +@0 end
-fillDumpLevel+
+fillDumpLevel
+ADD
+92
 +@0 function fillDumpLevel(tableName, levelTable, levelToFill, levelTableKey)
 +@0 
 +@0 	local tableKey, tableValue = next(levelTable, levelTableKey)
@@ -242,7 +262,9 @@ fillDumpLevel+
 +@0 		return levelToFill
 +@0 	end
 +@0 end
-fillSpellListInfo+
+fillSpellListInfo
+ADD
+61
 +@0 function fillSpellListInfo()
 +@0 
 +@0 	characters = {}
@@ -304,12 +326,16 @@ fillSpellListInfo+
 +@0 	filteredSpellListInfo = spellListInfo
 +@0 	resetSpellHotbar()
 +@0 end
-filterSpellListInfoAll+
+filterSpellListInfoAll
+ADD
+4
 +@0 function filterSpellListInfoAll()
 +@0 	filteredSpellListInfo = spellListInfo
 +@0 	initializeSlots()
 +@0 end
-filterSpellListInfoCleric+
+filterSpellListInfoCleric
+ADD
+15
 +@0 function filterSpellListInfoCleric()
 +@0 	filteredSpellListInfo = {}
 +@0 	for i = 1, 9, 1 do
@@ -325,7 +351,9 @@ filterSpellListInfoCleric+
 +@0 	end
 +@0 	initializeSlots()
 +@0 end
-filterSpellListInfoMage+
+filterSpellListInfoMage
+ADD
+15
 +@0 function filterSpellListInfoMage()
 +@0 	filteredSpellListInfo = {}
 +@0 	for i = 1, 9, 1 do
@@ -341,7 +369,9 @@ filterSpellListInfoMage+
 +@0 	end
 +@0 	initializeSlots()
 +@0 end
-filterSpellListInfoSearch+
+filterSpellListInfoSearch
+ADD
+15
 +@0 function filterSpellListInfoSearch()
 +@0 	filteredSpellListInfo = {}
 +@0 	for i = 1, 9, 1 do
@@ -357,7 +387,9 @@ filterSpellListInfoSearch+
 +@0 	end
 +@0 	initializeSlots()
 +@0 end
-findAllPairs+
+findAllPairs
+ADD
+13
 +@0 function findAllPairs(string, toFind)
 +@0 
 +@0 	foundIndexPairs = {}
@@ -371,7 +403,9 @@ findAllPairs+
 +@0 
 +@0 	return foundIndexPairs
 +@0 end
-findFirst+
+findFirst
+ADD
+15
 +@0 function findFirst(string, toFind)
 +@0 
 +@0 	indexLimit = #string - #toFind + 1
@@ -387,7 +421,9 @@ findFirst+
 +@0 	end
 +@0 	return -1
 +@0 end
-findNewSpellIndex+
+findNewSpellIndex
+ADD
+33
 +@0 function findNewSpellIndex()
 +@0 
 +@0 	if not isTooltipArrow(actionBarTooltip[0]) then
@@ -421,7 +457,9 @@ findNewSpellIndex+
 +@0 		return nil
 +@0 	end
 +@0 end
-getBamForSlot+
+getBamForSlot
+ADD
+7
 +@0 function getBamForSlot(slot_row, slot_column)
 +@0 	if getSlotIsArrow(slot_row, slot_column) then
 +@0 		return 'GUIBTACT'
@@ -429,19 +467,25 @@ getBamForSlot+
 +@0 		return 'GUIBTBUT'
 +@0 	end
 +@0 end
-getCountForSlot+
+getCountForSlot
+ADD
+4
 +@0 function getCountForSlot(slot_row, slot_column)
 +@0 	local spell = getSpellForSlot(slot_row, slot_column)
 +@0 	if spell ~= nil then return spell.spellCastableCount else return nil end
 +@0 end
-getFirstSpellUUID+
+getFirstSpellUUID
+ADD
+6
 +@0 function getFirstSpellUUID()
 +@0 	for level = 1, 9, 1 do
 +@0 		spellLevel = filteredSpellListInfo[level]
 +@0 		if #spellLevel > 0 then return spellLevel[1].spellUUID end
 +@0 	end
 +@0 end
-getFrameForSlot+
+getFrameForSlot
+ADD
+15
 +@0 function getFrameForSlot(slot_row, slot_column)
 +@0 	if getSlotIsArrow(slot_row, slot_column) then
 +@0 		if slot_column == 1 then
@@ -457,16 +501,22 @@ getFrameForSlot+
 +@0 		end
 +@0 	end
 +@0 end
-getIconEnabledForSlot+
+getIconEnabledForSlot
+ADD
+3
 +@0 function getIconEnabledForSlot(slot_row, slot_column)
 +@0 	return not getSlotIsArrow(slot_row, slot_column)
 +@0 end
-getIconForSlot+
+getIconForSlot
+ADD
+4
 +@0 function getIconForSlot(slot_row, slot_column)
 +@0 	local spell = getSpellForSlot(slot_row, slot_column)
 +@0 	if spell ~= nil then return spell.spellIcon else return nil end
 +@0 end
-getLongestSpellCount+
+getLongestSpellCount
+ADD
+8
 +@0 function getLongestSpellCount()
 +@0 	local maxLength = #filteredSpellListInfo[1]
 +@0 	for i = 2, 9, 1 do
@@ -475,15 +525,21 @@ getLongestSpellCount+
 +@0 	end
 +@0 	return maxLength
 +@0 end
-getSlotEnabled+
+getSlotEnabled
+ADD
+3
 +@0 function getSlotEnabled(slot_row, slot_column)
 +@0 	return slot_column <= slotsAvailable and #filteredSpellListInfo[slot_row] >= slot_column
 +@0 end
-getSlotEndsAreArrows+
+getSlotEndsAreArrows
+ADD
+3
 +@0 function getSlotEndsAreArrows(slot_row)
 +@0 	return #filteredSpellListInfo[slot_row] > slotsAvailable
 +@0 end
-getSlotInfoOffset+
+getSlotInfoOffset
+ADD
+7
 +@0 function getSlotInfoOffset(slot_row, slot_column)
 +@0 	if getSlotEndsAreArrows(slot_row) then
 +@0 		return slotRowOffsets[slot_row] + slot_column - 1
@@ -491,11 +547,15 @@ getSlotInfoOffset+
 +@0 		return slotRowOffsets[slot_row] + slot_column
 +@0 	end
 +@0 end
-getSlotIsArrow+
+getSlotIsArrow
+ADD
+3
 +@0 function getSlotIsArrow(slot_row, slot_column)
 +@0 	return getSlotEndsAreArrows(slot_row) and (slot_column == 1 or slot_column == slotsAvailable)
 +@0 end
-getSlotsVerticalCenter+
+getSlotsVerticalCenter
+ADD
+14
 +@0 function getSlotsVerticalCenter()
 +@0 	local maxLevel = 0
 +@0 	local initialOffset = 0
@@ -510,7 +570,9 @@ getSlotsVerticalCenter+
 +@0 	end
 +@0 	return maxLevel + initialOffset
 +@0 end
-getSpellCastableCountFromResref+
+getSpellCastableCountFromResref
+ADD
+23
 +@0 function getSpellCastableCountFromResref(resref)
 +@0 	for key, character in pairs(characters) do
 +@0 		for spellLevelIndex = 1, 9, 1 do
@@ -534,11 +596,15 @@ getSpellCastableCountFromResref+
 +@0 		return nil
 +@0 	end
 +@0 end
-getSpellForSlot+
+getSpellForSlot
+ADD
+3
 +@0 function getSpellForSlot(slot_row, slot_column)
 +@0 	return filteredSpellListInfo[slot_row][getSlotInfoOffset(slot_row, slot_column)]
 +@0 end
-getSpellUUID+
+getSpellUUID
+ADD
+10
 +@0 function getSpellUUID(string)
 +@0 
 +@0 	spellUUIDIndex = findFirst(string, 'SPELL_UUID:')
@@ -549,12 +615,16 @@ getSpellUUID+
 +@0 		return nil
 +@0 	end
 +@0 end
-getTooltipContents+
+getTooltipContents
+ADD
+4
 +@0 function getTooltipContents(string)
 +@0 	firstIndex = findFirst(string, ':')
 +@0 	return string.sub(string, firstIndex + 2, #string)
 +@0 end
-getTooltipForSlot+
+getTooltipForSlot
+ADD
+8
 +@0 function getTooltipForSlot(slot_row, slot_column)
 +@0 	if not getSlotIsArrow(slot_row, slot_column) then
 +@0 		local spell = getSpellForSlot(slot_row, slot_column)
@@ -563,14 +633,18 @@ getTooltipForSlot+
 +@0 		return nil
 +@0 	end
 +@0 end
-incrementRowOffset+
+incrementRowOffset
+ADD
+6
 +@0 function incrementRowOffset(slot_row)
 +@0 	local rowOffset = slotRowOffsets[slot_row] + slotsAvailable - 2
 +@0 	local maxOffset = #filteredSpellListInfo[slot_row] - slotsAvailable + 2
 +@0 	if rowOffset > maxOffset then rowOffset = maxOffset end
 +@0 	slotRowOffsets[slot_row] = rowOffset
 +@0 end
-initializeSlots+
+initializeSlots
+ADD
+59
 +@0 function initializeSlots()
 +@0 
 +@0 	local screenWidth, screenHeight = Infinity_GetScreenSize()
@@ -630,11 +704,15 @@ initializeSlots+
 +@0 		currentYOffset = currentYOffset + 57
 +@0 	end
 +@0 end
-isFirstTooltipTalk+
+isFirstTooltipTalk
+ADD
+3
 +@0 function isFirstTooltipTalk()
 +@0 	return getTooltipContents(actionBarTooltip[0]) == Infinity_FetchString(4933) --Talk tooltip
 +@0 end
-isSlotFirst+
+isSlotFirst
+ADD
+12
 +@0 function isSlotFirst(slot_row, slot_column)
 +@0 	if (not getSlotEndsAreArrows(slot_row) and slotRowOffsets[slot_row] + slot_column == 1)
 +@0 	    or (getSlotEndsAreArrows(slot_row) and slotRowOffsets[slot_row] + slot_column == 2)
@@ -647,29 +725,39 @@ isSlotFirst+
 +@0 		return false
 +@0 	end
 +@0 end
-isTooltipArrow+
+isTooltipArrow
+ADD
+4
 +@0 function isTooltipArrow(tooltip)
 +@0 	return    tooltip == 'F1 : '
 +@0 		   or tooltip == 'F12 : '
 +@0 end
-isTooltipQuickSpell+
+isTooltipQuickSpell
+ADD
+6
 +@0 function isTooltipQuickSpell(tooltip)
 +@0 	return 
 +@0 			isFirstTooltipTalk()
 +@0 			and (getTooltipContents(tooltip) == Infinity_FetchString(4938) --Quick cast tooltip
 +@0 		   	or isTooltipSpell(tooltip))
 +@0 end
-isTooltipSpecial+
+isTooltipSpecial
+ADD
+5
 +@0 function isTooltipSpecial(tooltip)
 +@0 	return
 +@0 			  isTooltipArrow(tooltip)
 +@0 		   or spellInfo.specialTooltips[getTooltipContents(tooltip)] ~= nil
 +@0 end
-isTooltipSpell+
+isTooltipSpell
+ADD
+3
 +@0 function isTooltipSpell(tooltip)
 +@0 	return not isTooltipSpecial(tooltip) and getSpellUUID(tooltip) ~= nil
 +@0 end
-launchSpellMenu+
+launchSpellMenu
+ADD
+19
 +@0 function launchSpellMenu(slot, leftClick)
 +@0 
 +@0 	if leftClick then
@@ -689,7 +777,9 @@ launchSpellMenu+
 +@0 		Infinity_PushMenu('BUBB_SPELL_MENU_SLOTS')
 +@0 	end
 +@0 end
-printEntries+
+printEntries
+ADD
+53
 +@0 function printEntries(entriesTable, indentLevel, indentStrings, previousState, levelTableKey)
 +@0 
 +@0 	tableEntryKey, tableEntry = next(entriesTable, levelTableKey)
@@ -743,7 +833,9 @@ printEntries+
 +@0 							previousState.previousState, previousState.levelTableKey)
 +@0 	end
 +@0 end
-replaceSpellUUIDs+
+replaceSpellUUIDs
+ADD
+15
 +@0 function replaceSpellUUIDs(string)
 +@0 
 +@0 	toReturn = string
@@ -759,7 +851,9 @@ replaceSpellUUIDs+
 +@0 	end
 +@0 	return toReturn
 +@0 end
-resetSpellHotbar+
+resetSpellHotbar
+ADD
+17
 +@0 function resetSpellHotbar()
 +@0 
 +@0 	if not isTooltipArrow(actionBarTooltip[0]) then
@@ -777,13 +871,17 @@ resetSpellHotbar+
 +@0 
 +@0 	until newTooltip == oldTooltip
 +@0 end
-resolveTooltip+
+resolveTooltip
+ADD
+5
 +@0 function resolveTooltip(index)
 +@0 	tooltip = actionBarTooltip[index]
 +@0 	tooltip = replaceSpellUUIDs(tooltip)
 +@0 	return tooltip
 +@0 end
-selectSpellWithUUID+
+selectSpellWithUUID
+ADD
+47
 +@0 function selectSpellWithUUID(uuid, leftClick)
 +@0 
 +@0 	resetSpellHotbar()
@@ -831,7 +929,9 @@ selectSpellWithUUID+
 +@0 		end
 +@0 	end
 +@0 end
-worldMessageBoxOverride+
+worldMessageBoxOverride
+ADD
+7
 +@0 function worldMessageBoxOverride()
 +@0 	if worldMessageBoxText ~= previousWorldMessageBoxText then
 +@0 		worldMessageBoxTextOverride = replaceSpellUUIDs(worldMessageBoxText)
@@ -840,7 +940,10 @@ worldMessageBoxOverride+
 +@0 	return worldMessageBoxTextOverride
 +@0 end
 :menus
-BUBB_SPELL_MENU_SLOTS+
+14
+BUBB_SPELL_MENU_SLOTS
+ADD
+6716
 +@0 menu
 +@0 {
 +@0 	name 'BUBB_SPELL_MENU_SLOTS'
@@ -7558,6 +7661,8 @@ BUBB_SPELL_MENU_SLOTS+
 +@0 	}
 +@0 }
 CHARACTER
+MODIFY
+9
 -@298 				text		lua " otherlist[rowNumber][2]"				
 +@299 
 +@299 				-- BUBB EDIT SPELL START
@@ -7568,6 +7673,8 @@ CHARACTER
 +@299 				-- BUBB EDIT SPELL END
 +@299 
 CHARGEN
+MODIFY
+9
 -@19 		text lua "chargen.information"
 +@20 
 +@20 		-- BUBB EDIT SPELL START
@@ -7578,6 +7685,8 @@ CHARGEN
 +@20 		-- BUBB EDIT SPELL END
 +@20 
 CHARGEN_CHOOSE_SPELLS
+MODIFY
+9
 -@60 				text lua "Infinity_FetchString(spellBook[chargen.currentSpellLevelChoice][chargen.choose_spell[rowNumber].key].name)"
 +@61 
 +@61 				-- BUBB EDIT SPELL START
@@ -7588,9 +7697,13 @@ CHARGEN_CHOOSE_SPELLS
 +@61 				-- BUBB EDIT SPELL END
 +@61 
 CHARGEN_HIGH_LEVEL_ABILITIES
+MODIFY
+2
 -@57 				text lua "Infinity_FetchString(chargen.HLAs[rowNumber].name)"
 +@58 				text lua "replaceSpellUUIDs(Infinity_FetchString(chargen.HLAs[rowNumber].name))"
 CHARGEN_MEMORIZE_MAGE
+MODIFY
+9
 -@48 				text lua "Infinity_FetchString(mageSpells[chargen.currentSpellLevelChoice][chargen.choose_spell[rowNumber].key].name)"
 +@49 
 +@49 				-- BUBB EDIT SPELL START
@@ -7601,6 +7714,8 @@ CHARGEN_MEMORIZE_MAGE
 +@49 				-- BUBB EDIT SPELL END
 +@49 
 CHARGEN_MEMORIZE_PRIEST
+MODIFY
+9
 -@48 				text lua "Infinity_FetchString(priestSpells[chargen.currentSpellLevelChoice][chargen.choose_spell[rowNumber].key].name)"
 +@49 
 +@49 				-- BUBB EDIT SPELL START
@@ -7611,6 +7726,8 @@ CHARGEN_MEMORIZE_PRIEST
 +@49 				-- BUBB EDIT SPELL END
 +@49 
 MAGE
+MODIFY
+9
 -@174 				text lua "Infinity_FetchString( bookSpells[rowNumber].name)"
 +@175 
 +@175 				-- BUBB EDIT SPELL START
@@ -7621,9 +7738,13 @@ MAGE
 +@175 				-- BUBB EDIT SPELL END
 +@175 
 POPUP_DETAILS
+MODIFY
+2
 -@20 		text lua "Infinity_FetchString(PopupDetails.name)"
 +@21 		text lua "replaceSpellUUIDs(Infinity_FetchString(PopupDetails.name))"
 PRIEST
+MODIFY
+9
 -@146 				text lua "Infinity_FetchString( characters[id].priestSpells[currentSpellLevel][rowNumber].name)"
 +@147 
 +@147 				-- BUBB EDIT SPELL START
@@ -7634,6 +7755,8 @@ PRIEST
 +@147 				-- BUBB EDIT SPELL END
 +@147 
 STORE_HEALING
+MODIFY
+9
 -@59 				text lua "Infinity_FetchString(store.healingSpells[rowNumber].name)"
 +@60 				
 +@60 				-- BUBB EDIT SPELL START
@@ -7644,6 +7767,8 @@ STORE_HEALING
 +@60 				-- BUBB EDIT SPELL END
 +@60 				
 WORLD_ACTIONBAR
+MODIFY
+220
 -@41 		enabled "buttonArray:GetButtonEnabled(0)"
 -@42 		tooltip lua "actionBarTooltip[0]"
 +@43 
@@ -7865,6 +7990,8 @@ WORLD_ACTIONBAR
 +@144 		-- BUBB EDIT SPELL END
 +@144 				
 WORLD_DIALOG
+MODIFY
+9
 -@71 		text lua "worldMessageBoxText"
 +@72 		
 +@72 		--BUBB EDIT MESSAGE BOX START
@@ -7875,6 +8002,8 @@ WORLD_DIALOG
 +@72 		--BUBB EDIT MESSAGE BOX END
 +@72 		
 WORLD_MESSAGES
+MODIFY
+9
 -@45 		text lua "worldMessageBoxText"
 +@46 
 +@46 		--BUBB EDIT MESSAGE BOX START

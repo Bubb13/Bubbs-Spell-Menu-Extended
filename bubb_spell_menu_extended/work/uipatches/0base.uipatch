@@ -33,7 +33,7 @@ ADD
 +@0 checkForSpellMenuClose = false
 +@0 -- BUBB EDIT Slot Functions END
 :functions
-48
+49
 alphanumericSortEntries
 ADD
 22
@@ -59,15 +59,32 @@ ADD
 +@0       end)
 +@0    return o
 +@0 end
+checkForOpcode214Watchdog
+ADD
+9
++@0 function checkForOpcode214Watchdog()
++@0 
++@0 	if checkForOpcode214 then
++@0 		if not isFirstTooltipTalk() then
++@0 			launchSpellMenu()
++@0 		end
++@0 		checkForOpcode214 = false
++@0 	end
++@0 end
 customSpellMenuWatchdog
 ADD
-22
+27
 +@0 function customSpellMenuWatchdog()
 +@0 
 +@0 	if checkForSpellMenuClose then
 +@0 		if isFirstTooltipTalk() then
 +@0 			Infinity_PopMenu("BUBB_SPELL_MENU_SLOTS")
 +@0 		else
++@0 
++@0 			oldSpellSearchEdit = ''
++@0 			spellSearchEdit = ''
++@0 			Infinity_FocusTextEdit('bubbSpellMenuSearch');
++@0 
 +@0 			fillSpellListInfo()
 +@0 			initializeSlots()
 +@0 		end
@@ -757,17 +774,9 @@ ADD
 +@0 end
 launchSpellMenu
 ADD
-19
-+@0 function launchSpellMenu(slot, leftClick)
-+@0 
-+@0 	if leftClick then
-+@0 		buttonArray:OnLButtonPressed(slot)
-+@0 	else
-+@0 		buttonArray:OnRButtonPressed(slot)
-+@0 	end
-+@0 
+11
++@0 function launchSpellMenu()
 +@0 	if not isFirstTooltipTalk() then
-+@0 
 +@0 		if not worldScreen:CheckIfPaused() then
 +@0 			pausedOnOpen = false
 +@0 			worldScreen:TogglePauseGame(true)
@@ -1011,7 +1020,7 @@ ADD
 +@0 				Infinity_PopMenu('BUBB_SPELL_MENU_SLOTS')
 +@0 			elseif key_pressed == 13 then
 +@0 				selectSpellWithUUID(getFirstSpellUUID(), true)
-+@0 				Infinity_PopMenu('BUBB_SPELL_MENU_SLOTS')
++@0 				checkForSpellMenuClose = true
 +@0 				return 0
 +@0 			else
 +@0 				return 1
@@ -7768,7 +7777,18 @@ MODIFY
 +@60 				
 WORLD_ACTIONBAR
 MODIFY
-220
+272
++@18 
++@18 	-- BUBB EDIT SPELL START
++@18 
++@18 	label
++@18 	{
++@18 		area 0 0 -1 -1
++@18 		text lua "checkForOpcode214Watchdog()"
++@18 	}
++@18 
++@18 	-- BUBB EDIT SPELL END
++@18 
 -@41 		enabled "buttonArray:GetButtonEnabled(0)"
 -@42 		tooltip lua "actionBarTooltip[0]"
 +@43 
@@ -7810,23 +7830,36 @@ MODIFY
 +@61 
 -@68 		enabled "buttonArray:GetButtonEnabled(3)"
 -@69 		tooltip lua "actionBarTooltip[3]"
-+@70 
-+@70 		-- BUBB EDIT SPELL START
-+@70 
-+@70 		--enabled "buttonArray:GetButtonEnabled(3)"
-+@70 		enabled "not hotbarButtonsDisabled and buttonArray:GetButtonEnabled(3)"
-+@70 
-+@70 		--tooltip lua "actionBarTooltip[3]"
-+@70 		tooltip lua "resolveTooltip(3)"
-+@70 
+-@70 		action "buttonArray:OnLButtonPressed(3)"
 -@71 		actionAlt "buttonArray:OnRButtonPressed(3)"
++@72 
++@72 		-- BUBB EDIT SPELL START
++@72 
++@72 		--enabled "buttonArray:GetButtonEnabled(3)"
++@72 		enabled "not hotbarButtonsDisabled and buttonArray:GetButtonEnabled(3)"
++@72 
++@72 		--tooltip lua "actionBarTooltip[3]"
++@72 		tooltip lua "resolveTooltip(3)"
++@72 
++@72 		--action "buttonArray:OnLButtonPressed(3)"
++@72 		action 	"
++@72 					if isTooltipQuickSpell(actionBarTooltip[3])
++@72 					   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
++@72 					then
++@72 						buttonArray:OnLButtonPressed(3)
++@72 						checkForOpcode214 = true
++@72 					else
++@72 						buttonArray:OnLButtonPressed(3)
++@72 					end
++@72 				"
 +@72 
 +@72 		--actionAlt "buttonArray:OnRButtonPressed(3)"
 +@72 		actionAlt 	"
 +@72 						if isTooltipQuickSpell(actionBarTooltip[3])
 +@72 						   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
 +@72 						then
-+@72 							launchSpellMenu(3, false)
++@72 							buttonArray:OnRButtonPressed(3)
++@72 							launchSpellMenu()
 +@72 						else
 +@72 							buttonArray:OnRButtonPressed(3)
 +@72 						end
@@ -7837,23 +7870,36 @@ MODIFY
 +@76 		
 -@77 		enabled "buttonArray:GetButtonEnabled(4)"
 -@78 		tooltip lua "actionBarTooltip[4]"
-+@79 
-+@79 		-- BUBB EDIT SPELL START
-+@79 
-+@79 		--enabled "buttonArray:GetButtonEnabled(4)"
-+@79 		enabled "not hotbarButtonsDisabled and buttonArray:GetButtonEnabled(4)"
-+@79 
-+@79 		--tooltip lua "actionBarTooltip[4]"
-+@79 		tooltip lua "resolveTooltip(4)"
-+@79 
+-@79 		action "buttonArray:OnLButtonPressed(4)"
 -@80 		actionAlt "buttonArray:OnRButtonPressed(4)"
++@81 
++@81 		-- BUBB EDIT SPELL START
++@81 
++@81 		--enabled "buttonArray:GetButtonEnabled(4)"
++@81 		enabled "not hotbarButtonsDisabled and buttonArray:GetButtonEnabled(4)"
++@81 
++@81 		--tooltip lua "actionBarTooltip[4]"
++@81 		tooltip lua "resolveTooltip(4)"
++@81 
++@81 		--action "buttonArray:OnLButtonPressed(4)"
++@81 		action 	"
++@81 					if isTooltipQuickSpell(actionBarTooltip[4])
++@81 					   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
++@81 					then
++@81 						buttonArray:OnLButtonPressed(4)
++@81 						checkForOpcode214 = true
++@81 					else
++@81 						buttonArray:OnLButtonPressed(4)
++@81 					end
++@81 				"
 +@81 
 +@81 		--actionAlt "buttonArray:OnRButtonPressed(4)"
 +@81 		actionAlt 	"
 +@81 						if isTooltipQuickSpell(actionBarTooltip[4])
 +@81 						   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
 +@81 						then
-+@81 							launchSpellMenu(4, false)
++@81 							buttonArray:OnRButtonPressed(4)
++@81 							launchSpellMenu()
 +@81 						else
 +@81 							buttonArray:OnRButtonPressed(4)
 +@81 						end
@@ -7863,23 +7909,36 @@ MODIFY
 +@81 
 -@86 		enabled "buttonArray:GetButtonEnabled(5)"
 -@87 		tooltip lua "actionBarTooltip[5]"
-+@88 
-+@88 		-- BUBB EDIT SPELL START
-+@88 
-+@88 		--enabled "buttonArray:GetButtonEnabled(5)"
-+@88 		enabled "not hotbarButtonsDisabled and buttonArray:GetButtonEnabled(5)"
-+@88 
-+@88 		--tooltip lua "actionBarTooltip[5]"
-+@88 		tooltip lua "resolveTooltip(5)"
-+@88 
+-@88 		action "buttonArray:OnLButtonPressed(5)"
 -@89 		actionAlt "buttonArray:OnRButtonPressed(5)"
++@90 
++@90 		-- BUBB EDIT SPELL START
++@90 
++@90 		--enabled "buttonArray:GetButtonEnabled(5)"
++@90 		enabled "not hotbarButtonsDisabled and buttonArray:GetButtonEnabled(5)"
++@90 
++@90 		--tooltip lua "actionBarTooltip[5]"
++@90 		tooltip lua "resolveTooltip(5)"
++@90 
++@90 		--action "buttonArray:OnLButtonPressed(5)"
++@90 		action 	"
++@90 					if isTooltipQuickSpell(actionBarTooltip[5])
++@90 					   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
++@90 					then
++@90 						buttonArray:OnLButtonPressed(5)
++@90 						checkForOpcode214 = true
++@90 					else
++@90 						buttonArray:OnLButtonPressed(5)
++@90 					end
++@90 				"
 +@90 
 +@90 		--actionAlt "buttonArray:OnRButtonPressed(5)"
 +@90 		actionAlt 	"
 +@90 						if isTooltipQuickSpell(actionBarTooltip[5])
 +@90 						   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
 +@90 						then
-+@90 							launchSpellMenu(5, false)
++@90 							buttonArray:OnRButtonPressed(5)
++@90 							launchSpellMenu()
 +@90 						else
 +@90 							buttonArray:OnRButtonPressed(5)
 +@90 						end
@@ -7904,7 +7963,8 @@ MODIFY
 +@98 					if isFirstTooltipTalk()
 +@98 					   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
 +@98 					then
-+@98 						launchSpellMenu(6, true)
++@98 						buttonArray:OnLButtonPressed(6)
++@98 						launchSpellMenu()
 +@98 					else
 +@98 						buttonArray:OnLButtonPressed(6)
 +@98 					end
@@ -7981,7 +8041,8 @@ MODIFY
 +@144 					if isFirstTooltipTalk()
 +@144 					   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
 +@144 					then
-+@144 						launchSpellMenu(11, true)
++@144 						buttonArray:OnLButtonPressed(11)
++@144 						launchSpellMenu()
 +@144 					else
 +@144 						buttonArray:OnLButtonPressed(11)
 +@144 					end

@@ -811,12 +811,27 @@ function filterSpellListInfoSearch()
 	initializeSlots()
 end
 
+function checkForOpcode214Watchdog()
+
+	if checkForOpcode214 then
+		if not isFirstTooltipTalk() then
+			launchSpellMenu()
+		end
+		checkForOpcode214 = false
+	end
+end
+
 function customSpellMenuWatchdog()
 
 	if checkForSpellMenuClose then
 		if isFirstTooltipTalk() then
 			Infinity_PopMenu("BUBB_SPELL_MENU_SLOTS")
 		else
+
+			oldSpellSearchEdit = ''
+			spellSearchEdit = ''
+			Infinity_FocusTextEdit('bubbSpellMenuSearch');
+
 			fillSpellListInfo()
 			initializeSlots()
 		end
@@ -834,16 +849,8 @@ function customSpellMenuWatchdog()
 	end
 end
 
-function launchSpellMenu(slot, leftClick)
-
-	if leftClick then
-		buttonArray:OnLButtonPressed(slot)
-	else
-		buttonArray:OnRButtonPressed(slot)
-	end
-
+function launchSpellMenu()
 	if not isFirstTooltipTalk() then
-
 		if not worldScreen:CheckIfPaused() then
 			pausedOnOpen = false
 			worldScreen:TogglePauseGame(true)
@@ -922,7 +929,7 @@ menu
 				Infinity_PopMenu('BUBB_SPELL_MENU_SLOTS')
 			elseif key_pressed == 13 then
 				selectSpellWithUUID(getFirstSpellUUID(), true)
-				Infinity_PopMenu('BUBB_SPELL_MENU_SLOTS')
+				checkForSpellMenuClose = true
 				return 0
 			else
 				return 1
@@ -17990,6 +17997,17 @@ menu
 		Infinity_PopMenu('WORLD_MESSAGES');
 	"
 	ignoreEsc
+
+	-- BUBB EDIT SPELL START
+
+	label
+	{
+		area 0 0 -1 -1
+		text lua "checkForOpcode214Watchdog()"
+	}
+
+	-- BUBB EDIT SPELL END
+
 	label
 	{
 		area 0 0 746 57
@@ -18076,14 +18094,25 @@ menu
 		--tooltip lua "actionBarTooltip[3]"
 		tooltip lua "resolveTooltip(3)"
 
-		action "buttonArray:OnLButtonPressed(3)"
+		--action "buttonArray:OnLButtonPressed(3)"
+		action 	"
+					if isTooltipQuickSpell(actionBarTooltip[3])
+					   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
+					then
+						buttonArray:OnLButtonPressed(3)
+						checkForOpcode214 = true
+					else
+						buttonArray:OnLButtonPressed(3)
+					end
+				"
 
 		--actionAlt "buttonArray:OnRButtonPressed(3)"
 		actionAlt 	"
 						if isTooltipQuickSpell(actionBarTooltip[3])
 						   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
 						then
-							launchSpellMenu(3, false)
+							buttonArray:OnRButtonPressed(3)
+							launchSpellMenu()
 						else
 							buttonArray:OnRButtonPressed(3)
 						end
@@ -18106,14 +18135,25 @@ menu
 		--tooltip lua "actionBarTooltip[4]"
 		tooltip lua "resolveTooltip(4)"
 
-		action "buttonArray:OnLButtonPressed(4)"
+		--action "buttonArray:OnLButtonPressed(4)"
+		action 	"
+					if isTooltipQuickSpell(actionBarTooltip[4])
+					   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
+					then
+						buttonArray:OnLButtonPressed(4)
+						checkForOpcode214 = true
+					else
+						buttonArray:OnLButtonPressed(4)
+					end
+				"
 
 		--actionAlt "buttonArray:OnRButtonPressed(4)"
 		actionAlt 	"
 						if isTooltipQuickSpell(actionBarTooltip[4])
 						   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
 						then
-							launchSpellMenu(4, false)
+							buttonArray:OnRButtonPressed(4)
+							launchSpellMenu()
 						else
 							buttonArray:OnRButtonPressed(4)
 						end
@@ -18135,14 +18175,25 @@ menu
 		--tooltip lua "actionBarTooltip[5]"
 		tooltip lua "resolveTooltip(5)"
 
-		action "buttonArray:OnLButtonPressed(5)"
+		--action "buttonArray:OnLButtonPressed(5)"
+		action 	"
+					if isTooltipQuickSpell(actionBarTooltip[5])
+					   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
+					then
+						buttonArray:OnLButtonPressed(5)
+						checkForOpcode214 = true
+					else
+						buttonArray:OnLButtonPressed(5)
+					end
+				"
 
 		--actionAlt "buttonArray:OnRButtonPressed(5)"
 		actionAlt 	"
 						if isTooltipQuickSpell(actionBarTooltip[5])
 						   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
 						then
-							launchSpellMenu(5, false)
+							buttonArray:OnRButtonPressed(5)
+							launchSpellMenu()
 						else
 							buttonArray:OnRButtonPressed(5)
 						end
@@ -18169,7 +18220,8 @@ menu
 					if isFirstTooltipTalk()
 					   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
 					then
-						launchSpellMenu(6, true)
+						buttonArray:OnLButtonPressed(6)
+						launchSpellMenu()
 					else
 						buttonArray:OnLButtonPressed(6)
 					end
@@ -18270,7 +18322,8 @@ menu
 					if isFirstTooltipTalk()
 					   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU_SLOTS')
 					then
-						launchSpellMenu(11, true)
+						buttonArray:OnLButtonPressed(11)
+						launchSpellMenu()
 					else
 						buttonArray:OnLButtonPressed(11)
 					end

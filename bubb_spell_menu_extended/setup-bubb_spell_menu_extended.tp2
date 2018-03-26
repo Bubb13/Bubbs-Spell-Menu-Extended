@@ -5,6 +5,7 @@ AUTO_TRA ~bubb_spell_menu_extended/%s~
 
 BEGIN ~Bubb's Spell Menu Extended~
 REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
+REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) ~Game not supported. If you are trying to install on bgee, did you first run modmerge?~
 
 	INCLUDE ~bubb_spell_menu_extended/bubb_lib.tph~
 
@@ -32,34 +33,44 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 	
 	END
 	
+	ACTION_IF GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~ BEGIN
+		OUTER_SPRINT game_directory ~bubb_spell_menu_extended\bgee+sod~
+	END ELSE BEGIN
+		ACTION_IF GAME_IS ~bg2ee~ BEGIN
+			OUTER_SPRINT game_directory ~bubb_spell_menu_extended\bg2ee~
+		END ELSE BEGIN
+			FAIL ~Game not supported.~
+		END
+	END
+	
 	ACTION_IF %response% == 1 BEGIN
 	
 		//Patch UI.MENU
 		
-		AT_NOW ~bubb_spell_menu_extended/work/UIUtil.exe cleanup~
+		AT_NOW ~bubb_spell_menu_extended\work\UIUtil.exe cleanup~
 		
-		COPY ~bubb_spell_menu_extended\work\uipatches\0base.uipatch~ ~bubb_spell_menu_extended\work~
+		COPY ~%game_directory%\uipatches\0base.uipatch~ ~bubb_spell_menu_extended\work~
 		
 		ACTION_IF MOD_IS_INSTALLED ~EEUITweaks.tp2~ ~2900~ BEGIN
-			COPY ~bubb_spell_menu_extended\work\uipatches\1lefreut's Improved Record Screen.uipatch~ ~bubb_spell_menu_extended\work~
+			COPY ~%game_directory%\uipatches\1lefreut's Improved Record Screen.uipatch~ ~bubb_spell_menu_extended\work~
 		END
 		
-		COPY_EXISTING ~UI.MENU~ ~bubb_spell_menu_extended/work/to_patch.MENU~ IF_EXISTS
-		AT_NOW ~bubb_spell_menu_extended/work/UIUtil.exe applypatches to_patch.MENU out.MENU~
+		COPY_EXISTING ~UI.MENU~ ~bubb_spell_menu_extended\work\to_patch.MENU~ IF_EXISTS
+		AT_NOW ~bubb_spell_menu_extended\work\UIUtil.exe applypatches to_patch.MENU out.MENU~
 		
-		ACTION_IF FILE_EXISTS ~bubb_spell_menu_extended/work/failed.mrk~ BEGIN
+		ACTION_IF FILE_EXISTS ~bubb_spell_menu_extended\work\failed.mrk~ BEGIN
 			FAIL ~Could not patch UI.MENU.~
 		END
 		
-		COPY ~bubb_spell_menu_extended/work/out.MENU~ ~override/UI.MENU~
+		COPY ~bubb_spell_menu_extended\work\out.MENU~ ~override\UI.MENU~
 		
-		AT_NOW ~bubb_spell_menu_extended/work/UIUtil.exe cleanup~
+		AT_NOW ~bubb_spell_menu_extended\work\UIUtil.exe cleanup~
 		
 		//Patch UI.MENU
 	
 	END ELSE BEGIN
 	
-		COPY ~bubb_spell_menu_extended/copy/UI.MENU~ ~override/UI.MENU~
+		COPY ~%game_directory%\copy\UI.MENU~ ~override\UI.MENU~
 	
 	END
 

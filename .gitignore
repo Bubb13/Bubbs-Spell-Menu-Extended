@@ -1,6 +1,7 @@
 *.*
 !setup-bubb_spell_menu_extended.exe
 !bubb_spell_menu_extended/*.*
+!bubb_spell_menu_extended/copy/*.*
 !bubb_spell_menu_extended/bgee+sod/always_copy/*.*
 !bubb_spell_menu_extended/bgee+sod/copy/*.*
 !bubb_spell_menu_extended/bgee+sod/uipatches/*.*

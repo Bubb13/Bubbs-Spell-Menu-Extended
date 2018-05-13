@@ -1,8 +1,10 @@
 *.*
 !setup-bubb_spell_menu_extended.exe
 !bubb_spell_menu_extended/*.*
+!bubb_spell_menu_extended/bgee+sod/always_copy/*.*
 !bubb_spell_menu_extended/bgee+sod/copy/*.*
 !bubb_spell_menu_extended/bgee+sod/uipatches/*.*
+!bubb_spell_menu_extended/bg2ee/always_copy/*.*
 !bubb_spell_menu_extended/bg2ee/copy/*.*
 !bubb_spell_menu_extended/bg2ee/uipatches/*.*
 !bubb_spell_menu_extended/work/*.*

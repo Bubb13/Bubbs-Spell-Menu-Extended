@@ -10,7 +10,7 @@ CHARACTER_INFORMATION
 MODIFY
 2
 -@70 		text lua "characters[currentID].Stats.favspell.current"
-+@71 		text lua "replaceSpellUUIDs(characters[currentID].Stats.favspell.current)"
++@71 		text lua "B3replaceSpellUUIDs(characters[currentID].Stats.favspell.current)"
 :function_references
 0
 :menu_references

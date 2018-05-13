@@ -1,7 +1,6 @@
 BACKUP ~bubb_spell_menu_extended/backup~
 AUTHOR ~Bubb~
-VERSION 1.17
-AUTO_TRA ~bubb_spell_menu_extended/%s~
+VERSION 2.0
 
 BEGIN ~Bubb's Spell Menu Extended~
 REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
@@ -70,15 +69,20 @@ REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) 
 	
 	END ELSE BEGIN
 	
-		COPY ~%game_directory%\copy\UI.MENU~ ~override\UI.MENU~
+		COPY ~%game_directory%\copy\UI.MENU~ ~override~
 	
 	END
 
-	OUTER_SET spell_count = 0
-	APPEND ~BGEE.LUA~ ~spellInfo =~
-	APPEND ~BGEE.LUA~ ~{~
+	COPY ~%game_directory%\always_copy~ ~override~
+
+	COPY ~bubb_spell_menu_extended/copy/blank.txt~ ~override/M_B3SpIn.lua~
+	OUTER_SPRINT append_string ~~
 	
-	COPY_EXISTING_REGEXP ~.*\.SPL~ ~override~
+	OUTER_SET spell_count = 0
+	OUTER_SPRINT append_string ~%append_string%B3spellInfo =~
+	OUTER_SPRINT append_string ~%append_string%%WNL%{~
+	
+	COPY_EXISTING_REGEXP ~^.+\.SPL$~ ~override~
 
 		LPF TO_HEX_NUMBER INT_VAR value = spell_count minDigits = 3 RET hex_uuid = hexNumber END
 
@@ -117,16 +121,16 @@ REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) 
 					LAF STRING_REPLACE STR_VAR string = EVAL ~%unidentified_name%~ to_replace = ~\~ with = ~\\~ RET unidentified_name_escaped = replaced_string END
 					LAF STRING_REPLACE STR_VAR string = EVAL ~%unidentified_name_escaped%~ to_replace = ~'~ with = ~\'~ RET unidentified_name_escaped = replaced_string END
 					
-					APPEND ~BGEE.LUA~ ~%TAB%['%hex_uuid%'] =~
-					APPEND ~BGEE.LUA~ ~%TAB%{~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%['%hex_uuid%'] =~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%{~
 
-					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['resref'] = '%SOURCE_RES%',~
-					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['name'] = '%unidentified_name_escaped%',~
-					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellType'] = %spell_type%,~
-					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellLevel'] = %spell_level%,~
-					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellIcon'] = '%spell_icon%',~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['resref'] = '%SOURCE_RES%',~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['name'] = '%unidentified_name_escaped%',~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['spellType'] = %spell_type%,~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['spellLevel'] = %spell_level%,~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['spellIcon'] = '%spell_icon%',~
 
-					APPEND ~BGEE.LUA~ ~%TAB%},~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%},~
 				END
 
 				TEXT_SPRINT $processed_strrefs(~%unidentified_name_strref%~) ~%unidentified_name%~
@@ -158,16 +162,16 @@ REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) 
 					LAF STRING_REPLACE STR_VAR string = EVAL ~%original_value%~ to_replace = ~\~ with = ~\\~ RET original_value_escaped = replaced_string END
 					LAF STRING_REPLACE STR_VAR string = EVAL ~%original_value_escaped%~ to_replace = ~'~ with = ~\'~ RET original_value_escaped = replaced_string END
 					
-					APPEND ~BGEE.LUA~ ~%TAB%['%hex_uuid%'] =~
-					APPEND ~BGEE.LUA~ ~%TAB%{~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%['%hex_uuid%'] =~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%{~
 
-					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['resref'] = '%SOURCE_RES%',~
-					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['name'] = '%original_value_escaped%',~
-					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellType'] = %spell_type%,~
-					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellLevel'] = %spell_level%,~
-					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellIcon'] = '%spell_icon%',~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['resref'] = '%SOURCE_RES%',~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['name'] = '%original_value_escaped%',~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['spellType'] = %spell_type%,~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['spellLevel'] = %spell_level%,~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['spellIcon'] = '%spell_icon%',~
 
-					APPEND ~BGEE.LUA~ ~%TAB%},~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%},~
 				END
 
 				TEXT_SPRINT $processed_strrefs(~%inserted_strref%~) ~%original_value%~
@@ -186,12 +190,15 @@ REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) 
 	LAF STRING_REPLACE STR_VAR string = EVAL ~%jump_to_cleric%~ to_replace = ~'~ with = ~\'~ RET jump_to_cleric = replaced_string END
 	LAF STRING_REPLACE STR_VAR string = EVAL ~%jump_to_mage%~ to_replace = ~'~ with = ~\'~ RET jump_to_mage = replaced_string END
 
-	APPEND ~BGEE.LUA~ ~%TAB%["specialTooltips"] =~
-	APPEND ~BGEE.LUA~ ~%TAB%{~
-	APPEND ~BGEE.LUA~ ~%TAB%%TAB%['%identify_string%'] = 1,~
-	APPEND ~BGEE.LUA~ ~%TAB%%TAB%['%jump_to_cleric%'] = 1,~
-	APPEND ~BGEE.LUA~ ~%TAB%%TAB%['%jump_to_mage%'] = 1,~
-	APPEND ~BGEE.LUA~ ~%TAB%},~
+	OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%["specialTooltips"] =~
+	OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%{~
+	OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['%identify_string%'] = 1,~
+	OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['%jump_to_cleric%'] = 1,~
+	OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['%jump_to_mage%'] = 1,~
+	OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%},~
 
-	APPEND ~BGEE.LUA~ ~}~
+	OUTER_SPRINT append_string ~%append_string%%WNL%}~
+
+    APPEND ~M_B3SpIn.lua~ ~%append_string%~
+    OUTER_SPRINT append_string ~~
 	

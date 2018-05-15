@@ -8,6 +8,9 @@
 !bubb_spell_menu_extended/bg2ee/always_copy/*.*
 !bubb_spell_menu_extended/bg2ee/copy/*.*
 !bubb_spell_menu_extended/bg2ee/uipatches/*.*
+!bubb_spell_menu_extended/iwdee/always_copy/*.*
+!bubb_spell_menu_extended/iwdee/copy/*.*
+!bubb_spell_menu_extended/iwdee/uipatches/*.*
 !bubb_spell_menu_extended/work/*.*
 bubb_spell_menu_extended/work/out.MENU
 bubb_spell_menu_extended/work/to_patch.MENU

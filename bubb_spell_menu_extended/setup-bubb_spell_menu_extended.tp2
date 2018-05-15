@@ -4,7 +4,7 @@ VERSION 2.0
 
 BEGIN ~Bubb's Spell Menu Extended~
 REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
-REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) ~Game not supported. If you are trying to install on bgee, did you first run modmerge?~
+REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) OR (GAME_IS ~iwdee~) ~Game not supported. If you are trying to install on bgee, did you first run modmerge?~
 
 	INCLUDE ~bubb_spell_menu_extended/bubb_lib.tph~
 
@@ -38,7 +38,11 @@ REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) 
 		ACTION_IF GAME_IS ~bg2ee~ BEGIN
 			OUTER_SPRINT game_directory ~bubb_spell_menu_extended\bg2ee~
 		END ELSE BEGIN
-			FAIL ~Game not supported.~
+			ACTION_IF GAME_IS ~iwdee~ BEGIN
+				OUTER_SPRINT game_directory ~bubb_spell_menu_extended\iwdee~
+			END ELSE BEGIN
+				FAIL ~Game not supported.~
+			END
 		END
 	END
 	
@@ -124,8 +128,9 @@ REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) 
 					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%['%hex_uuid%'] =~
 					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%{~
 
-					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['resref'] = '%SOURCE_RES%',~
 					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['name'] = '%unidentified_name_escaped%',~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['original_name_strref'] = %unidentified_name_strref%,~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['resref'] = '%SOURCE_RES%',~
 					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['spellType'] = %spell_type%,~
 					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['spellLevel'] = %spell_level%,~
 					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['spellIcon'] = '%spell_icon%',~
@@ -165,8 +170,9 @@ REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) 
 					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%['%hex_uuid%'] =~
 					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%{~
 
-					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['resref'] = '%SOURCE_RES%',~
 					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['name'] = '%original_value_escaped%',~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['original_name_strref'] = %unidentified_name_strref%,~
+					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['resref'] = '%SOURCE_RES%',~
 					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['spellType'] = %spell_type%,~
 					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['spellLevel'] = %spell_level%,~
 					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%%TAB%['spellIcon'] = '%spell_icon%',~

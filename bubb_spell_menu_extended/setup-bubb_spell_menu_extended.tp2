@@ -13,7 +13,7 @@ REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) 
 		ACTION_DEFINE_ASSOCIATIVE_ARRAY accepted_responses BEGIN ~1~ => 1 ~2~ => 1 END
 		LAF PROMPT_USER
 		STR_VAR
-			to_prompt = EVAL ~This installer can attempt to patch UI.MENU instead of overriding it on Windows platforms; which installation method do you wish to perform?%WNL% 1] Patch%WNL% 2] Override~
+			to_prompt = EVAL ~This installer can attempt to patch UI.MENU instead of overriding it on Windows platforms; which installation method do you wish to perform?%WNL% 1] Patch%WNL% 2] Override (Warning: Will either wipe or break any currently installed UI mods)~
 			accepted_responses = ~accepted_responses~
 		RET
 			response
@@ -24,7 +24,7 @@ REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) 
 		ACTION_DEFINE_ASSOCIATIVE_ARRAY accepted_responses BEGIN ~2~ => 1 END
 		LAF PROMPT_USER
 		STR_VAR
-			to_prompt = EVAL ~This installer can attempt to patch UI.MENU instead of overriding it on Windows platforms; which installation method do you wish to perform?%WNL% 1] Patch (Disabled)%WNL% 2] Override~
+			to_prompt = EVAL ~This installer can attempt to patch UI.MENU instead of overriding it on Windows platforms; which installation method do you wish to perform?%WNL% 1] Patch (Disabled)%WNL% 2] Override (Warning: Will either wipe or break any currently installed UI mods)~
 			accepted_responses = ~accepted_responses~
 		RET
 			response
@@ -32,32 +32,38 @@ REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) 
 	
 	END
 	
+	// Set game_directory
 	ACTION_IF GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~ BEGIN
-		OUTER_SPRINT game_directory ~bubb_spell_menu_extended\bgee+sod~
+		OUTER_SPRINT game_directory ~bubb_spell_menu_extended\environments\bgee+sod~
+	END ELSE ACTION_IF GAME_IS ~bg2ee~ BEGIN
+		OUTER_SPRINT game_directory ~bubb_spell_menu_extended\environments\bg2ee~
+	END ELSE ACTION_IF GAME_IS ~iwdee~ BEGIN
+		OUTER_SPRINT game_directory ~bubb_spell_menu_extended\environments\iwdee~
 	END ELSE BEGIN
-		ACTION_IF GAME_IS ~bg2ee~ BEGIN
-			OUTER_SPRINT game_directory ~bubb_spell_menu_extended\bg2ee~
-		END ELSE BEGIN
-			ACTION_IF GAME_IS ~iwdee~ BEGIN
-				OUTER_SPRINT game_directory ~bubb_spell_menu_extended\iwdee~
-			END ELSE BEGIN
-				FAIL ~Game not supported.~
-			END
-		END
+		FAIL ~Game not supported.~
+	END
+
+	// Set base-specific variables
+	ACTION_IF MOD_IS_INSTALLED ~LeUI.tp2~ ~0~ BEGIN
+		OUTER_SPRINT environment_directory ~bubb_spell_menu_extended\environments\LeUI~
+		OUTER_SPRINT bam_directory ~bubb_spell_menu_extended\environments\bg2ee\bam~
+	END ELSE BEGIN
+		OUTER_SPRINT environment_directory ~%game_directory%~
+		OUTER_SPRINT bam_directory ~%game_directory%\bam~
 	END
 	
 	ACTION_IF %response% == 1 BEGIN
 	
-		//Patch UI.MENU
+		// Patch UI.MENU
 		
 		AT_NOW ~bubb_spell_menu_extended\work\UIUtil.exe cleanup~
 		
-		COPY ~%game_directory%\uipatches\0base.uipatch~ ~bubb_spell_menu_extended\work~
+		// Base Patches; for vanilla game and UI overhauls
+		LAF COPY_UIPATCH STR_VAR uipatch = ~0base~ END 
 		
-		ACTION_IF MOD_IS_INSTALLED ~EEUITweaks.tp2~ ~2900~ BEGIN
-			COPY ~%game_directory%\uipatches\1lefreut's Improved Record Screen.uipatch~ ~bubb_spell_menu_extended\work~
-		END
-		
+		// Tweak Patches
+		ACTION_IF MOD_IS_INSTALLED ~EEUITweaks.tp2~ ~2900~ BEGIN LAF COPY_UIPATCH STR_VAR uipatch = ~1lefreut's Improved Record Screen~ END END
+				
 		COPY_EXISTING ~UI.MENU~ ~bubb_spell_menu_extended\work\to_patch.MENU~ IF_EXISTS
 		AT_NOW ~bubb_spell_menu_extended\work\UIUtil.exe applypatches to_patch.MENU out.MENU~
 		
@@ -69,15 +75,13 @@ REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) 
 		
 		AT_NOW ~bubb_spell_menu_extended\work\UIUtil.exe cleanup~
 		
-		//Patch UI.MENU
-	
 	END ELSE BEGIN
 	
 		COPY ~%game_directory%\copy\UI.MENU~ ~override~
 	
 	END
-
-	COPY ~%game_directory%\always_copy~ ~override~
+	
+	COPY ~%bam_directory%~ ~override~
 
 	COPY ~bubb_spell_menu_extended/copy/blank.txt~ ~override/M_B3SpIn.lua~
 	OUTER_SPRINT append_string ~~
@@ -107,7 +111,7 @@ REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) 
 				READ_SHORT 0x001c spell_type
 				READ_LONG 0x0034 spell_level
 				
-				//Get Spell Icon
+				// Get Spell Icon
 				
 				READ_SHORT 0x0068 extended_header_count
 				PATCH_IF extended_header_count > 0 BEGIN
@@ -118,8 +122,6 @@ REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) 
 					READ_ASCII 0x003a spell_icon
 				END
 				
-				//Get Spell Icon
-
 				INNER_ACTION BEGIN
 
 					LAF STRING_REPLACE STR_VAR string = EVAL ~%unidentified_name%~ to_replace = ~\~ with = ~\\~ RET unidentified_name_escaped = replaced_string END
@@ -149,7 +151,7 @@ REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) 
 				READ_SHORT 0x001c spell_type
 				READ_LONG 0x0034 spell_level
 				
-				//Get Spell Icon
+				// Get Spell Icon
 				
 				READ_SHORT 0x0068 extended_header_count
 				PATCH_IF extended_header_count > 0 BEGIN
@@ -160,8 +162,6 @@ REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) 
 					READ_ASCII 0x003a spell_icon
 				END
 				
-				//Get Spell Icon
-
 				INNER_ACTION BEGIN
 
 					LAF STRING_REPLACE STR_VAR string = EVAL ~%original_value%~ to_replace = ~\~ with = ~\\~ RET original_value_escaped = replaced_string END

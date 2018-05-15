@@ -1,3 +1,15 @@
+	DEFINE_ACTION_FUNCTION COPY_UIPATCH
+	STR_VAR
+		uipatch = ~~
+	BEGIN
+		OUTER_SPRINT uipatch_file ~%environment_directory%\uipatches\%uipatch%.uipatch~
+		ACTION_IF FILE_EXISTS ~%uipatch_file%~ BEGIN
+			COPY ~%uipatch_file%~ ~bubb_spell_menu_extended\work~
+		END ELSE BEGIN
+			FAIL ~UI patch file not present (%uipatch%). This is an installer error, please report to @Bubb on the Beamdog forums.~
+		END
+	END
+
 	/**
 	 * Patch function. Converts any decimal number into a hexadecimal number.
 	 * INT_VAR value      The decimal number to convert.

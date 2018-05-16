@@ -47,6 +47,9 @@ REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) 
 	ACTION_IF MOD_IS_INSTALLED ~LeUI.tp2~ ~0~ BEGIN
 		OUTER_SPRINT environment_directory ~bubb_spell_menu_extended\environments\LeUI~
 		OUTER_SPRINT bam_directory ~bubb_spell_menu_extended\environments\bg2ee\bam~
+	END ELSE ACTION_IF MOD_IS_INSTALLED ~LeUI-SoD.tp2~ ~0~ BEGIN
+		OUTER_SPRINT environment_directory ~bubb_spell_menu_extended\environments\LeUI-SoD~
+		OUTER_SPRINT bam_directory ~bubb_spell_menu_extended\environments\bgee+sod\bam~
 	END ELSE BEGIN
 		OUTER_SPRINT environment_directory ~%game_directory%~
 		OUTER_SPRINT bam_directory ~%game_directory%\bam~

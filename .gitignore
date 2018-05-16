@@ -11,7 +11,10 @@
 !bubb_spell_menu_extended/environments/iwdee/bam/*.*
 !bubb_spell_menu_extended/environments/iwdee/copy/*.*
 !bubb_spell_menu_extended/environments/iwdee/uipatches/*.*
+!bubb_spell_menu_extended/environments/LeUI/copy/*.*
 !bubb_spell_menu_extended/environments/LeUI/uipatches/*.*
+!bubb_spell_menu_extended/environments/LeUI-SoD/copy/*.*
+!bubb_spell_menu_extended/environments/LeUI-SoD/uipatches/*.*
 !bubb_spell_menu_extended/work/*.*
 bubb_spell_menu_extended/work/out.MENU
 bubb_spell_menu_extended/work/to_patch.MENU

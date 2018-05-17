@@ -15,6 +15,6 @@
 !bubb_spell_menu_extended/environments/LeUI/uipatches/*.*
 !bubb_spell_menu_extended/environments/LeUI-SoD/copy/*.*
 !bubb_spell_menu_extended/environments/LeUI-SoD/uipatches/*.*
-!bubb_spell_menu_extended/work/*.*
-bubb_spell_menu_extended/work/out.MENU
-bubb_spell_menu_extended/work/to_patch.MENU
+!bubb_spell_menu_extended/environments/LeUI-IWDEE/copy/*.*
+!bubb_spell_menu_extended/environments/LeUI-IWDEE/uipatches/*.*
+!bubb_spell_menu_extended/work/UIUtil.exe

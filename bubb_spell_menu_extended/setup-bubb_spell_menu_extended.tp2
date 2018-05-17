@@ -4,7 +4,11 @@ VERSION 2.0
 
 BEGIN ~Bubb's Spell Menu Extended~
 REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
-REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) OR (GAME_IS ~iwdee~) ~Game not supported. If you are trying to install on bgee, did you first run modmerge?~
+REQUIRE_PREDICATE (
+	   (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) 
+	OR (GAME_IS ~bg2ee~) OR (GAME_IS ~iwdee~) 
+	OR (GAME_IS ~eet~ AND (MOD_IS_INSTALLED ~LeUI.tp2~ ~0~ OR MOD_IS_INSTALLED ~LeUI-SoD.tp2~ ~0~))
+) ~Game not supported. If you are trying to install on bgee, did you first run modmerge?~
 
 	INCLUDE ~bubb_spell_menu_extended/bubb_lib.tph~
 
@@ -50,6 +54,9 @@ REQUIRE_PREDICATE (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR (GAME_IS ~bg2ee~) 
 	END ELSE ACTION_IF MOD_IS_INSTALLED ~LeUI-SoD.tp2~ ~0~ BEGIN
 		OUTER_SPRINT environment_directory ~bubb_spell_menu_extended\environments\LeUI-SoD~
 		OUTER_SPRINT bam_directory ~bubb_spell_menu_extended\environments\bgee+sod\bam~
+	END ELSE ACTION_IF MOD_IS_INSTALLED ~LeUI-IWDEE.tp2~ ~0~ BEGIN
+		OUTER_SPRINT environment_directory ~bubb_spell_menu_extended\environments\LeUI-IWDEE~
+		OUTER_SPRINT bam_directory ~bubb_spell_menu_extended\environments\iwdee\bam~
 	END ELSE BEGIN
 		OUTER_SPRINT environment_directory ~%game_directory%~
 		OUTER_SPRINT bam_directory ~%game_directory%\bam~

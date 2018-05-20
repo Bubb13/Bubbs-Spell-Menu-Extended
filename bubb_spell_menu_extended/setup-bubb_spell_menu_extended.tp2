@@ -1,6 +1,6 @@
 BACKUP ~bubb_spell_menu_extended/backup~
 AUTHOR ~Bubb~
-VERSION 2.0
+VERSION 2.2
 
 BEGIN ~Bubb's Spell Menu Extended~
 REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
@@ -8,7 +8,6 @@ REQUIRE_PREDICATE (
 	   (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) 
 	OR (GAME_IS ~bg2ee~) OR (GAME_IS ~iwdee~) 
 	OR (GAME_IS ~eet~)
-	//OR (GAME_IS ~eet~ AND (MOD_IS_INSTALLED ~LeUI.tp2~ ~0~ OR MOD_IS_INSTALLED ~LeUI-SoD.tp2~ ~0~))
 ) ~Game not supported. If you are trying to install on bgee, did you first run modmerge?~
 
 	INCLUDE ~bubb_spell_menu_extended/bubb_lib.tph~
@@ -37,15 +36,19 @@ REQUIRE_PREDICATE (
 	
 	END
 	
-	// Set game_directory
+	// Set copy_directory
 	ACTION_IF GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~ BEGIN
-		OUTER_SPRINT game_directory ~bubb_spell_menu_extended\environments\bgee+sod~
+		OUTER_SPRINT copy_directory ~bubb_spell_menu_extended\environments\bgee+sod~
 	END ELSE ACTION_IF GAME_IS ~bg2ee~ BEGIN
-		OUTER_SPRINT game_directory ~bubb_spell_menu_extended\environments\bg2ee~
+		OUTER_SPRINT copy_directory ~bubb_spell_menu_extended\environments\bg2ee~
 	END ELSE ACTION_IF GAME_IS ~iwdee~ BEGIN
-		OUTER_SPRINT game_directory ~bubb_spell_menu_extended\environments\iwdee~
+		OUTER_SPRINT copy_directory ~bubb_spell_menu_extended\environments\iwdee~
 	END ELSE ACTION_IF GAME_IS ~eet~ BEGIN
-		OUTER_SPRINT game_directory ~bubb_spell_menu_extended\environments\eet~
+		ACTION_IF NOT MOD_IS_INSTALLED ~EET_gui.tp2~ ~0~ BEGIN
+			OUTER_SPRINT copy_directory ~bubb_spell_menu_extended\environments\eet~
+		END ELSE BEGIN
+			OUTER_SPRINT copy_directory ~bubb_spell_menu_extended\environments\eet-SoD_GUI~
+		END
 	END ELSE BEGIN
 		FAIL ~Game not supported.~
 	END
@@ -73,18 +76,22 @@ REQUIRE_PREDICATE (
 		
 	END ELSE ACTION_IF GAME_IS ~eet~ BEGIN
 	
-		OUTER_SPRINT environment_directory ~bubb_spell_menu_extended\environments\eet~
-		
 		ACTION_IF NOT MOD_IS_INSTALLED ~EET_gui.tp2~ ~0~ BEGIN
+		
+			OUTER_SPRINT environment_directory ~bubb_spell_menu_extended\environments\eet~
 			OUTER_SPRINT bam_directory ~bubb_spell_menu_extended\environments\bg2ee\bam~
+			
 		END ELSE BEGIN
+		
+			OUTER_SPRINT environment_directory ~bubb_spell_menu_extended\environments\eet-SoD_GUI~
 			OUTER_SPRINT bam_directory ~bubb_spell_menu_extended\environments\bgee+sod\bam~
+			
 		END
 		
 	END ELSE BEGIN
 	
-		OUTER_SPRINT environment_directory ~%game_directory%~
-		OUTER_SPRINT bam_directory ~%game_directory%\bam~
+		OUTER_SPRINT environment_directory ~%copy_directory%~
+		OUTER_SPRINT bam_directory ~%copy_directory%\bam~
 	END
 	
 	ACTION_IF %response% == 1 BEGIN
@@ -112,7 +119,7 @@ REQUIRE_PREDICATE (
 		
 	END ELSE BEGIN
 	
-		COPY ~%game_directory%\copy\UI.MENU~ ~override~
+		COPY ~%copy_directory%\copy\UI.MENU~ ~override~
 	
 	END
 	

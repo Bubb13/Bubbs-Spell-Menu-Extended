@@ -21,6 +21,9 @@ EET/*
 !bubb_spell_menu_extended/environments/eet/copy/*.*
 !bubb_spell_menu_extended/environments/eet/uipatches/*.*
 
+!bubb_spell_menu_extended/environments/eet-SoD_GUI/copy/*.*
+!bubb_spell_menu_extended/environments/eet-SoD_GUI/uipatches/*.*
+
 !bubb_spell_menu_extended/environments/iwdee/bam/*.*
 !bubb_spell_menu_extended/environments/iwdee/copy/*.*
 !bubb_spell_menu_extended/environments/iwdee/uipatches/*.*

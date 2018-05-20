@@ -7,7 +7,8 @@ REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~UI.MENU~ ~UI.MENU not found in game.~
 REQUIRE_PREDICATE (
 	   (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) 
 	OR (GAME_IS ~bg2ee~) OR (GAME_IS ~iwdee~) 
-	OR (GAME_IS ~eet~ AND (MOD_IS_INSTALLED ~LeUI.tp2~ ~0~ OR MOD_IS_INSTALLED ~LeUI-SoD.tp2~ ~0~))
+	OR (GAME_IS ~eet~)
+	//OR (GAME_IS ~eet~ AND (MOD_IS_INSTALLED ~LeUI.tp2~ ~0~ OR MOD_IS_INSTALLED ~LeUI-SoD.tp2~ ~0~))
 ) ~Game not supported. If you are trying to install on bgee, did you first run modmerge?~
 
 	INCLUDE ~bubb_spell_menu_extended/bubb_lib.tph~
@@ -43,21 +44,45 @@ REQUIRE_PREDICATE (
 		OUTER_SPRINT game_directory ~bubb_spell_menu_extended\environments\bg2ee~
 	END ELSE ACTION_IF GAME_IS ~iwdee~ BEGIN
 		OUTER_SPRINT game_directory ~bubb_spell_menu_extended\environments\iwdee~
+	END ELSE ACTION_IF GAME_IS ~eet~ BEGIN
+		OUTER_SPRINT game_directory ~bubb_spell_menu_extended\environments\eet~
 	END ELSE BEGIN
 		FAIL ~Game not supported.~
 	END
 
 	// Set base-specific variables
 	ACTION_IF MOD_IS_INSTALLED ~LeUI.tp2~ ~0~ BEGIN
+	
 		OUTER_SPRINT environment_directory ~bubb_spell_menu_extended\environments\LeUI~
 		OUTER_SPRINT bam_directory ~bubb_spell_menu_extended\environments\bg2ee\bam~
+		
 	END ELSE ACTION_IF MOD_IS_INSTALLED ~LeUI-SoD.tp2~ ~0~ BEGIN
+	
 		OUTER_SPRINT environment_directory ~bubb_spell_menu_extended\environments\LeUI-SoD~
 		OUTER_SPRINT bam_directory ~bubb_spell_menu_extended\environments\bgee+sod\bam~
+		
 	END ELSE ACTION_IF MOD_IS_INSTALLED ~LeUI-IWDEE.tp2~ ~0~ BEGIN
+	
 		OUTER_SPRINT environment_directory ~bubb_spell_menu_extended\environments\LeUI-IWDEE~
 		OUTER_SPRINT bam_directory ~bubb_spell_menu_extended\environments\iwdee\bam~
+		
+	END ELSE ACTION_IF MOD_IS_INSTALLED ~dragonspear_ui++.tp2~ ~1~ BEGIN
+	
+		OUTER_SPRINT environment_directory ~bubb_spell_menu_extended\environments\Dragonspear UI++~
+		OUTER_SPRINT bam_directory ~bubb_spell_menu_extended\environments\bgee+sod\bam~
+		
+	END ELSE ACTION_IF GAME_IS ~eet~ BEGIN
+	
+		OUTER_SPRINT environment_directory ~bubb_spell_menu_extended\environments\eet~
+		
+		ACTION_IF NOT MOD_IS_INSTALLED ~EET_gui.tp2~ ~0~ BEGIN
+			OUTER_SPRINT bam_directory ~bubb_spell_menu_extended\environments\bg2ee\bam~
+		END ELSE BEGIN
+			OUTER_SPRINT bam_directory ~bubb_spell_menu_extended\environments\bgee+sod\bam~
+		END
+		
 	END ELSE BEGIN
+	
 		OUTER_SPRINT environment_directory ~%game_directory%~
 		OUTER_SPRINT bam_directory ~%game_directory%\bam~
 	END

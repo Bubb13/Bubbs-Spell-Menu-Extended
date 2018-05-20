@@ -1,4 +1,6 @@
 *.*
+EET/*
+
 !setup-bubb_spell_menu_extended.exe
 
 !bubb_spell_menu_extended/*.*
@@ -15,6 +17,9 @@
 
 !bubb_spell_menu_extended/environments/Dragonspear UI++/copy/*.*
 !bubb_spell_menu_extended/environments/Dragonspear UI++/uipatches/*.*
+
+!bubb_spell_menu_extended/environments/eet/copy/*.*
+!bubb_spell_menu_extended/environments/eet/uipatches/*.*
 
 !bubb_spell_menu_extended/environments/iwdee/bam/*.*
 !bubb_spell_menu_extended/environments/iwdee/copy/*.*

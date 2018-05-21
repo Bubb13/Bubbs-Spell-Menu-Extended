@@ -1462,13 +1462,13 @@ ADD
 +@0 	label
 +@0 	{
 +@0 		name "B3spellMenuSearchBackground"
-+@0 		area 465 57 297 27
-+@0 		bam GUIGENC6
++@0 		area 465 57 340 32
++@0 		bam GUIBUTWS
 +@0 	}
 +@0 	edit
 +@0 	{
 +@0 		name "B3spellMenuSearch"
-+@0 		area 465 59 297 24
++@0 		area 465 57 340 29
 +@0 		var B3spellSearchEdit
 +@0 		text style "edit"
 +@0 		align center bottom

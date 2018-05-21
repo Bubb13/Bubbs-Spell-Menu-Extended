@@ -1297,13 +1297,13 @@ menu
 	label
 	{
 		name "B3spellMenuSearchBackground"
-		area 465 57 297 27
-		bam GUIGENC6
+		area 465 57 340 32
+		bam GUIBUTWS
 	}
 	edit
 	{
 		name "B3spellMenuSearch"
-		area 465 59 297 24
+		area 465 57 340 29
 		var B3spellSearchEdit
 		text style "edit"
 		align center bottom
@@ -1346,8 +1346,8 @@ menu
 	button
 	{
 		name "B3optimizeSlotSize"
-		area 722 5 140 42
-		bam GUIOSTSM
+		area 722 4 200 44
+		bam GUIBUTNT
 		sequence 6
 		text "Optimize Slot Size"
 		text style "button"

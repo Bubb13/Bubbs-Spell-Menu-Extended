@@ -1345,8 +1345,8 @@ menu
 	button
 	{
 		name "B3optimizeSlotSize"
-		area 722 5 140 42
-		bam GUIOSTSM
+		area 722 5 201 42
+		bam GUIOSTUM
 		sequence 6
 		text "Optimize Slot Size"
 		text style "button"

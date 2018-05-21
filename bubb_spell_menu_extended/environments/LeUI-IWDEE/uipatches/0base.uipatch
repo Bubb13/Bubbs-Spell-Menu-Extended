@@ -2,8 +2,7 @@
 1
 IGNORED
 ADD
-36
-+@0 
+35
 +@0 -- BUBB EDIT DEBUG DUMP START
 +@0 -- BUBB EDIT DEBUG DUMP END
 +@0 
@@ -1461,13 +1460,13 @@ ADD
 +@0 	label
 +@0 	{
 +@0 		name "B3spellMenuSearchBackground"
-+@0 		area 465 57 297 27
-+@0 		bam GUIGENC6
++@0 		area 465 57 340 32
++@0 		bam GUIBUTWS
 +@0 	}
 +@0 	edit
 +@0 	{
 +@0 		name "B3spellMenuSearch"
-+@0 		area 465 59 297 24
++@0 		area 465 57 340 29
 +@0 		var B3spellSearchEdit
 +@0 		text style "edit"
 +@0 		align center bottom
@@ -28092,27 +28091,27 @@ MODIFY
 WORLD_DIALOG
 MODIFY
 9
--@76 				text lua "getDialogText()"
-+@77 
-+@77 				-- BUBB EDIT SPELL START
-+@77 
-+@77 				--text lua "getDialogText()"
-+@77 				text lua "B3replaceSpellUUIDs(getDialogText())"
-+@77 
-+@77 				-- BUBB EDIT SPELL END
-+@77 
+-@74 				text lua "getDialogText()"
++@75 
++@75 				-- BUBB EDIT SPELL START
++@75 
++@75 				--text lua "getDialogText()"
++@75 				text lua "B3replaceSpellUUIDs(getDialogText())"
++@75 
++@75 				-- BUBB EDIT SPELL END
++@75 
 WORLD_MESSAGES
 MODIFY
 9
--@47 				text lua "combatLog[rowNumber]"
-+@48 
-+@48 				-- BUBB EDIT SPELL START
-+@48 
-+@48 				--text lua "combatLog[rowNumber]"
-+@48 				text lua "B3replaceSpellUUIDs(combatLog[rowNumber])"
-+@48 
-+@48 				-- BUBB EDIT SPELL END
-+@48 
+-@45 				text lua "combatLog[rowNumber]"
++@46 
++@46 				-- BUBB EDIT SPELL START
++@46 
++@46 				--text lua "combatLog[rowNumber]"
++@46 				text lua "B3replaceSpellUUIDs(combatLog[rowNumber])"
++@46 
++@46 				-- BUBB EDIT SPELL END
++@46 
 :function_references
 2
 refreshMageBook
@@ -29458,7 +29457,7 @@ menu
 	}
 }
 WORLD_DIALOG
-2685
+2652
 menu
 {
 	name 'WORLD_DIALOG'
@@ -29494,7 +29493,6 @@ menu
 	}
 	button
 	{
-		area 0 0 0 0
 		on pageup
 		action
 		"
@@ -29503,7 +29501,6 @@ menu
 	}
 	button
 	{
-	 	area 0 0 0 0
 		on pagedown
 		action
 		"
@@ -29598,7 +29595,7 @@ menu
 	}
 }
 WORLD_MESSAGES
-889
+856
 menu
 {
 	name 'WORLD_MESSAGES'
@@ -29622,7 +29619,6 @@ menu
 	}
 	button
 	{
-		area 0 0 0 0
 		on pageup
 		action
 		"
@@ -29631,7 +29627,6 @@ menu
 	}
 	button
 	{
-	 	area 0 0 0 0
 		on pagedown
 		action
 		"

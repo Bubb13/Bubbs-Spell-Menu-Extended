@@ -1452,8 +1452,8 @@ ADD
 +@0 	button
 +@0 	{
 +@0 		name "B3optimizeSlotSize"
-+@0 		area 722 5 140 42
-+@0 		bam GUIOSTSM
++@0 		area 722 4 201 44
++@0 		bam GUIOSTUM
 +@0 		sequence 6
 +@0 		text "Optimize Slot Size"
 +@0 		text style "button"

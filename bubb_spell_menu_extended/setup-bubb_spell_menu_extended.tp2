@@ -166,6 +166,7 @@ REQUIRE_PREDICATE (
 				INNER_ACTION BEGIN
 
 					LAF STRING_REPLACE STR_VAR string = EVAL ~%unidentified_name%~ to_replace = ~\~ with = ~\\~ RET unidentified_name_escaped = replaced_string END
+					LAF STRING_REPLACE STR_VAR string = EVAL ~%unidentified_name_escaped%~ to_replace = EVAL ~%LNL%~ with = EVAL ~\%LNL%~ RET unidentified_name_escaped = replaced_string END
 					LAF STRING_REPLACE STR_VAR string = EVAL ~%unidentified_name_escaped%~ to_replace = ~'~ with = ~\'~ RET unidentified_name_escaped = replaced_string END
 					
 					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%['%hex_uuid%'] =~
@@ -206,6 +207,7 @@ REQUIRE_PREDICATE (
 				INNER_ACTION BEGIN
 
 					LAF STRING_REPLACE STR_VAR string = EVAL ~%original_value%~ to_replace = ~\~ with = ~\\~ RET original_value_escaped = replaced_string END
+					LAF STRING_REPLACE STR_VAR string = EVAL ~%original_value_escaped%~ to_replace = EVAL ~%LNL%~ with = EVAL ~\%LNL%~ RET original_value_escaped = replaced_string END
 					LAF STRING_REPLACE STR_VAR string = EVAL ~%original_value_escaped%~ to_replace = ~'~ with = ~\'~ RET original_value_escaped = replaced_string END
 					
 					OUTER_SPRINT append_string ~%append_string%%WNL%%TAB%['%hex_uuid%'] =~

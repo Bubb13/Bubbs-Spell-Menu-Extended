@@ -114,6 +114,36 @@
 		END
 	END
 	
+	/*// STRING_REPLACE
+	DEFINE_PATCH_FUNCTION STRING_REPLACE
+		STR_VAR
+			string = ~~
+			to_replace = ~~
+			with = ~~
+		RET
+			replaced_string
+	BEGIN
+		INNER_PATCH ~%string%~ BEGIN
+			REPLACE_TEXTUALLY ~%to_replace%~ ~%with%~
+			READ_ASCII 0 replaced_string (BUFFER_LENGTH)
+		END
+	END
+	
+	// Action version of STRING_REPLACE
+	DEFINE_ACTION_FUNCTION STRING_REPLACE
+		STR_VAR
+			string = ~~
+			to_replace = ~~
+			with = ~~
+		RET
+			replaced_string
+	BEGIN
+		OUTER_PATCH ~%string%~ BEGIN
+			REPLACE_TEXTUALLY ~%to_replace%~ ~%with%~
+			READ_ASCII 0 replaced_string (BUFFER_LENGTH)
+		END
+	END*/
+	
 	// STRING_REPLACE
 	DEFINE_PATCH_FUNCTION STRING_REPLACE
 	STR_VAR

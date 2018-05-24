@@ -22589,7 +22589,7 @@ function B3initializeSlots()
 		Infinity_SetArea('B3filterSlotsCleric',                   sidebarWidth + 104, nil, nil, nil)
 		Infinity_SetArea('B3moveSlotsRight',                      sidebarWidth + 156, nil, nil, nil)
 		Infinity_SetArea('B3slotSizeSlider',                      sidebarWidth + 208, nil, nil, nil)
-		Infinity_SetArea('B3optimizeSlotSize',                    sidebarWidth + 413, nil, nil, nil)
+		Infinity_SetArea('B3optimizeSlotSize',                    sidebarWidth + 408, nil, nil, nil)
 
 	end
 
@@ -23060,7 +23060,7 @@ menu
 	slider
 	{
 		name 'B3slotSizeSlider'
-		area 517 8 200 36
+		area 517 7 200 38
 		position "B3slotSizeSlider"
 		bam SLDRSTAR
 		mosaic GUISLDR

@@ -913,7 +913,7 @@ ADD
 +@0 		Infinity_SetArea('B3filterSlotsCleric',                   sidebarWidth + 104, nil, nil, nil)
 +@0 		Infinity_SetArea('B3moveSlotsRight',                      sidebarWidth + 156, nil, nil, nil)
 +@0 		Infinity_SetArea('B3slotSizeSlider',                      sidebarWidth + 208, nil, nil, nil)
-+@0 		Infinity_SetArea('B3optimizeSlotSize',                    sidebarWidth + 413, nil, nil, nil)
++@0 		Infinity_SetArea('B3optimizeSlotSize',                    sidebarWidth + 408, nil, nil, nil)
 +@0 
 +@0 	end
 +@0 
@@ -1442,7 +1442,7 @@ ADD
 +@0 	slider
 +@0 	{
 +@0 		name 'B3slotSizeSlider'
-+@0 		area 517 8 200 36
++@0 		area 517 7 200 38
 +@0 		position "B3slotSizeSlider"
 +@0 		bam SLDRSTAR
 +@0 		mosaic GUISLDR

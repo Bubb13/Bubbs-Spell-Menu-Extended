@@ -23032,7 +23032,7 @@ menu
 	label
 	{
 		name "B3spellMenuSearchBackground"
-		area 465 57 297 27
+		area 465 57 297 27 -- Checked against LeUI's GUIGENC6.BAM
 		bam GUIGENC6
 	}
 	edit
@@ -23081,7 +23081,7 @@ menu
 	button
 	{
 		name "B3optimizeSlotSize"
-		area 722 4 201 44
+		area 722 4 201 44 -- Checked against LeUI's GUIOSTUM.BAM
 		bam GUIOSTUM
 		sequence 6
 		text "Optimize Slot Size"

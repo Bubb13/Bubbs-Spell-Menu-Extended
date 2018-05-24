@@ -1336,7 +1336,7 @@ menu
 	label
 	{
 		name "B3spellMenuSearchBackground"
-		area 465 57 340 32
+		area 465 57 340 32 -- Checked against IWDEE's GUIBUTWS.BAM
 		bam GUIBUTWS
 	}
 	edit
@@ -1385,7 +1385,7 @@ menu
 	button
 	{
 		name "B3optimizeSlotSize"
-		area -1 4 200 44
+		area -1 4 200 44 -- Checked against IWDEE's GUIBUTNT.BAM
 		bam GUIBUTNT
 		sequence 6
 		text "Optimize Slot Size"

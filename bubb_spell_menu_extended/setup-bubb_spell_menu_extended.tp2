@@ -100,10 +100,10 @@ REQUIRE_PREDICATE (
 		AT_NOW ~bubb_spell_menu_extended\work\UIUtil.exe cleanup~
 		
 		// Base Patches; for vanilla game and UI overhauls
-		LAF COPY_UIPATCH STR_VAR uipatch = ~0base~ END 
+		LAF B3_COPY_UIPATCH STR_VAR uipatch = ~0base~ END 
 		
 		// Tweak Patches
-		ACTION_IF MOD_IS_INSTALLED ~EEUITweaks.tp2~ ~2900~ BEGIN LAF COPY_UIPATCH STR_VAR uipatch = ~1lefreut's Improved Record Screen~ END END
+		ACTION_IF MOD_IS_INSTALLED ~EEUITweaks.tp2~ ~2900~ BEGIN LAF B3_COPY_UIPATCH STR_VAR uipatch = ~1lefreut's Improved Record Screen~ END END
 				
 		COPY_EXISTING ~UI.MENU~ ~bubb_spell_menu_extended\work\to_patch.MENU~ IF_EXISTS
 		AT_NOW ~bubb_spell_menu_extended\work\UIUtil.exe applypatches to_patch.MENU out.MENU~

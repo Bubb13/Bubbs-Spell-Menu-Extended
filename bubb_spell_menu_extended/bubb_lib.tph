@@ -1,4 +1,130 @@
-	DEFINE_ACTION_FUNCTION COPY_UIPATCH
+
+	DEFINE_ACTION_FUNCTION B3_BAM_V2_RETURN_REFERENCED_PVRZ
+		STR_VAR
+			source_folder = ~~
+			bam_files = ~~
+		RET_ARRAY
+			pvrz_references
+	BEGIN
+		ACTION_DEFINE_ARRAY pvrz_references BEGIN END
+		LAF B3_RETURN_SPACE_ARRAY STR_VAR string = EVAL ~%bam_files%~ RET_ARRAY bam_files_array = space_array END
+		ACTION_PHP_EACH bam_files_array AS i => bam_file BEGIN
+			COPY ~%source_folder%\%bam_file%~ ~override~
+				READ_ASCII 0x0000 signature (4)
+				PATCH_IF ~%signature%~ STRING_EQUAL ~BAM ~ BEGIN
+					READ_ASCII 0x0004 version (4)
+					PATCH_IF ~%version%~ STRING_EQUAL ~V2  ~ BEGIN
+						READ_LONG 0x0008 count_frame_entries
+						READ_LONG 0x0014 offset_frame_entries
+						READ_LONG 0x001c offset_data_blocks
+						SET current_frame_entry_offset = offset_frame_entries
+						FOR (i = 0 ; i < count_frame_entries ; ++i) BEGIN
+							READ_SHORT current_frame_entry_offset + 0x0008 frame_start_offset_data_block
+							SET current_data_block_offset = offset_data_blocks + (frame_start_offset_data_block) * (0x0018 + 4)
+							READ_LONG current_data_block_offset + 0x0000 pvrz_page
+							SET $pvrz_references(~%pvrz_page%~) = 1
+							SET current_frame_entry_offset = current_frame_entry_offset + 0x000a + 2
+						END
+					END ELSE BEGIN
+						//PATCH_PRINT ~Error: The version of %SOURCE_FILE% is invalid; aborting processing of %SOURCE_FILE%~
+					END
+				END ELSE BEGIN
+					//PATCH_PRINT ~Error: The signature of %SOURCE_FILE% is invalid; aborting processing of %SOURCE_FILE%~
+				END
+			BUT_ONLY_IF_IT_CHANGES
+		END
+	END
+	
+	DEFINE_ACTION_FUNCTION B3_BAM_V2_INSTALL
+		STR_VAR
+			source_folder = ~~
+			bam_files = ~~
+	BEGIN
+		LAF B3_BAM_V2_RETURN_REFERENCED_PVRZ STR_VAR source_folder = EVAL ~%source_folder%~ bam_files = EVAL ~%bam_files%~ RET_ARRAY pvrz_references END
+		OUTER_SET free_index_search_start = 0
+		ACTION_PHP_EACH pvrz_references AS pvrz_file => v BEGIN
+			LAF B3_PAD_ZEROS INT_VAR number = pvrz_file desired_length = 4 RET padded_pvrz_file = padded_string END
+			OUTER_SPRINT padded_pvrz_file ~MOS%padded_pvrz_file%.PVRZ~
+			LAF FIND_FREE_PVRZ_INDEX INT_VAR start_index = free_index_search_start RET free_index END
+			LAF B3_PAD_ZEROS INT_VAR number = free_index desired_length = 4 RET padded_free_index = padded_string END
+			OUTER_SPRINT padded_free_index ~MOS%padded_free_index%.PVRZ~
+			COPY ~%source_folder%\%padded_pvrz_file%~ ~override\%padded_free_index%~
+			OUTER_SET $pvrz_references(~%pvrz_file%~) = free_index
+			OUTER_SET free_index_search_start = free_index + 1
+		END
+		LAF B3_RETURN_SPACE_ARRAY STR_VAR string = EVAL ~%bam_files%~ RET_ARRAY bam_files_array = space_array END
+		ACTION_PHP_EACH bam_files_array AS i => bam_file BEGIN
+			COPY ~%source_folder%\%bam_file%~ ~override~
+				READ_ASCII 0x0000 signature (4)
+				PATCH_IF ~%signature%~ STRING_EQUAL ~BAM ~ BEGIN
+					READ_ASCII 0x0004 version (4)
+					PATCH_IF ~%version%~ STRING_EQUAL ~V2  ~ BEGIN
+						READ_LONG 0x0008 count_frame_entries
+						READ_LONG 0x0014 offset_frame_entries
+						READ_LONG 0x001c offset_data_blocks
+						SET current_frame_entry_offset = offset_frame_entries
+						FOR (i = 0 ; i < count_frame_entries ; ++i) BEGIN
+							READ_SHORT current_frame_entry_offset + 0x0008 frame_start_offset_data_block
+							SET current_data_block_offset = offset_data_blocks + (frame_start_offset_data_block) * (0x0018 + 4)
+							READ_LONG current_data_block_offset + 0x0000 pvrz_page
+							WRITE_LONG current_data_block_offset + 0x0000 $pvrz_references(~%pvrz_page%~)
+							SET current_frame_entry_offset = current_frame_entry_offset + 0x000a + 2
+						END
+					END ELSE BEGIN
+						//PATCH_PRINT ~Error: The version of %SOURCE_FILE% is invalid; aborting processing of %SOURCE_FILE%~
+					END
+				END ELSE BEGIN
+					//PATCH_PRINT ~Error: The signature of %SOURCE_FILE% is invalid; aborting processing of %SOURCE_FILE%~
+				END
+			BUT_ONLY_IF_IT_CHANGES
+		END
+	END
+	
+	DEFINE_ACTION_FUNCTION B3_RETURN_SPACE_ARRAY
+		STR_VAR
+			string = ~~
+		RET_ARRAY
+			space_array		
+	BEGIN
+		OUTER_PATCH ~%string%~ BEGIN
+			SET insertion_index = 0
+			SET string_length = STRING_LENGTH ~%string%~
+			SET last_space_index = (0 - 1)
+			FOR (i = 0; i < string_length; ++i) BEGIN
+				READ_ASCII i read_char (1)
+				PATCH_IF ~%read_char%~ STRING_EQUAL ~ ~ BEGIN
+					SET element_length = i - last_space_index - 1
+					PATCH_IF element_length > 0 BEGIN
+						READ_ASCII last_space_index + 1 element (element_length)
+						SPRINT $space_array(~%insertion_index%~) ~%element%~
+						SET ++insertion_index
+					END
+					SET last_space_index = i
+				END
+			END
+			SET element_length = string_length - last_space_index - 1
+			PATCH_IF element_length > 0 BEGIN
+				READ_ASCII last_space_index + 1 element (element_length)
+				SPRINT $space_array(~%insertion_index%~) ~%element%~
+			END
+		END
+	END
+
+	DEFINE_ACTION_FUNCTION B3_PAD_ZEROS
+		INT_VAR
+			number = 0
+			desired_length = 0
+		RET
+			padded_string
+	BEGIN
+		OUTER_SPRINT padded_string ~%number%~
+		OUTER_SET zeros_needed = desired_length - STRING_LENGTH ~%padded_string%~
+		OUTER_FOR (i = 0 ; i < zeros_needed ; ++i) BEGIN
+			OUTER_SPRINT padded_string ~0%padded_string%~
+		END
+	END
+	
+	DEFINE_ACTION_FUNCTION B3_COPY_UIPATCH
 	STR_VAR
 		uipatch = ~~
 	BEGIN
@@ -114,6 +240,7 @@
 		END
 	END
 	
+	// These are probably a better way to do STRING_REPLACE, but the old way works, so use them for now.
 	/*// STRING_REPLACE
 	DEFINE_PATCH_FUNCTION STRING_REPLACE
 		STR_VAR

@@ -1,0 +1,10 @@
+UIUtil.exe writepatch "original\BG2EE.MENU" "..\environments\bg2ee\copy\UI.MENU" "..\environments\bg2ee\uipatches\0base.uipatch"
+UIUtil.exe writepatch "original\BGEE.MENU" "..\environments\bgee+sod\copy\UI.MENU" "..\environments\bgee+sod\uipatches\0base.uipatch"
+UIUtil.exe writepatch "original\Dragonspear UI++.MENU" "..\environments\Dragonspear UI++\copy\UI.MENU" "..\environments\Dragonspear UI++\uipatches\0base.uipatch"
+UIUtil.exe writepatch "original\EET.MENU" "..\environments\eet\copy\UI.MENU" "..\environments\eet\uipatches\0base.uipatch"
+UIUtil.exe writepatch "original\EET-SoD_GUI.MENU" "..\environments\eet-SoD_GUI\copy\UI.MENU" "..\environments\eet-SoD_GUI\uipatches\0base.uipatch"
+UIUtil.exe writepatch "original\IWDEE.MENU" "..\environments\iwdee\copy\UI.MENU" "..\environments\iwdee\uipatches\0base.uipatch"
+UIUtil.exe writepatch "original\LeUI.menu" "..\environments\LeUI\copy\UI.MENU" "..\environments\LeUI\uipatches\0base.uipatch"
+UIUtil.exe writepatch "original\LeUI-IWDEE.MENU" "..\environments\LeUI-IWDEE\copy\UI.MENU" "..\environments\LeUI-IWDEE\uipatches\0base.uipatch"
+UIUtil.exe writepatch "original\LeUI-SoD.MENU" "..\environments\LeUI-SoD\copy\UI.MENU" "..\environments\LeUI-SoD\uipatches\0base.uipatch"
+pause

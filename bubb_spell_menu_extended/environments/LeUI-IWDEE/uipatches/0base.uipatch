@@ -1460,7 +1460,7 @@ ADD
 +@0 	label
 +@0 	{
 +@0 		name "B3spellMenuSearchBackground"
-+@0 		area 465 57 340 32
++@0 		area 465 57 340 32 -- Checked against LeUI-IWDEE's GUIBUTWS.BAM
 +@0 		bam GUIBUTWS
 +@0 	}
 +@0 	edit
@@ -1509,7 +1509,7 @@ ADD
 +@0 	button
 +@0 	{
 +@0 		name "B3optimizeSlotSize"
-+@0 		area -1 4 200 44
++@0 		area -1 4 200 44 -- Checked against LeUI-IWDEE's GUIBUTNT.BAM
 +@0 		bam GUIBUTNT
 +@0 		sequence 6
 +@0 		text "Optimize Slot Size"

@@ -1296,7 +1296,7 @@ menu
 	label
 	{
 		name "B3spellMenuSearchBackground"
-		area 465 57 340 32
+		area 465 57 340 32 -- Checked against eet-SoD_GUI's GUIBUTWS.BAM
 		bam GUIBUTWS
 	}
 	edit
@@ -1346,7 +1346,7 @@ menu
 	{
 		name "B3optimizeSlotSize"
 		area 722 4 200 44
-		bam GUIBUTNT
+		bam GUIBUTNT -- Checked against eet-SoD_GUI's GUIBUTNT.BAM
 		sequence 6
 		text "Optimize Slot Size"
 		text style "button"

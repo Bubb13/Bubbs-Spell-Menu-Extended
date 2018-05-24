@@ -5,6 +5,8 @@ EET/*
 
 !bubb_spell_menu_extended/*.*
 !bubb_spell_menu_extended/copy/*.*
+!bubb_spell_menu_extended/work/original/*.*
+!bubb_spell_menu_extended/work/REGEN_PATCH_FILES.BAT
 !bubb_spell_menu_extended/work/UIUtil.exe
 
 !bubb_spell_menu_extended/environments/bg2ee/bam/*.*

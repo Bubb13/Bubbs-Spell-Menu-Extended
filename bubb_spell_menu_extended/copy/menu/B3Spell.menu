@@ -1,0 +1,277 @@
+
+------------------
+-- B3Spell_Menu --
+------------------
+
+menu
+{
+	name      "B3Spell_Menu"
+	onopen    "B3Spell_Menu_OnOpen()"
+	onclose   "B3Spell_Menu_OnClose()"
+	modal lua "B3Spell_Menu_Modal()"
+	ignoreesc
+
+	-- The engine won't change the cursor type over templates if there isn't at
+	-- least one "normal" element that occupies an xy of equal or greater value.
+	label
+	{
+		enabled "B3Spell_Menu_Tick()"
+		area 0 0 2147483647 2147483647
+	}
+
+	text
+	{
+		name    "B3Spell_Menu_ExitBackground"
+		enabled "B3Spell_Menu_ExitBackground_Enabled()"
+		action  "B3Spell_Menu_ExitBackground_Action()"
+		-- W, H set via Infinity_SetArea
+		on escape
+	}
+
+	text
+	{
+		name    "B3Spell_Menu_ExitBackgroundDark"
+		enabled "B3Spell_Menu_ExitBackgroundDark_Enabled()"
+		action  "B3Spell_Menu_ExitBackgroundDark_Action()"
+		area -2 -2 0 0 -- W, H set via Infinity_SetArea
+		rectangle 1
+		rectangle opacity 100
+	}
+
+	label
+	{
+		name "B3Spell_Menu_SearchBackground"
+		bam "%B3Spell_Menu_SearchBackground_bam%" -- "GUIGENC6"
+		area 0 57 %B3Spell_Menu_SearchBackground_w% %B3Spell_Menu_SearchBackground_h% -- X set via Infinity_SetArea
+	}
+
+	edit
+	{
+		name   "B3Spell_Menu_Search"
+		var    "B3Spell_SearchEdit"
+		action "return B3Spell_Menu_Search_Action()"
+		area 0 %B3Spell_Menu_Search_y% %B3Spell_Menu_SearchBackground_w% 24 -- X set via Infinity_SetArea
+		text style "edit"
+		align center bottom
+		maxlines 1
+	}
+
+	slider
+	{
+		name        "B3Spell_Menu_SlotSizeSlider"
+		position    "B3Spell_SlotSizeSlider"
+		tooltip lua "B3Spell_Menu_SlotSizeSlider_Tooltip()"
+		action      "B3Spell_Menu_SlotSizeSlider_Action()"
+		bam "SLDRSTAR"
+		%B3Spell_Menu_SlotSizeSlider_sliderBackground%
+		scaleToClip
+		area 0 %B3Spell_Menu_SlotSizeSlider_y% %B3Spell_Menu_SlotSizeSlider_w% %B3Spell_Menu_SlotSizeSlider_h% -- X set via Infinity_SetArea
+		sequence 0
+		frame 1
+		settings 48
+	}
+
+	button
+	{
+		name   "B3Spell_Menu_OptimizeSlotSize"
+		action "B3Spell_Menu_OptimizeSlotSize_Action()"
+		text "Optimize Slot Size"
+		text style "button"
+		bam "%B3Spell_Menu_OptimizeSlotSize_bam%" -- "GUIOSTUM"
+		area 0 %B3Spell_Menu_OptimizeSlotSize_y% %B3Spell_Menu_OptimizeSlotSize_w% %B3Spell_Menu_OptimizeSlotSize_h% -- X set via Infinity_SetArea
+		sequence 6
+	}
+
+	button
+	{
+		name   "B3Spell_Menu_OptionsButton"
+		action "B3Spell_Menu_OptionsButton_Action()"
+		tooltip "Bubb's Spell Menu Options"
+		bam "GUILS10"
+		area 0 0 72 55 -- X set via Infinity_SetArea
+		sequence 7
+	}
+
+	button
+	{
+		name   "B3Spell_Menu_FilterSlotsMage"
+		action "B3Spell_Menu_FilterSlotsMage_Action()"
+		tooltip "Mage Spells"
+		bam "GUIBTACT"
+		area 0 0 52 52 -- X set via Infinity_SetArea
+		align center center
+		frame 68
+	}
+
+	button
+	{
+		name   "B3Spell_Menu_FilterSlotsAll"
+		action "B3Spell_Menu_FilterSlotsAll_Action()"
+		tooltip "All Spells"
+		bam "GUIBTACT"
+		area 0 0 52 52 -- X set via Infinity_SetArea
+		align center center
+		frame 12
+	}
+
+	button
+	{
+		name   "B3Spell_Menu_FilterSlotsCleric"
+		action "B3Spell_Menu_FilterSlotsCleric_Action()"
+		tooltip "Cleric Spells"
+		bam "GUIBTACT"
+		area 0 0 52 52 -- X set via Infinity_SetArea
+		align center center
+		frame 70
+	}
+
+	button
+	{
+		name    "B3Spell_Menu_MoveSlotsLeft"
+		enabled "B3Spell_Menu_MoveSlotsLeft_Enabled()"
+		action  "B3Spell_Menu_MoveSlotsLeft_Action()"
+		tooltip "Align Left"
+		bam "GUIBTACT"
+		area 0 0 52 52 -- X set via Infinity_SetArea
+		align center center
+		frame 64
+	}
+
+	button
+	{
+		name    "B3Spell_Menu_MoveSlotsRight"
+		enabled "B3Spell_Menu_MoveSlotsRight_Enabled()"
+		action  "B3Spell_Menu_MoveSlotsRight_Action()"
+		tooltip "Align Center"
+		bam "GUIBTACT"
+		area 0 0 52 52 -- X set via Infinity_SetArea
+		align center center
+		frame 66
+	}
+
+	template
+	{
+		label
+		{
+			enabled true
+			icon lua       "B3Spell_Menu_TEMPLATE_Icon_Icon()"
+			count lua      "B3Spell_Menu_TEMPLATE_Icon_Count()"
+			useOverlayTint "B3Spell_Menu_TEMPLATE_Icon_DisableTint()"
+			greyscale lua  "B3Spell_Menu_TEMPLATE_Icon_DisableTint()"
+			overlayTint 60 60 60
+		}
+		name "B3Spell_Menu_TEMPLATE_Icon"
+	}
+
+	template
+	{
+		label
+		{
+			enabled true
+			bam lua   "B3Spell_Menu_TEMPLATE_Bam_Bam()"
+			frame lua "B3Spell_Menu_TEMPLATE_Bam_Frame()"
+			scaleToClip
+		}
+		name "B3Spell_Menu_TEMPLATE_Bam"
+	}
+
+	template
+	{
+		button
+		{
+			enabled true
+			bam lua        "B3Spell_Menu_TEMPLATE_BamButton_Bam()"
+			frame lua      "B3Spell_Menu_TEMPLATE_BamButton_Frame()"
+			tooltip lua    "B3Spell_Menu_TEMPLATE_BamButton_Tooltip()"
+			useOverlayTint "B3Spell_Menu_TEMPLATE_BamButton_DisableTint()"
+			greyscale lua  "B3Spell_Menu_TEMPLATE_BamButton_DisableTint()"
+			action         "B3Spell_Menu_TEMPLATE_BamButton_Action()"
+			overlayTint 60 60 60
+			scaleToClip
+		}
+		name "B3Spell_Menu_TEMPLATE_BamButton"
+	}
+
+	template
+	{
+		button
+		{
+			enabled     "B3Spell_Menu_TEMPLATE_Action_Tick()"
+			tooltip lua "B3Spell_Menu_TEMPLATE_Action_Tooltip()"
+			action      "B3Spell_Menu_TEMPLATE_Action_Action()"
+			actionAlt   "B3Spell_Menu_TEMPLATE_Action_ActionAlt()"
+		}
+		name "B3Spell_Menu_TEMPLATE_Action"
+	}
+}
+
+--------------------------
+-- B3Spell_Menu_Options --
+--------------------------
+
+menu
+{
+	name      "B3Spell_Menu_Options"
+	onopen    "B3Spell_Menu_Options_OnOpen()"
+	onclose   "B3Spell_Menu_Options_OnClose()"
+	modal lua "B3Spell_Menu_Options_Modal()"
+	ignoreesc
+
+	-- The engine won't change the cursor type over templates if there isn't at
+	-- least one "normal" element that occupies an xy of equal or greater value.
+	label
+	{
+		enabled false
+		area 0 0 2147483647 2147483647
+	}
+
+	text
+	{
+		name    "B3Spell_Menu_Options_ExitBackground"
+		enabled "B3Spell_Menu_Options_ExitBackground_Enabled()"
+		action  "B3Spell_Menu_Options_ExitBackground_Action()"
+		-- W, H set via Infinity_SetArea
+		on escape
+	}
+	text
+	{
+		name    "B3Spell_Menu_Options_ExitBackgroundDark"
+		enabled "B3Spell_Menu_Options_ExitBackgroundDark_Enabled()"
+		action  "B3Spell_Menu_Options_ExitBackgroundDark_Action()"
+		-- W, H set via Infinity_SetArea
+		rectangle 1
+		rectangle opacity 100
+	}
+
+	label
+	{
+		name "B3Spell_Menu_Options_OptionsBackground"
+		-- X, Y, W, H set via Infinity_SetArea
+		rectangle 4
+	}
+
+	template
+	{
+		label
+		{
+			enabled true
+			text lua "B3Spell_Menu_Options_TEMPLATE_Text_Text()"
+			text style "normal"
+			text useFontZoom 0
+		}
+		name "TEMPLATE_B3Spell_Menu_Options_Text"
+	}
+
+	template
+	{
+		button
+		{
+			enabled true
+			frame lua "B3Spell_Menu_Options_TEMPLATE_Toggle_Frame()"
+			action    "B3Spell_Menu_Options_TEMPLATE_Toggle_Action()"
+			bam "ROUNDBUT"
+			scaleToClip
+		}
+		name "TEMPLATE_B3Spell_Menu_Options_Toggle"
+	}
+}

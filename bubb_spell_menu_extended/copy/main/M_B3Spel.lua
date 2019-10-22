@@ -75,6 +75,7 @@ B3Spell_MinY              = 52 + 5 + %B3Spell_Menu_SearchBackground_h% + 5
 B3Spell_SlotsGapY         = 2
 B3Spell_SlotsGapYFlowover = 1
 
+B3Spell_SidebarWidth = %B3Spell_SidebarWidth%
 B3Spell_Menu_OptimizeSlotSize_AlignmentX = 208 + %B3Spell_Menu_SlotSizeSlider_w%
 
 -----------
@@ -228,8 +229,6 @@ function B3Spell_InitializeSlots()
 	-- fill in the exact slots configuration for instantiation.
 	B3Spell_FillSlotRowInfo()
 
-	local _, _, sidebarWidth, _ = Infinity_GetArea('leftSidebarBackground')
-
 	-- Calculate slotsRenderXOffset
 	local slotsRenderXOffset = nil
 	if B3Spell_AlignCenter then
@@ -237,9 +236,9 @@ function B3Spell_InitializeSlots()
 		local longestCount = B3Spell_GetLongestSlotCount()
 		local horizontalAreaUsed = longestCount * (B3Spell_SlotSize + B3Spell_SlotsGapX) - B3Spell_SlotsGapX
 		local horizontalMarginSpace = horizontalAvailableSpace - horizontalAreaUsed
-		slotsRenderXOffset = sidebarWidth + (horizontalMarginSpace / 2)
+		slotsRenderXOffset = B3Spell_SidebarWidth + (horizontalMarginSpace / 2)
 	else
-		slotsRenderXOffset = sidebarWidth
+		slotsRenderXOffset = B3Spell_SidebarWidth
 	end
 
 	-- Calculate currentYOffset
@@ -268,15 +267,15 @@ function B3Spell_InitializeSlots()
 
 	else
 
-		Infinity_SetArea('B3Spell_Menu_FilterSlotsMage',   sidebarWidth,       nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_FilterSlotsAll',    sidebarWidth + 52,  nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_FilterSlotsCleric', sidebarWidth + 104, nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_MoveSlotsRight',    sidebarWidth + 156, nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_SlotSizeSlider',    sidebarWidth + 208, nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_OptimizeSlotSize',  sidebarWidth + B3Spell_Menu_OptimizeSlotSize_AlignmentX, nil, nil, nil)
+		Infinity_SetArea('B3Spell_Menu_FilterSlotsMage',   B3Spell_SidebarWidth,       nil, nil, nil)
+		Infinity_SetArea('B3Spell_Menu_FilterSlotsAll',    B3Spell_SidebarWidth + 52,  nil, nil, nil)
+		Infinity_SetArea('B3Spell_Menu_FilterSlotsCleric', B3Spell_SidebarWidth + 104, nil, nil, nil)
+		Infinity_SetArea('B3Spell_Menu_MoveSlotsRight',    B3Spell_SidebarWidth + 156, nil, nil, nil)
+		Infinity_SetArea('B3Spell_Menu_SlotSizeSlider',    B3Spell_SidebarWidth + 208, nil, nil, nil)
+		Infinity_SetArea('B3Spell_Menu_OptimizeSlotSize',  B3Spell_SidebarWidth + B3Spell_Menu_OptimizeSlotSize_AlignmentX, nil, nil, nil)
 
-		Infinity_SetArea('B3Spell_Menu_SearchBackground', sidebarWidth, nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_Search',           sidebarWidth, nil, nil, nil)
+		Infinity_SetArea('B3Spell_Menu_SearchBackground', B3Spell_SidebarWidth, nil, nil, nil)
+		Infinity_SetArea('B3Spell_Menu_Search',           B3Spell_SidebarWidth, nil, nil, nil)
 
 	end
 
@@ -624,8 +623,7 @@ end
 
 function B3Spell_GetAvailableHorizontalSpace()
 	local screenWidth, _ = Infinity_GetScreenSize()
-	local _, _, sidebarWidth, _ = Infinity_GetArea('leftSidebarBackground')
-	local horizontalAvailableSpace = screenWidth - (sidebarWidth * 2)
+	local horizontalAvailableSpace = screenWidth - (B3Spell_SidebarWidth * 2)
 	return horizontalAvailableSpace
 end
 
@@ -738,11 +736,10 @@ function B3Spell_Menu_OnOpen()
 		B3Spell_ActionbarDisable = true
 
 		local screenWidth, screenHeight = Infinity_GetScreenSize()
-		local _, _, sidebarWidth, _ = Infinity_GetArea('leftSidebarBackground')
 
 		Infinity_SetArea('B3Spell_Menu_ExitBackground', nil, nil, screenWidth, screenHeight)
 		Infinity_SetArea('B3Spell_Menu_ExitBackgroundDark', nil, nil, screenWidth + 4, screenHeight + 4)
-		Infinity_SetArea('B3Spell_Menu_OptionsButton', screenWidth - sidebarWidth - 72, nil, nil, nil)
+		Infinity_SetArea('B3Spell_Menu_OptionsButton', screenWidth - B3Spell_SidebarWidth - 72, nil, nil, nil)
 
 		B3Spell_OldSearchEdit = ''
 		B3Spell_SearchEdit = ''

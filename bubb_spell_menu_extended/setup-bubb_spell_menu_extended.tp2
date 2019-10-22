@@ -7,9 +7,33 @@ REQUIRE_PREDICATE (FILE_EXISTS_IN_GAME ~UI.MENU~) ~UI.MENU not found in game.~
 REQUIRE_PREDICATE (GAME_IS ~bgee bg2ee eet iwdee~) ~Game not supported.~
 REQUIRE_PREDICATE (NOT GAME_IS ~bgee~ OR GAME_INCLUDES ~sod~) ~SoD not found as part of BG:EE install. If your install includes SoD, run modmerge / equivalent.~
 
-	ACTION_IF GAME_IS ~bgee~ BEGIN
+	ACTION_IF MOD_IS_INSTALLED ~dragonspear_ui++.tp2~ ~1~ BEGIN
 
 		OUTER_SPRINT bam_folder ~bubb_spell_menu_extended\copy\bgee~
+
+		OUTER_SET B3Spell_SidebarWidth = 80
+
+		OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~mosaic "GUISLDR"~
+		OUTER_SET B3Spell_Menu_SlotSizeSlider_y = 8
+		OUTER_SET B3Spell_Menu_SlotSizeSlider_w = 200
+		OUTER_SET B3Spell_Menu_SlotSizeSlider_h = 36
+
+		OUTER_SPRINT B3Spell_Menu_OptimizeSlotSize_bam ~GUIBUTNT~
+		OUTER_SET B3Spell_Menu_OptimizeSlotSize_y = 4
+		OUTER_SET B3Spell_Menu_OptimizeSlotSize_w = 200
+		OUTER_SET B3Spell_Menu_OptimizeSlotSize_h = 44
+
+		OUTER_SPRINT B3Spell_Menu_SearchBackground_bam ~GUIBUTWS~
+		OUTER_SET B3Spell_Menu_SearchBackground_w = 340
+		OUTER_SET B3Spell_Menu_SearchBackground_h = 32
+
+		OUTER_SET B3Spell_Menu_Search_y = 63
+
+	END ELSE ACTION_IF GAME_IS ~bgee~ BEGIN
+
+		OUTER_SPRINT bam_folder ~bubb_spell_menu_extended\copy\bgee~
+
+		OUTER_SET B3Spell_SidebarWidth = 80
 
 		OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~sliderBackground "SLDRBACK"~
 		OUTER_SET B3Spell_Menu_SlotSizeSlider_y = 8
@@ -31,6 +55,8 @@ REQUIRE_PREDICATE (NOT GAME_IS ~bgee~ OR GAME_INCLUDES ~sod~) ~SoD not found as 
 
 		OUTER_SPRINT bam_folder ~bubb_spell_menu_extended\copy\bg2ee~
 
+		OUTER_SET B3Spell_SidebarWidth = 80
+
 		OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~mosaic "GUISLDR"~
 		OUTER_SET B3Spell_Menu_SlotSizeSlider_y = 8
 		OUTER_SET B3Spell_Menu_SlotSizeSlider_w = 200
@@ -50,6 +76,8 @@ REQUIRE_PREDICATE (NOT GAME_IS ~bgee~ OR GAME_INCLUDES ~sod~) ~SoD not found as 
 	END ELSE ACTION_IF GAME_IS ~iwdee~ BEGIN
 
 		OUTER_SPRINT bam_folder ~bubb_spell_menu_extended\copy\iwdee~
+
+		OUTER_SET B3Spell_SidebarWidth = 80
 
 		OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~mosaic "GUISLDR"~
 		OUTER_SET B3Spell_Menu_SlotSizeSlider_y = 6

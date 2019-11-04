@@ -86,6 +86,7 @@ B3Spell_Mode = nil
 
 B3Spell_ActionbarDisable     = false
 B3Spell_AlignCenter          = true
+B3Spell_AllowSearchTick      = -1
 B3Spell_PausedOnOpen         = false
 B3Spell_SlotsSuppressOnOpen  = false
 B3Spell_SlotsSuppressOnClose = false
@@ -734,6 +735,7 @@ function B3Spell_Menu_OnOpen()
 	if not B3Spell_SlotsSuppressOnOpen then
 
 		B3Spell_ActionbarDisable = true
+		B3Spell_AllowSearchTick = Infinity_GetClockTicks() + 1
 
 		local screenWidth, screenHeight = Infinity_GetScreenSize()
 
@@ -823,7 +825,9 @@ end
 -------------------------
 
 function B3Spell_Menu_Search_Action()
-	if key_pressed == 27 then
+	if Infinity_GetClockTicks() <= B3Spell_AllowSearchTick then
+		return 0
+	elseif key_pressed == 27 then
 		Infinity_PopMenu('B3Spell_Menu')
 	elseif key_pressed == 13 then
 		if B3Spell_QuickSpellData then

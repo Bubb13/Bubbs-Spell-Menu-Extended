@@ -1,6 +1,6 @@
 BACKUP ~bubb_spell_menu_extended/backup~
 AUTHOR ~Bubb~
-VERSION 3.1
+VERSION 3.2
 
 BEGIN ~Bubb's Spell Menu Extended~
 REQUIRE_PREDICATE (FILE_EXISTS_IN_GAME ~UI.MENU~) ~UI.MENU not found in game.~
@@ -29,7 +29,7 @@ REQUIRE_PREDICATE (NOT GAME_IS ~bgee~ OR GAME_INCLUDES ~sod~) ~SoD not found as 
 
 		OUTER_SET B3Spell_Menu_Search_y = 63
 
-	END ELSE ACTION_IF GAME_IS ~bgee~ BEGIN
+	END ELSE ACTION_IF GAME_IS ~bgee~ OR MOD_IS_INSTALLED ~EET_GUI.TP2~ ~0~ BEGIN
 
 		OUTER_SPRINT bam_folder ~bubb_spell_menu_extended\copy\bgee~
 
@@ -51,7 +51,7 @@ REQUIRE_PREDICATE (NOT GAME_IS ~bgee~ OR GAME_INCLUDES ~sod~) ~SoD not found as 
 
 		OUTER_SET B3Spell_Menu_Search_y = 63
 
-	END ELSE ACTION_IF GAME_IS ~bg2ee~ BEGIN
+	END ELSE ACTION_IF GAME_IS ~bg2ee eet~ BEGIN
 
 		OUTER_SPRINT bam_folder ~bubb_spell_menu_extended\copy\bg2ee~
 

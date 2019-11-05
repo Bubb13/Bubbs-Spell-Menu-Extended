@@ -1,21 +1,40 @@
 
+-----------------
+-- Keybindings --
+-----------------
+
+-- Replace "" with the key you want to use to open the corresponding menu.
+-- Example: B3Spell_CastSpellKey = "f"
+B3Spell_CastSpellKey = ""
+B3Spell_CastInnateKey = ""
+
+function B3Spell_KeyPressedListener(keyPressed)
+
+	if worldScreen ~= e:GetActiveEngine() then return end
+	if Infinity_IsMenuOnStack("B3Spell_Menu") or Infinity_IsMenuOnStack("B3Spell_Menu_Options") then return end
+
+	local keyToCode = function(string)
+		return #string ~= 0 and string:byte() or -1
+	end
+
+	local keyToType = {
+		[keyToCode(B3Spell_CastSpellKey)] = 3,
+		[keyToCode(B3Spell_CastInnateKey)] = 10,
+	}
+
+	local typeToPress = keyToType[keyPressed]
+	if typeToPress then
+		for i = 0, 11, 1 do
+			if buttonArray:GetButtonType(i) == typeToPress then
+				buttonArray:OnLButtonPressed(i)
+			end
+		end
+	end
+end
+
 --------------------
 -- Hook Actionbar --
 --------------------
-
-function B3Spell_InstallActionbarEnabledHook()
-
-	EEex_LoadMenuFile("B3Spell")
-
-	local actionbarItems = EEex_FindActionbarMenuItems("WORLD_ACTIONBAR")
-	for _, actionbarItem in ipairs(actionbarItems) do
-		local oldEnable = EEex_GetMenuItemVariantFunction(actionbarItem, "enabled")
-		EEex_SetMenuItemVariantFunction(actionbarItem, "enabled", function()
-			return not B3Spell_ActionbarDisable and oldEnable()
-		end)
-	end
-end
-EEex_AddUIMenuLoadListener(B3Spell_InstallActionbarEnabledHook)
 
 function B3Spell_ActionbarListener(config, state)
 
@@ -55,7 +74,35 @@ function B3Spell_ActionbarListener(config, state)
 		B3Spell_LaunchSpellMenu(mode)
 	end
 end
-EEex_AddActionbarListener(B3Spell_ActionbarListener)
+
+--------------------
+-- Listeners Init -- 
+--------------------
+
+function B3Spell_InitListeners()
+	EEex_AddKeyPressedListener(B3Spell_KeyPressedListener)
+	EEex_AddActionbarListener(B3Spell_ActionbarListener)
+	EEex_AddResetListener(B3Spell_InitListeners)
+end
+B3Spell_InitListeners()
+
+---------------
+-- Hook Menu --
+---------------
+
+function B3Spell_InstallActionbarEnabledHook()
+
+	EEex_LoadMenuFile("B3Spell")
+
+	local actionbarItems = EEex_FindActionbarMenuItems("WORLD_ACTIONBAR")
+	for _, actionbarItem in ipairs(actionbarItems) do
+		local oldEnable = EEex_GetMenuItemVariantFunction(actionbarItem, "enabled")
+		EEex_SetMenuItemVariantFunction(actionbarItem, "enabled", function()
+			return not B3Spell_ActionbarDisable and oldEnable()
+		end)
+	end
+end
+EEex_AddUIMenuLoadListener(B3Spell_InstallActionbarEnabledHook)
 
 ---------------------------------
 -- Softcoded Actionbar Actions --

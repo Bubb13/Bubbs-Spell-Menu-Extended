@@ -86,13 +86,13 @@ B3Spell_Mode = nil
 
 B3Spell_ActionbarDisable     = false
 B3Spell_AlignCenter          = true
-B3Spell_AllowSearchTick      = -1
 B3Spell_PausedOnOpen         = false
 B3Spell_SlotsSuppressOnOpen  = false
 B3Spell_SlotsSuppressOnClose = false
 
 B3Spell_SearchEdit    = ""
 B3Spell_OldSearchEdit = ""
+B3Spell_MenuTick      = -1
 
 B3Spell_SpellListInfo         = {}
 B3Spell_FilteredSpellListInfo = {}
@@ -735,7 +735,6 @@ function B3Spell_Menu_OnOpen()
 	if not B3Spell_SlotsSuppressOnOpen then
 
 		B3Spell_ActionbarDisable = true
-		B3Spell_AllowSearchTick = Infinity_GetClockTicks() + 1
 
 		local screenWidth, screenHeight = Infinity_GetScreenSize()
 
@@ -745,7 +744,7 @@ function B3Spell_Menu_OnOpen()
 
 		B3Spell_OldSearchEdit = ''
 		B3Spell_SearchEdit = ''
-		Infinity_FocusTextEdit('B3Spell_Menu_Search');
+		B3Spell_MenuTick = 0
 
 		B3Spell_FillSpellListInfo()
 		B3Spell_InitializeSlots()
@@ -771,6 +770,15 @@ end
 
 -- Used to update slots based on current search field
 function B3Spell_Menu_Tick()
+
+	if B3Spell_MenuTick >= 0 then
+		if B3Spell_MenuTick >= 1 then
+			Infinity_FocusTextEdit('B3Spell_Menu_Search')
+			B3Spell_MenuTick = -1
+		else
+			B3Spell_MenuTick = B3Spell_MenuTick + 1
+		end
+	end
 
 	local currentTick = Infinity_GetClockTicks()
 	if B3Spell_SliderChangeQueued and currentTick - B3Spell_LastManualSliderChange >= 33 then
@@ -825,9 +833,8 @@ end
 -------------------------
 
 function B3Spell_Menu_Search_Action()
-	if Infinity_GetClockTicks() <= B3Spell_AllowSearchTick then
-		return 0
-	elseif key_pressed == 27 then
+	if not key_pressed then return 1 end
+	if key_pressed == 27 then
 		Infinity_PopMenu('B3Spell_Menu')
 	elseif key_pressed == 13 then
 		if B3Spell_QuickSpellData then
@@ -861,6 +868,7 @@ function B3Spell_Menu_OptimizeSlotSize_Action()
 	B3Spell_AutomaticallyOptimizeSlotSize = 1
 	B3Spell_InitializeSlots()
 	B3Spell_AutomaticallyOptimizeSlotSize = savedValue
+	Infinity_FocusTextEdit('B3Spell_Menu_Search')
 end
 
 --------------------------------

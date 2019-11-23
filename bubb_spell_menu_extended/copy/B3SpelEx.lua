@@ -11,6 +11,7 @@ B3Spell_CastInnateKey = ""
 function B3Spell_KeyPressedListener(keyPressed)
 
 	if worldScreen ~= e:GetActiveEngine() then return end
+	if not Infinity_IsMenuOnStack("WORLD_ACTIONBAR") then return end
 	if Infinity_IsMenuOnStack("B3Spell_Menu") or Infinity_IsMenuOnStack("B3Spell_Menu_Options") then return end
 
 	local keyToCode = function(string)

@@ -254,7 +254,10 @@ end
 -- Used in M_B3Spel.lua
 function B3Spell_FillSpellListInfo()
 
-	B3Spell_SpellListInfo = {[0] = {}, [1] = {}, [2] = {}, [3] = {}, [4] = {}, [5] = {}, [6] = {}, [7] = {}, [8] = {}, [9] = {}}
+	B3Spell_SpellListInfo = {}
+	local belowSpellsIndex = nil
+	local levelToIndex = {}
+	local aboveSpellsIndex = nil
 
 	-- Every level table is filled with a number of spell entries:
 	--     ["spellCastableCount"] = The number of times the spell can still be cast,
@@ -274,13 +277,16 @@ function B3Spell_FillSpellListInfo()
 	local buttonType = nil
 	if B3Spell_Mode == B3Spell_Modes.Innate then
 
-		-- TODO: Hack (cleric-thief 0th line abilities row)
+		-- Cleric-thief abilities row
 		if EEex_GetActorClass(actorID) == 15 then
 
 			local thievingTooltip = Infinity_FetchString(0xF000E2)
+			local levelToFill = {
+				["infoMode"] = B3Spell_InfoModes.Abilities,
+			}
 
 			if not B3Spell_IsThievingDisabled() then
-				table.insert(B3Spell_SpellListInfo[0], {
+				table.insert(levelToFill, {
 					["bam"] = "GUIBTACT",
 					["frame"] = 26,
 					["disableTint"] = false,
@@ -291,7 +297,7 @@ function B3Spell_FillSpellListInfo()
 					end,
 				})
 			else
-				table.insert(B3Spell_SpellListInfo[0], {
+				table.insert(levelToFill, {
 					["bam"] = "GUIBTACT",
 					["frame"] = 26,
 					["disableTint"] = true,
@@ -299,6 +305,8 @@ function B3Spell_FillSpellListInfo()
 					["func"] = function() end,
 				})
 			end
+
+			table.insert(B3Spell_SpellListInfo, levelToFill)
 		end
 
 		buttonType = 4
@@ -326,24 +334,61 @@ function B3Spell_FillSpellListInfo()
 				local spellData = EEex_DemandResData(resref, "SPL")
 				local level = EEex_ReadDword(spellData + 0x34)
 
-				if level ~= 0 then
-					table.insert(B3Spell_SpellListInfo[level], {
-						["spellCastableCount"]  = B3Spell_Mode ~= B3Spell_Modes.Opcode214 and EEex_ReadWord(m_CButtonData + 0x18, 0) or 0,
-						["spellDescription"]    = EEex_ReadDword(spellData + 0x50),
-						["spellDisabled"]       = EEex_ReadByte(m_CButtonData + 0x30, 0) == 1,
-						["spellIcon"]           = EEex_ReadLString(m_CButtonData, 0x8),
-						["spellLevel"]          = level,
-						["spellName"]           = name,
-						["spellNameStrref"]     = nameStrref,
-						["spellRealNameStrref"] = EEex_ReadDword(spellData + 0x8),
-						["spellResref"]         = resref,
-						["spellType"]           = EEex_ReadWord(spellData + 0x1C, 0),
-					})
+				local levelToFill = {}
+
+				if level <= 0 then
+
+					if not belowSpellsIndex then
+						levelToFill = {
+							["infoMode"] = B3Spell_InfoModes.BelowSpells,
+						}
+						belowSpellsIndex = #B3Spell_SpellListInfo + 1
+						table.insert(B3Spell_SpellListInfo, levelToFill)
+					else
+						levelToFill = B3Spell_SpellListInfo[belowSpellsIndex]
+					end
+					
+				elseif level <= 9 then
+
+					local levelInfoIndex = levelToIndex[level]
+					if not levelInfoIndex then
+						levelToFill = {
+							["infoMode"] = B3Spell_InfoModes.Spells,
+							["spellLevel"] = level,
+						}
+						levelToIndex[level] = #B3Spell_SpellListInfo + 1
+						table.insert(B3Spell_SpellListInfo, levelToFill)
+					else
+						levelToFill = B3Spell_SpellListInfo[levelInfoIndex]
+					end
+
 				else
-					print("[B3Spell_FillSpellListInfo] (ASSERT) Spell with level 0 encountered: '"..name.."'")
-					Infinity_DisplayString("[Bubb's Spell Menu] Didn't display a level-0 spell: '"..name.."'. \z
-					Please report this error to @Bubb if you have encountered it during normal play.")
+
+					if not aboveSpellsIndex then
+						levelToFill = {
+							["infoMode"] = B3Spell_InfoModes.AboveSpells,
+						}
+						aboveSpellsIndex = #B3Spell_SpellListInfo + 1
+						table.insert(B3Spell_SpellListInfo, levelToFill)
+					else
+						levelToFill = B3Spell_SpellListInfo[aboveSpellsIndex]
+					end
+
 				end
+
+				table.insert(levelToFill, {
+					["spellCastableCount"]  = B3Spell_Mode ~= B3Spell_Modes.Opcode214 and EEex_ReadWord(m_CButtonData + 0x18, 0) or 0,
+					["spellDescription"]    = EEex_ReadDword(spellData + 0x50),
+					["spellDisabled"]       = EEex_ReadByte(m_CButtonData + 0x30, 0) == 1,
+					["spellIcon"]           = EEex_ReadLString(m_CButtonData, 0x8),
+					["spellLevel"]          = level,
+					["spellName"]           = name,
+					["spellNameStrref"]     = nameStrref,
+					["spellRealNameStrref"] = EEex_ReadDword(spellData + 0x8),
+					["spellResref"]         = resref,
+					["spellType"]           = EEex_ReadWord(spellData + 0x1C, 0),
+				})
+	
 			else
 				print("[B3Spell_FillSpellListInfo] (ASSERT) Not implemented, report to @Bubb")
 			end
@@ -353,6 +398,10 @@ function B3Spell_FillSpellListInfo()
 		end
 	end)
 
+	table.sort(B3Spell_SpellListInfo, function(a, b)
+		return a.infoMode < b.infoMode or (a.infoMode == B3Spell_InfoModes.Spells and b.infoMode == B3Spell_InfoModes.Spells and a.spellLevel < b.spellLevel)
+	end)
+	
 	B3Spell_FilteredSpellListInfo = B3Spell_SpellListInfo
 	B3Spell_SortFilteredSpellListInfo()
 end

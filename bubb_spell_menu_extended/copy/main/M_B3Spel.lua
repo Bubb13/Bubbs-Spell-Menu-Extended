@@ -69,6 +69,19 @@ B3Spell_Modes = {
 	["Opcode214"] = 3,
 }
 
+B3Spell_InfoModes = {
+	["Abilities"]   = 0,
+	["BelowSpells"] = 1,
+	["Spells"]      = 2,
+	["AboveSpells"] = 3,
+}
+
+B3Spell_InfoModeIcons = {
+	[B3Spell_InfoModes.Abilities]   = {"GUIBTACT", 38},
+	[B3Spell_InfoModes.BelowSpells] = {"GUIBTACT", 52},
+	[B3Spell_InfoModes.AboveSpells] = {"GUIBTACT", 53},
+}
+
 B3Spell_SlotSizeMinimum   = 5
 B3Spell_SlotsGapX         = 1
 B3Spell_MinY              = 52 + 5 + %B3Spell_Menu_SearchBackground_h% + 5
@@ -129,20 +142,10 @@ end
 -- Fills: B3Spell_SlotRowInfo
 function B3Spell_FillSlotRowInfo()
 
-	local linesPossible = B3Spell_LinesAvailable
-
-	local filledSpellLevels = 0 -- How many spell levels actually have at least one memorized spell
-	for i = 0, #B3Spell_FilteredSpellListInfo, 1 do
-		if #B3Spell_FilteredSpellListInfo[i] > 0 then
-			filledSpellLevels = filledSpellLevels + 1
-		end
-	end
-
 	B3Spell_SlotRowInfo = {}
-	local flowoverLinesAvailable = linesPossible - filledSpellLevels
-	local flowoverLinesCounter = flowoverLinesAvailable
+	local flowoverLinesCounter = B3Spell_LinesAvailable - #B3Spell_FilteredSpellListInfo
 
-	for i = 0, 9, 1 do
+	for i = 1, #B3Spell_FilteredSpellListInfo, 1 do
 
 		-- Number of spells(slots) I want to display for this spell level
 		local spellCount = #B3Spell_FilteredSpellListInfo[i]
@@ -159,10 +162,10 @@ function B3Spell_FillSlotRowInfo()
 
 				levelRowCount = levelRowCount + 1
 				local spellLevelInfo = {
-					["spellLevel"] = i,
+					["originatingRow"] = i,
 					["slotCount"] = -1, -- Filled down below
-					["spellOffsetBase"] = currentSpellAccessStart,
-					["spellOffset"] = 0,
+					["scrollBase"] = currentSpellAccessStart,
+					["scrollOffset"] = 0,
 					["isFlowover"] = false, -- (Possibly) Updated down below
 					["hasArrows"] = false,  -- (Possibly) Updated down below
 					["slotInstances"] = {},
@@ -291,26 +294,27 @@ function B3Spell_InitializeSlots()
 	for row = 1, slotRowCount, 1 do
 
 		local currentXOffset = slotsRenderXOffset
-		local rowInfo = B3Spell_SlotRowInfo[row]
+		local slotRowInfo = B3Spell_SlotRowInfo[row]
+		local rowInfo = B3Spell_FilteredSpellListInfo[slotRowInfo.originatingRow]
+		local rowInfoMode = rowInfo.infoMode
 
-		local spellSlotCount = rowInfo.slotCount
+		local spellSlotCount = slotRowInfo.slotCount
 		if spellSlotCount > B3Spell_SlotsAvailable then spellSlotCount = B3Spell_SlotsAvailable end
 		-- Always going to leave room for the spell level
 		spellSlotCount = spellSlotCount - 1
 
-		if not rowInfo.isFlowover then
-			-- TODO: Hack (cleric-thief 0th line abilities row)
-			if rowInfo.spellLevel == 0 then
-				B3Spell_CreateBam("GUIBTACT", 38, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
-			-- Spawn Spell Level
-			else
+		if not slotRowInfo.isFlowover then
+			if rowInfoMode == B3Spell_InfoModes.Spells then
 				B3Spell_CreateBam("B3NUM"..rowInfo.spellLevel, 1, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
+			else
+				local iconDef = B3Spell_InfoModeIcons[rowInfoMode]
+				B3Spell_CreateBam(iconDef[1], iconDef[2], currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
 			end
 		end
 		currentXOffset = currentXOffset + B3Spell_SlotSize + B3Spell_SlotsGapX
 
 		-- Spawn Left Arrows
-		if rowInfo.hasArrows then
+		if slotRowInfo.hasArrows then
 			local arrowData = B3Spell_CreateBamButton("GUIBTACT", 64, "", false, B3Spell_ArrowLeft, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
 			arrowData.row = row
 			-- Spawn 2 fewer spell slots, (to make room for the arrows)
@@ -318,31 +322,31 @@ function B3Spell_InitializeSlots()
 			currentXOffset = currentXOffset + B3Spell_SlotSize + B3Spell_SlotsGapX
 		end
 
-		-- Spawn Spell Slots
-		for column = 1, spellSlotCount, 1 do
-
-			local data = B3Spell_GetDataForSlot(row, column)
-
-			-- TODO: Hack (cleric-thief 0th line abilities row)
-			if rowInfo.spellLevel == 0 then
+		if rowInfoMode == B3Spell_InfoModes.Abilities then
+			for column = 1, spellSlotCount, 1 do
+				local data = B3Spell_GetDataForSlot(row, column)
 				local abilityData = B3Spell_CreateBamButton(data.bam, data.frame, data.tooltip, data.disableTint, data.func, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
-				rowInfo.slotInstances[column] = abilityData
-			-- TODO: Handle this separately, instead of checking EVERY SLOT
-			elseif not foundGreen and not data.spellDisabled then
-				local slotData = B3Spell_CreateSpell(data, true, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
-				rowInfo.slotInstances[column] = slotData
-				B3Spell_QuickSpellData = data
-				foundGreen = true
-			else
-				local slotData = B3Spell_CreateSpell(data, false, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
-				rowInfo.slotInstances[column] = slotData
+				slotRowInfo.slotInstances[column] = abilityData
+				currentXOffset = currentXOffset + B3Spell_SlotSize + B3Spell_SlotsGapX
 			end
-
-			currentXOffset = currentXOffset + B3Spell_SlotSize + B3Spell_SlotsGapX
+		else
+			for column = 1, spellSlotCount, 1 do
+				local data = B3Spell_GetDataForSlot(row, column)
+				if not foundGreen and not data.spellDisabled then
+					local slotData = B3Spell_CreateSpell(data, true, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
+					slotRowInfo.slotInstances[column] = slotData
+					B3Spell_QuickSpellData = data
+					foundGreen = true
+				else
+					local slotData = B3Spell_CreateSpell(data, false, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
+					slotRowInfo.slotInstances[column] = slotData
+				end
+				currentXOffset = currentXOffset + B3Spell_SlotSize + B3Spell_SlotsGapX
+			end
 		end
 
 		-- Spawn Right Arrows
-		if rowInfo.hasArrows then
+		if slotRowInfo.hasArrows then
 			local arrowData = B3Spell_CreateBamButton("GUIBTACT", 66, "", false, B3Spell_ArrowRight, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
 			arrowData.row = row
 		end
@@ -363,12 +367,12 @@ end
 
 function B3Spell_GetSlotInfoOffset(slotRow, slotColumn)
 	local slotInfo = B3Spell_SlotRowInfo[slotRow]
-	return slotInfo.spellOffsetBase + slotInfo.spellOffset + slotColumn
+	return slotInfo.scrollBase + slotInfo.scrollOffset + slotColumn
 end
 
 function B3Spell_GetDataForSlot(slotRow, slotColumn)
-	local spellLevel = B3Spell_SlotRowInfo[slotRow].spellLevel
-	return B3Spell_FilteredSpellListInfo[spellLevel][B3Spell_GetSlotInfoOffset(slotRow, slotColumn)]
+	local originatingRow = B3Spell_SlotRowInfo[slotRow].originatingRow
+	return B3Spell_FilteredSpellListInfo[originatingRow][B3Spell_GetSlotInfoOffset(slotRow, slotColumn)]
 end
 
 function B3Spell_GetLongestSlotCount()
@@ -442,10 +446,9 @@ function B3Spell_CalculateLines()
 	B3Spell_SlotsAvailable = math.floor(horizontalAvailableSpace / (B3Spell_SlotSize + B3Spell_SlotsGapX))
 	B3Spell_SlotsAvailable = B3Spell_SlotsAvailable + math.floor(B3Spell_SlotsGapX / B3Spell_SlotSize)
 
-	for i = 0, 9, 1 do
+	for i = 1, #B3Spell_FilteredSpellListInfo, 1 do
 
-		local spellListInfo = B3Spell_FilteredSpellListInfo[i]
-		local spellCountForLevel = #spellListInfo
+		local spellCountForLevel = #B3Spell_FilteredSpellListInfo[i]
 
 		-- Update local state with a new line, accounting for gapSize
 		local processLine = function(gapSize)
@@ -483,17 +486,21 @@ end
 -- Fill B3Spell_FilteredSpellListInfo from B3Spell_SpellListInfo with only mage spells.
 function B3Spell_FilterSpellListInfoMage()
 	B3Spell_FilteredSpellListInfo = {}
-	B3Spell_FilteredSpellListInfo[0] = {}
-	for i = 1, 9, 1 do
-		local spellLevel = B3Spell_SpellListInfo[i]
-		local currentLevel = {}
-		for j = 1, #spellLevel, 1 do
-			local spell = spellLevel[j]
+	for i = 1, #B3Spell_SpellListInfo, 1 do
+		local infoRow = B3Spell_SpellListInfo[i]
+		local currentLevel = {
+			["infoMode"] = infoRow.infoMode,
+			["spellLevel"] = infoRow.spellLevel,
+		}
+		for j = 1, #infoRow, 1 do
+			local spell = infoRow[j]
 			if spell.spellType == 1 then
 				table.insert(currentLevel, spell)
 			end
 		end
-		table.insert(B3Spell_FilteredSpellListInfo, currentLevel)
+		if #currentLevel > 0 then
+			table.insert(B3Spell_FilteredSpellListInfo, currentLevel)
+		end
 	end
 	B3Spell_SortFilteredSpellListInfo()
 	B3Spell_InitializeSlots()
@@ -509,17 +516,21 @@ end
 -- Fill B3Spell_FilteredSpellListInfo from B3Spell_SpellListInfo with only cleric spells.
 function B3Spell_FilterSpellListInfoCleric()
 	B3Spell_FilteredSpellListInfo = {}
-	B3Spell_FilteredSpellListInfo[0] = {}
-	for i = 1, 9, 1 do
-		local spellLevel = B3Spell_SpellListInfo[i]
-		local currentLevel = {}
-		for j = 1, #spellLevel, 1 do
-			local spell = spellLevel[j]
+	for i = 1, #B3Spell_SpellListInfo, 1 do
+		local infoRow = B3Spell_SpellListInfo[i]
+		local currentLevel = {
+			["infoMode"] = infoRow.infoMode,
+			["spellLevel"] = infoRow.spellLevel,
+		}
+		for j = 1, #infoRow, 1 do
+			local spell = infoRow[j]
 			if spell.spellType == 2 then
 				table.insert(currentLevel, spell)
 			end
 		end
-		table.insert(B3Spell_FilteredSpellListInfo, currentLevel)
+		if #currentLevel > 0 then
+			table.insert(B3Spell_FilteredSpellListInfo, currentLevel)
+		end
 	end
 	B3Spell_SortFilteredSpellListInfo()
 	B3Spell_InitializeSlots()
@@ -528,17 +539,23 @@ end
 -- Fill B3Spell_FilteredSpellListInfo from B3Spell_SpellListInfo with only spells that contain fragment of B3Spell_SearchEdit.
 function B3Spell_FilterSpellListInfoSearch()
 	B3Spell_FilteredSpellListInfo = {}
-	B3Spell_FilteredSpellListInfo[0] = {}
-	for i = 1, 9, 1 do
-		local spellLevel = B3Spell_SpellListInfo[i]
-		local currentLevel = {}
-		for j = 1, #spellLevel, 1 do
-			local spell = spellLevel[j]
-			if string.find(string.lower(spell.spellName), string.lower(B3Spell_SearchEdit), 1, true) ~= nil then
-				table.insert(currentLevel, spell)
+	for i = 1, #B3Spell_SpellListInfo, 1 do
+		local infoRow = B3Spell_SpellListInfo[i]
+		if infoRow.infoMode ~= B3Spell_InfoModes.Abilities then
+			local currentLevel = {
+				["infoMode"] = infoRow.infoMode,
+				["spellLevel"] = infoRow.spellLevel,
+			}
+			for j = 1, #infoRow, 1 do
+				local spell = infoRow[j]
+				if string.find(string.lower(spell.spellName), string.lower(B3Spell_SearchEdit), 1, true) ~= nil then
+					table.insert(currentLevel, spell)
+				end
+			end
+			if #currentLevel > 0 then
+				table.insert(B3Spell_FilteredSpellListInfo, currentLevel)
 			end
 		end
-		table.insert(B3Spell_FilteredSpellListInfo, currentLevel)
 	end
 	B3Spell_SortFilteredSpellListInfo()
 	B3Spell_InitializeSlots()
@@ -566,10 +583,17 @@ function B3Spell_AlphanumericSortSpellInfo(o)
 		end
 		return res
 	end
-	table.sort(o, function(a, b)
-		local ca, cb = conv(a.spellName), conv(b.spellName)
-		return ca < cb or ca == cb and a.spellName < b.spellName
-	end)
+	if o.infoMode == B3Spell_InfoModes.Abilities then
+		table.sort(o, function(a, b)
+			local ca, cb = conv(a.tooltip), conv(b.tooltip)
+			return ca <= cb and a.tooltip < b.tooltip
+		end)
+	else
+		table.sort(o, function(a, b)
+			local ca, cb = conv(a.spellName), conv(b.spellName)
+			return (a.spellLevel <= b.spellLevel) and (ca <= cb and a.spellName < b.spellName)
+		end)
+	end
 	return o
 end
 
@@ -578,27 +602,30 @@ end
 ---------------------------
 
 function B3Spell_DecrementRowOffset(slotRow)
-	local rowOffset = B3Spell_SlotRowInfo[slotRow].spellOffset - B3Spell_SlotsAvailable + 3
+	local rowOffset = B3Spell_SlotRowInfo[slotRow].scrollOffset - B3Spell_SlotsAvailable + 3
 	if rowOffset < 0 then rowOffset = 0 end
-	B3Spell_SlotRowInfo[slotRow].spellOffset = rowOffset
+	B3Spell_SlotRowInfo[slotRow].scrollOffset = rowOffset
 end
 
 function B3Spell_IncrementRowOffset(slotRow)
-	local rowOffset = B3Spell_SlotRowInfo[slotRow].spellOffset + B3Spell_SlotsAvailable - 3
+	local rowOffset = B3Spell_SlotRowInfo[slotRow].scrollOffset + B3Spell_SlotsAvailable - 3
 	local maxOffset = B3Spell_SlotRowInfo[slotRow].slotCount - B3Spell_SlotsAvailable + 2
 	if rowOffset > maxOffset then rowOffset = maxOffset end
-	B3Spell_SlotRowInfo[slotRow].spellOffset = rowOffset
+	B3Spell_SlotRowInfo[slotRow].scrollOffset = rowOffset
 end
 
 function B3Spell_UpdateRow(slotRow)
-	local rowInfo = B3Spell_SlotRowInfo[slotRow]
-	for slotColumn, slotData in ipairs(rowInfo.slotInstances) do
-		local newSlotData = B3Spell_GetDataForSlot(slotRow, slotColumn)
-		-- TODO: Hack (cleric-thief 0th line abilities row)
-		if rowInfo.spellLevel == 0 then
+	local slotRowInfo = B3Spell_SlotRowInfo[slotRow]
+	local rowInfoMode = B3Spell_FilteredSpellListInfo[slotRowInfo.originatingRow].infoMode
+	if rowInfoMode == B3Spell_InfoModes.Abilities then
+		for slotColumn, slotData in ipairs(slotRowInfo.slotInstances) do
+			local newSlotData = B3Spell_GetDataForSlot(slotRow, slotColumn)
 			local bamButtonInstanceData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_BamButton"].instanceData
 			bamButtonInstanceData[slotData.id] = newSlotData
-		else
+		end
+	else
+		for slotColumn, slotData in ipairs(slotRowInfo.slotInstances) do
+			local newSlotData = B3Spell_GetDataForSlot(slotRow, slotColumn)
 			local iconData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Icon"].instanceData[slotData.pairedIconID]
 			slotData.spellData = newSlotData
 			iconData.icon = newSlotData.spellIcon

@@ -1,6 +1,6 @@
 BACKUP ~bubb_spell_menu_extended/backup~
 AUTHOR ~Bubb~
-VERSION 3.4
+VERSION 3.5
 
 BEGIN ~Bubb's Spell Menu Extended~
 REQUIRE_PREDICATE (FILE_EXISTS_IN_GAME ~UI.MENU~) ~UI.MENU not found in game.~

@@ -253,6 +253,10 @@ end
 
 -- Used in M_B3Spel.lua
 function B3Spell_FillSpellListInfo()
+	(B3Spell_CheatMode and B3Spell_CheatFillFunctions or B3Spell_FillFunctions)[B3Spell_Mode]()
+end
+
+function B3Spell_FillFromMemorized()
 
 	B3Spell_SpellListInfo = {}
 	local belowSpellsIndex = nil
@@ -397,6 +401,158 @@ function B3Spell_FillSpellListInfo()
 			print("[B3Spell_FillSpellListInfo] (ASSERT) Empty resref, report to @Bubb")
 		end
 	end)
+
+	table.sort(B3Spell_SpellListInfo, function(a, b)
+		return a.infoMode < b.infoMode or (a.infoMode == B3Spell_InfoModes.Spells and b.infoMode == B3Spell_InfoModes.Spells and a.spellLevel < b.spellLevel)
+	end)
+	
+	B3Spell_FilteredSpellListInfo = B3Spell_SpellListInfo
+	B3Spell_SortFilteredSpellListInfo()
+end
+
+-- Cheat
+function B3Spell_FillFromKnown()
+
+	B3Spell_SpellListInfo = {}
+	local belowSpellsIndex = nil
+	local levelToIndex = {}
+	local aboveSpellsIndex = nil
+
+	-- Every level table is filled with a number of spell entries:
+	--     ["spellCastableCount"] = The number of times the spell can still be cast,
+	--     ["spellIcon"]          = The icon displayed for the spell in the actionbar,
+	--     ["spellLevel"]         = The spell's level,
+	--     ["spellName"]          = The spell's true name,
+	--     ["spellResref"]        = The spell's resref,
+	--     ["spellType"]          = The spell's type: Special (0), Wizard (1), Priest (2), Psionic (3), Innate (4), Bard song (5)
+
+	local actorID = EEex_GetActorIDSelected()
+	if not EEex_IsSprite(actorID) then
+		error("[B3Spell_FillSpellListInfo] (ASSERT) Invalid actorID")
+		return
+	end
+	local share = EEex_GetActorShare(actorID)
+
+	local knownResrefs = {}
+	local addResrefs = function(getEntriesFunction)
+		for _, level in ipairs(getEntriesFunction(actorID)) do
+			for _, entry in ipairs(level) do
+				table.insert(knownResrefs, entry.resref)
+			end
+		end
+	end
+
+	if B3Spell_Mode == B3Spell_Modes.Innate then
+
+		-- Cleric-thief abilities row
+		if EEex_GetActorClass(actorID) == 15 then
+
+			local thievingTooltip = Infinity_FetchString(0xF000E2)
+			local levelToFill = {
+				["infoMode"] = B3Spell_InfoModes.Abilities,
+			}
+
+			if not B3Spell_IsThievingDisabled() then
+				table.insert(levelToFill, {
+					["bam"] = "GUIBTACT",
+					["frame"] = 26,
+					["disableTint"] = false,
+					["tooltip"] = thievingTooltip,
+					["func"] = function()
+						Infinity_PopMenu("B3Spell_Menu")
+						B3Spell_DoThieving()
+					end,
+				})
+			else
+				table.insert(levelToFill, {
+					["bam"] = "GUIBTACT",
+					["frame"] = 26,
+					["disableTint"] = true,
+					["tooltip"] = thievingTooltip,
+					["func"] = function() end,
+				})
+			end
+
+			table.insert(B3Spell_SpellListInfo, levelToFill)
+		end
+
+		addResrefs(EEex_GetKnownInnateSpells)
+
+	else
+		addResrefs(EEex_GetKnownWizardSpells)
+		addResrefs(EEex_GetKnownClericSpells)
+	end
+
+	for _, resref in ipairs(knownResrefs) do
+
+		if resref ~= "" then
+
+			local spellData = EEex_DemandResData(resref, "SPL")
+			local abilityData = EEex_GetSpellAbilityData(share, resref)
+
+			local level = EEex_ReadDword(spellData + 0x34)
+
+			local levelToFill = {}
+
+			if level <= 0 then
+
+				if not belowSpellsIndex then
+					levelToFill = {
+						["infoMode"] = B3Spell_InfoModes.BelowSpells,
+					}
+					belowSpellsIndex = #B3Spell_SpellListInfo + 1
+					table.insert(B3Spell_SpellListInfo, levelToFill)
+				else
+					levelToFill = B3Spell_SpellListInfo[belowSpellsIndex]
+				end
+				
+			elseif level <= 9 then
+
+				local levelInfoIndex = levelToIndex[level]
+				if not levelInfoIndex then
+					levelToFill = {
+						["infoMode"] = B3Spell_InfoModes.Spells,
+						["spellLevel"] = level,
+					}
+					levelToIndex[level] = #B3Spell_SpellListInfo + 1
+					table.insert(B3Spell_SpellListInfo, levelToFill)
+				else
+					levelToFill = B3Spell_SpellListInfo[levelInfoIndex]
+				end
+
+			else
+
+				if not aboveSpellsIndex then
+					levelToFill = {
+						["infoMode"] = B3Spell_InfoModes.AboveSpells,
+					}
+					aboveSpellsIndex = #B3Spell_SpellListInfo + 1
+					table.insert(B3Spell_SpellListInfo, levelToFill)
+				else
+					levelToFill = B3Spell_SpellListInfo[aboveSpellsIndex]
+				end
+
+			end
+
+			local realNameStrref = EEex_ReadDword(spellData + 0x8)
+
+			table.insert(levelToFill, {
+				["spellCastableCount"]  = 0,
+				["spellDescription"]    = EEex_ReadDword(spellData + 0x50),
+				["spellDisabled"]       = false,
+				["spellIcon"]           = EEex_ReadLString(abilityData + 0x4, 0x8),
+				["spellLevel"]          = level,
+				["spellName"]           = Infinity_FetchString(realNameStrref),
+				["spellNameStrref"]     = realNameStrref,
+				["spellRealNameStrref"] = realNameStrref,
+				["spellResref"]         = resref,
+				["spellType"]           = EEex_ReadWord(spellData + 0x1C, 0),
+			})
+		else
+			print("[B3Spell_FillSpellListInfo] (ASSERT) Empty resref, report to @Bubb")
+		end
+
+	end
 
 	table.sort(B3Spell_SpellListInfo, function(a, b)
 		return a.infoMode < b.infoMode or (a.infoMode == B3Spell_InfoModes.Spells and b.infoMode == B3Spell_InfoModes.Spells and a.spellLevel < b.spellLevel)

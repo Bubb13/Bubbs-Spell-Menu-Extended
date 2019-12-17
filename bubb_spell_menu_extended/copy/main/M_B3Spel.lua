@@ -62,11 +62,41 @@ B3Spell_Modal                         = Infinity_GetINIValue('Bubbs Spell Menu E
 -- Constants --
 ---------------
 
+B3Spell_CheatMode = false
+
 B3Spell_Modes = {
 	["Normal"]    = 0,
 	["Innate"]    = 1,
 	["Quick"]     = 2,
 	["Opcode214"] = 3,
+}
+
+B3Spell_FillFunctions = {
+	[B3Spell_Modes.Normal]    = B3Spell_FillFromMemorized,
+	[B3Spell_Modes.Innate]    = B3Spell_FillFromMemorized,
+	[B3Spell_Modes.Quick]     = B3Spell_FillFromMemorized,
+	[B3Spell_Modes.Opcode214] = B3Spell_FillFromMemorized,
+}
+
+B3Spell_CastFunctions = {
+	[B3Spell_Modes.Normal]    = B3Spell_CastResref,
+	[B3Spell_Modes.Innate]    = B3Spell_CastResref,
+	[B3Spell_Modes.Quick]     = B3Spell_SetQuickSlotToResref,
+	[B3Spell_Modes.Opcode214] = B3Spell_CastResrefInternal,
+}
+
+B3Spell_CheatFillFunctions = {
+	[B3Spell_Modes.Normal]    = B3Spell_FillFromKnown,
+	[B3Spell_Modes.Innate]    = B3Spell_FillFromKnown,
+	[B3Spell_Modes.Quick]     = B3Spell_FillFromMemorized,
+	[B3Spell_Modes.Opcode214] = B3Spell_FillFromMemorized,
+}
+
+B3Spell_CheatCastFunctions = {
+	[B3Spell_Modes.Normal]    = EEex_PlayerCastResrefNoDec,
+	[B3Spell_Modes.Innate]    = EEex_PlayerCastResrefNoDec,
+	[B3Spell_Modes.Quick]     = B3Spell_SetQuickSlotToResref,
+	[B3Spell_Modes.Opcode214] = B3Spell_CastResrefInternal,
 }
 
 B3Spell_InfoModes = {
@@ -704,12 +734,14 @@ B3Spell_SliderChangeQueued = false
 function B3Spell_CastSpellData(spellData)
 
 	Infinity_PopMenu("B3Spell_Menu")
+	local castFunction = (B3Spell_CheatMode and B3Spell_CheatCastFunctions or B3Spell_CastFunctions)[B3Spell_Mode]
 
-	-- Please ignore this monstrosity
-	if     B3Spell_Mode == B3Spell_Modes.Normal    then B3Spell_CastResref(spellData.spellResref, 2)
-	elseif B3Spell_Mode == B3Spell_Modes.Innate    then B3Spell_CastResref(spellData.spellResref, 4)
-	elseif B3Spell_Mode == B3Spell_Modes.Opcode214 then B3Spell_CastResrefInternal(spellData.spellResref)
-	elseif B3Spell_Mode == B3Spell_Modes.Quick     then B3Spell_SetQuickSlotToResref(spellData.spellResref)
+	if B3Spell_Mode == B3Spell_Modes.Normal then
+		castFunction(spellData.spellResref, 2)
+	elseif B3Spell_Mode == B3Spell_Modes.Innate then 
+		castFunction(spellData.spellResref, 4)
+	else
+		castFunction(spellData.spellResref)
 	end
 end
 

@@ -38,7 +38,7 @@ end
 function B3Spell_DestroyInstances(menuName)
 	for templateName, entry in pairs(B3Spell_InstanceIDs[menuName] or {}) do
 		for i = 1, entry.maxID, 1 do
-			Infinity_DestroyAnimation(menuName, templateName, i)
+			Infinity_DestroyAnimation(templateName, i)
 		end
 		entry.maxID = 0
 		entry.instanceData = {}

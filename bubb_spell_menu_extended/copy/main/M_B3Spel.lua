@@ -53,6 +53,7 @@ end
 -- Options --
 -------------
 
+B3Spell_AutoFocusSearchBar            = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Automatically Focus Search Bar',   1)
 B3Spell_AutomaticallyOptimizeSlotSize = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Automatically Optimize Slot Size', 1)
 B3Spell_AutoPause                     = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Auto-Pause',                       1)
 B3Spell_DarkenBackground              = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Darken Background',                0)
@@ -827,12 +828,18 @@ function B3Spell_Menu_Modal()
 	return B3Spell_Modal == 1
 end
 
+function B3Spell_Menu_FocusSearchBar()
+	if B3Spell_AutoFocusSearchBar == 1 then
+		Infinity_FocusTextEdit('B3Spell_Menu_Search')
+	end
+end
+
 -- Used to update slots based on current search field
 function B3Spell_Menu_Tick()
 
 	if B3Spell_MenuTick >= 0 then
 		if B3Spell_MenuTick >= 1 then
-			Infinity_FocusTextEdit('B3Spell_Menu_Search')
+			B3Spell_Menu_FocusSearchBar()
 			B3Spell_MenuTick = -1
 		else
 			B3Spell_MenuTick = B3Spell_MenuTick + 1
@@ -927,7 +934,7 @@ function B3Spell_Menu_OptimizeSlotSize_Action()
 	B3Spell_AutomaticallyOptimizeSlotSize = 1
 	B3Spell_InitializeSlots()
 	B3Spell_AutomaticallyOptimizeSlotSize = savedValue
-	Infinity_FocusTextEdit('B3Spell_Menu_Search')
+	B3Spell_Menu_FocusSearchBar()
 end
 
 --------------------------------
@@ -949,7 +956,7 @@ function B3Spell_Menu_FilterSlotsMage_Action()
 	B3Spell_FilterSpellListInfoMage()
 	B3Spell_OldSearchEdit = ''
 	B3Spell_SearchEdit = ''
-	Infinity_FocusTextEdit('B3Spell_Menu_Search')
+	B3Spell_Menu_FocusSearchBar()
 end
 
 ---------------------------------
@@ -960,7 +967,7 @@ function B3Spell_Menu_FilterSlotsAll_Action()
 	B3Spell_FilterSpellListInfoAll()
 	B3Spell_OldSearchEdit = ''
 	B3Spell_SearchEdit = ''
-	Infinity_FocusTextEdit('B3Spell_Menu_Search')
+	B3Spell_Menu_FocusSearchBar()
 end
 
 ------------------------------------
@@ -971,7 +978,7 @@ function B3Spell_Menu_FilterSlotsCleric_Action()
 	B3Spell_FilterSpellListInfoCleric()
 	B3Spell_OldSearchEdit = ''
 	B3Spell_SearchEdit = ''
-	Infinity_FocusTextEdit('B3Spell_Menu_Search')
+	B3Spell_Menu_FocusSearchBar()
 end
 
 --------------------------------
@@ -985,7 +992,7 @@ end
 function B3Spell_Menu_MoveSlotsLeft_Action()
 	B3Spell_AlignCenter = false
 	B3Spell_InitializeSlots()
-	Infinity_FocusTextEdit('B3Spell_Menu_Search');
+	B3Spell_Menu_FocusSearchBar()
 end
 
 ---------------------------------
@@ -999,7 +1006,7 @@ end
 function B3Spell_Menu_MoveSlotsRight_Action()
 	B3Spell_AlignCenter = true
 	B3Spell_InitializeSlots()
-	Infinity_FocusTextEdit('B3Spell_Menu_Search')
+	B3Spell_Menu_FocusSearchBar()
 end
 
 ----------------------------------
@@ -1111,7 +1118,12 @@ B3Spell_Options = {
 		["get"] = function() return B3Spell_AutoPause end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Auto-Pause', B3Spell_AutoPause) end,
 	},
-	{"Automatically Optimize Slot Size:",
+	{"Automatically Focus Search Bar: ",
+		["set"] = function(newVal) B3Spell_AutoFocusSearchBar = newVal end,
+		["get"] = function() return B3Spell_AutoFocusSearchBar end,
+		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Automatically Focus Search Bar', B3Spell_AutoFocusSearchBar) end,
+	},
+	{"Automatically Optimize Slot Size: ",
 		["set"] = function(newVal) B3Spell_AutomaticallyOptimizeSlotSize = newVal end,
 		["get"] = function() return B3Spell_AutomaticallyOptimizeSlotSize end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Automatically Optimize Slot Size', B3Spell_AutomaticallyOptimizeSlotSize) end,

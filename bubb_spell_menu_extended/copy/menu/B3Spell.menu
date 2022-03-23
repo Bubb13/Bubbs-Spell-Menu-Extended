@@ -40,17 +40,19 @@ menu
 
 	label
 	{
-		name "B3Spell_Menu_SearchBackground"
+		name    "B3Spell_Menu_SearchBackground"
+		enabled "B3Spell_Menu_SearchBackground_Enabled()"
 		bam "%B3Spell_Menu_SearchBackground_bam%" -- "GUIGENC6"
-		area 0 57 %B3Spell_Menu_SearchBackground_w% %B3Spell_Menu_SearchBackground_h% -- X set via Infinity_SetArea
+		area 0 0 %B3Spell_Menu_SearchBackground_w% %B3Spell_Menu_SearchBackground_h% -- X, Y set via Infinity_SetArea
 	}
 
 	edit
 	{
-		name   "B3Spell_Menu_Search"
-		var    "B3Spell_SearchEdit"
-		action "return B3Spell_Menu_Search_Action()"
-		area 0 %B3Spell_Menu_Search_y% %B3Spell_Menu_SearchBackground_w% 24 -- X set via Infinity_SetArea
+		name    "B3Spell_Menu_Search"
+		enabled "B3Spell_Menu_Search_Enabled()"
+		var     "B3Spell_SearchEdit"
+		action  "return B3Spell_Menu_Search_Action()"
+		area 0 0 %B3Spell_Menu_SearchBackground_w% 24 -- X, Y set via Infinity_SetArea
 		text style "edit"
 		align center bottom
 		maxlines 1
@@ -59,6 +61,7 @@ menu
 	slider
 	{
 		name        "B3Spell_Menu_SlotSizeSlider"
+		enabled     "B3Spell_Menu_SlotSizeSlider_Enabled()"
 		position    "B3Spell_SlotSizeSlider"
 		tooltip lua "B3Spell_Menu_SlotSizeSlider_Tooltip()"
 		action      "B3Spell_Menu_SlotSizeSlider_Action()"
@@ -73,8 +76,9 @@ menu
 
 	button
 	{
-		name   "B3Spell_Menu_OptimizeSlotSize"
-		action "B3Spell_Menu_OptimizeSlotSize_Action()"
+		name    "B3Spell_Menu_OptimizeSlotSize"
+		action  "B3Spell_Menu_OptimizeSlotSize_Action()"
+		enabled "B3Spell_Menu_OptimizeSlotSize_Enabled()"
 		text "Optimize Slot Size"
 		text style "button"
 		bam "%B3Spell_Menu_OptimizeSlotSize_bam%" -- "GUIOSTUM"
@@ -94,8 +98,9 @@ menu
 
 	button
 	{
-		name   "B3Spell_Menu_FilterSlotsMage"
-		action "B3Spell_Menu_FilterSlotsMage_Action()"
+		name    "B3Spell_Menu_FilterSlotsMage"
+		enabled "B3Spell_Menu_FilterSlotsMage_Enabled()"
+		action  "B3Spell_Menu_FilterSlotsMage_Action()"
 		tooltip "Mage Spells"
 		bam "GUIBTACT"
 		area 0 0 52 52 -- X set via Infinity_SetArea
@@ -105,8 +110,9 @@ menu
 
 	button
 	{
-		name   "B3Spell_Menu_FilterSlotsAll"
-		action "B3Spell_Menu_FilterSlotsAll_Action()"
+		name    "B3Spell_Menu_FilterSlotsAll"
+		enabled "B3Spell_Menu_FilterSlotsAll_Enabled()"
+		action  "B3Spell_Menu_FilterSlotsAll_Action()"
 		tooltip "All Spells"
 		bam "GUIBTACT"
 		area 0 0 52 52 -- X set via Infinity_SetArea
@@ -116,8 +122,9 @@ menu
 
 	button
 	{
-		name   "B3Spell_Menu_FilterSlotsCleric"
-		action "B3Spell_Menu_FilterSlotsCleric_Action()"
+		name    "B3Spell_Menu_FilterSlotsCleric"
+		enabled "B3Spell_Menu_FilterSlotsCleric_Enabled()"
+		action  "B3Spell_Menu_FilterSlotsCleric_Action()"
 		tooltip "Cleric Spells"
 		bam "GUIBTACT"
 		area 0 0 52 52 -- X set via Infinity_SetArea

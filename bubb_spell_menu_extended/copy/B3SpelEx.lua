@@ -46,7 +46,7 @@ function B3Spell_ActionbarListener(config, state)
 
 	local launchConfigs = {
 		[21] = true,
-		[23] = true,
+		[23] = B3Spell_IgnoreSpecialAbilities == 0,
 		[28] = true,
 		[30] = true,
 	}
@@ -77,7 +77,7 @@ function B3Spell_ActionbarListener(config, state)
 end
 
 --------------------
--- Listeners Init -- 
+-- Listeners Init --
 --------------------
 
 function B3Spell_InitListeners()
@@ -86,6 +86,14 @@ function B3Spell_InitListeners()
 	EEex_Menu_AddBeforeMainFileReloadedListener(B3Spell_InitListeners)
 end
 B3Spell_InitListeners()
+
+-----------------------
+-- General Functions --
+-----------------------
+
+function B3Spell_IsCaptureActive()
+	return EngineGlobals.capture.item ~= nil
+end
 
 ---------------
 -- Hook Menu --
@@ -313,7 +321,7 @@ function B3Spell_FillFromMemorized()
 					else
 						levelToFill = B3Spell_SpellListInfo[belowSpellsIndex]
 					end
-					
+
 				elseif level <= 9 then
 
 					local levelInfoIndex = levelToIndex[level]
@@ -354,7 +362,7 @@ function B3Spell_FillFromMemorized()
 					["spellResref"]         = resref,
 					["spellType"]           = spellHeader.itemType,
 				})
-	
+
 			else
 				print("[B3Spell_FillSpellListInfo] (ASSERT) Not implemented, report to @Bubb")
 			end
@@ -367,7 +375,7 @@ function B3Spell_FillFromMemorized()
 	table.sort(B3Spell_SpellListInfo, function(a, b)
 		return a.infoMode < b.infoMode or (a.infoMode == B3Spell_InfoModes.Spells and b.infoMode == B3Spell_InfoModes.Spells and a.spellLevel < b.spellLevel)
 	end)
-	
+
 	B3Spell_FilteredSpellListInfo = B3Spell_SpellListInfo
 	B3Spell_SortFilteredSpellListInfo()
 end
@@ -386,15 +394,11 @@ function B3Spell_UpdateSlotPressedState()
 	local data = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Action"].instanceData[instanceId]
 	local capture = EngineGlobals.capture.item
 
-	if capture then
+	if capture and capture.templateName:get() == "B3Spell_Menu_TEMPLATE_Action" and capture.instanceId == instanceId then
 
-		local captureInstance = capture.instanceId
-		local captureTemplate = capture.templateName:get()
-
-		if captureTemplate == "B3Spell_Menu_TEMPLATE_Action" and captureInstance == instanceId and not data.didOffset then
+		if not data.didOffset then
 
 			local slotData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Bam"].instanceData[data.pairedSlotID]
-
 			slotData.bam = data.isGreen and "B3SLOTGD" or "B3SLOTD"
 
 			EEex_Menu_StoreTemplateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_Icon", data.pairedIconID, "B3Spell_StoredInstance")

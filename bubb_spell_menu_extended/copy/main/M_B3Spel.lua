@@ -53,13 +53,20 @@ end
 -- Options --
 -------------
 
+B3Spell_AlignCenter                   = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Align Center',                     1)
 B3Spell_AutoPause                     = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Auto-Pause',                       1)
 B3Spell_AutoFocusSearchBar            = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Automatically Focus Search Bar',   1)
 B3Spell_AutomaticallyOptimizeSlotSize = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Automatically Optimize Slot Size', 1)
 B3Spell_DarkenBackground              = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Darken Background',                0)
 B3Spell_DisableControlBar             = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Disable Control Bar',              0)
 B3Spell_DisableSearchBar              = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Disable Search Bar',               0)
+B3Spell_IgnoreSpecialAbilities        = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Ignore Special Abilities',         0)
 B3Spell_Modal                         = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Modal',                            1)
+
+function B3Spell_SetAlignCenter(newVal)
+	B3Spell_AlignCenter = newVal
+	Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Align Center', B3Spell_AlignCenter)
+end
 
 ---------------
 -- Constants --
@@ -132,7 +139,6 @@ B3Spell_SlotsGapYFlowover = 1
 B3Spell_Mode = nil
 
 B3Spell_ActionbarDisable     = false
-B3Spell_AlignCenter          = true
 B3Spell_PausedOnOpen         = false
 B3Spell_SlotsSuppressOnOpen  = false
 B3Spell_SlotsSuppressOnClose = false
@@ -269,7 +275,7 @@ function B3Spell_InitializeSlots()
 
 	-- Calculate slotsRenderXOffset
 	local slotsRenderXOffset = nil
-	if B3Spell_AlignCenter then
+	if B3Spell_AlignCenter == 1 then
 		local horizontalAvailableSpace = B3Spell_GetAvailableHorizontalSpace()
 		local longestCount = B3Spell_GetLongestSlotCount()
 		local horizontalAreaUsed = longestCount * (B3Spell_SlotSize + B3Spell_SlotsGapX) - B3Spell_SlotsGapX
@@ -285,7 +291,7 @@ function B3Spell_InitializeSlots()
 	local verticalMarginSpace = screenHeight - B3Spell_GetMinY() - verticalAreaUsed
 	local currentYOffset = B3Spell_GetMinY() + (verticalMarginSpace / 2)
 
-	if B3Spell_AlignCenter then
+	if B3Spell_AlignCenter == 1 then
 
 		B3Spell_CenterItemsX(
 		{
@@ -305,9 +311,7 @@ function B3Spell_InitializeSlots()
 		local searchBackgroundTop = B3Spell_DisableControlBar == 0 and 57 or (55 - B3Spell_Menu_SearchBackground_h) / 2
 		Infinity_SetArea('B3Spell_Menu_SearchBackground', nil, searchBackgroundTop,                               nil, nil)
 		Infinity_SetArea('B3Spell_Menu_Search',           nil, searchBackgroundTop + B3Spell_Menu_Search_yoffset, nil, nil)
-
 	else
-
 		Infinity_SetArea('B3Spell_Menu_FilterSlotsMage',   B3Spell_SidebarWidth,       nil, nil, nil)
 		Infinity_SetArea('B3Spell_Menu_FilterSlotsAll',    B3Spell_SidebarWidth + 52,  nil, nil, nil)
 		Infinity_SetArea('B3Spell_Menu_FilterSlotsCleric', B3Spell_SidebarWidth + 104, nil, nil, nil)
@@ -315,9 +319,9 @@ function B3Spell_InitializeSlots()
 		Infinity_SetArea('B3Spell_Menu_SlotSizeSlider',    B3Spell_SidebarWidth + 208, nil, nil, nil)
 		Infinity_SetArea('B3Spell_Menu_OptimizeSlotSize',  B3Spell_SidebarWidth + B3Spell_Menu_OptimizeSlotSize_AlignmentX, nil, nil, nil)
 
-		Infinity_SetArea('B3Spell_Menu_SearchBackground', B3Spell_SidebarWidth, nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_Search',           B3Spell_SidebarWidth, nil, nil, nil)
-
+		local searchBackgroundTop = B3Spell_DisableControlBar == 0 and 57 or (55 - B3Spell_Menu_SearchBackground_h) / 2
+		Infinity_SetArea('B3Spell_Menu_SearchBackground', B3Spell_SidebarWidth, searchBackgroundTop,                               nil, nil)
+		Infinity_SetArea('B3Spell_Menu_Search',           B3Spell_SidebarWidth, searchBackgroundTop + B3Spell_Menu_Search_yoffset, nil, nil)
 	end
 
 	-- Destroy all the slots I've already spawned
@@ -818,7 +822,6 @@ function B3Spell_Menu_OnOpen()
 
 		B3Spell_OldSearchEdit = ''
 		B3Spell_SearchEdit = ''
-		B3Spell_MenuTick = 0
 
 		B3Spell_FillSpellListInfo()
 		B3Spell_InitializeSlots()
@@ -843,13 +846,17 @@ function B3Spell_Menu_Modal()
 end
 
 function B3Spell_Menu_FocusSearchBar()
-	if B3Spell_AutoFocusSearchBar == 1 then
+	if B3Spell_AutoFocusSearchBar == 1 and B3Spell_DisableSearchBar == 0 and not B3Spell_IsCaptureActive() then
 		Infinity_FocusTextEdit('B3Spell_Menu_Search')
 	end
 end
 
 -- Used to update slots based on current search field
 function B3Spell_Menu_Tick()
+
+	if B3Spell_MenuTick == -1 and not B3Spell_IsCaptureActive() then
+		B3Spell_MenuTick = 0
+	end
 
 	if B3Spell_MenuTick >= 0 then
 		if B3Spell_MenuTick >= 1 then
@@ -968,7 +975,6 @@ function B3Spell_Menu_OptimizeSlotSize_Action()
 	B3Spell_AutomaticallyOptimizeSlotSize = 1
 	B3Spell_InitializeSlots()
 	B3Spell_AutomaticallyOptimizeSlotSize = savedValue
-	B3Spell_Menu_FocusSearchBar()
 end
 
 --------------------------------
@@ -994,7 +1000,6 @@ function B3Spell_Menu_FilterSlotsMage_Action()
 	B3Spell_FilterSpellListInfoMage()
 	B3Spell_OldSearchEdit = ''
 	B3Spell_SearchEdit = ''
-	B3Spell_Menu_FocusSearchBar()
 end
 
 ---------------------------------
@@ -1009,7 +1014,6 @@ function B3Spell_Menu_FilterSlotsAll_Action()
 	B3Spell_FilterSpellListInfoAll()
 	B3Spell_OldSearchEdit = ''
 	B3Spell_SearchEdit = ''
-	B3Spell_Menu_FocusSearchBar()
 end
 
 ------------------------------------
@@ -1024,7 +1028,6 @@ function B3Spell_Menu_FilterSlotsCleric_Action()
 	B3Spell_FilterSpellListInfoCleric()
 	B3Spell_OldSearchEdit = ''
 	B3Spell_SearchEdit = ''
-	B3Spell_Menu_FocusSearchBar()
 end
 
 --------------------------------
@@ -1032,13 +1035,12 @@ end
 --------------------------------
 
 function B3Spell_Menu_MoveSlotsLeft_Enabled()
-	return B3Spell_DisableControlBar == 0 and B3Spell_AlignCenter
+	return B3Spell_DisableControlBar == 0 and B3Spell_AlignCenter == 1
 end
 
 function B3Spell_Menu_MoveSlotsLeft_Action()
-	B3Spell_AlignCenter = false
+	B3Spell_SetAlignCenter(0)
 	B3Spell_InitializeSlots()
-	B3Spell_Menu_FocusSearchBar()
 end
 
 ---------------------------------
@@ -1046,13 +1048,12 @@ end
 ---------------------------------
 
 function B3Spell_Menu_MoveSlotsRight_Enabled()
-	return B3Spell_DisableControlBar == 0 and not B3Spell_AlignCenter
+	return B3Spell_DisableControlBar == 0 and B3Spell_AlignCenter == 0
 end
 
 function B3Spell_Menu_MoveSlotsRight_Action()
-	B3Spell_AlignCenter = true
+	B3Spell_SetAlignCenter(1)
 	B3Spell_InitializeSlots()
-	B3Spell_Menu_FocusSearchBar()
 end
 
 ----------------------------------
@@ -1192,6 +1193,11 @@ B3Spell_Options = {
 		["get"] = function() return B3Spell_DisableSearchBar end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Disable Search Bar', B3Spell_DisableSearchBar) end,
 		["onChange"] = function() B3Spell_Options_SlotsNeedReinit = true end,
+	},
+	{"Ignore Special Abilities: ",
+		["set"] = function(newVal) B3Spell_IgnoreSpecialAbilities = newVal end,
+		["get"] = function() return B3Spell_IgnoreSpecialAbilities end,
+		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Ignore Special Abilities', B3Spell_IgnoreSpecialAbilities) end,
 	},
 	{"Modal: ",
 		["set"] = function(newVal) B3Spell_Modal = newVal end,

@@ -1068,16 +1068,7 @@ end
 
 function B3Spell_Menu_TEMPLATE_Action_ActionAlt()
 
-	local displayDetails = {
-		[B3Spell_Modes.Normal] = true,
-		[B3Spell_Modes.Innate] = true,
-		[B3Spell_Modes.Quick]  = true,
-	}
-
-	if displayDetails[B3Spell_Mode] then
-
 		local spellData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Action"].instanceData[instanceId].spellData
-
 		local castIcon = spellData.spellIcon
 		local icon = castIcon:sub(1, #castIcon - 1).."B"
 
@@ -1087,8 +1078,6 @@ function B3Spell_Menu_TEMPLATE_Action_ActionAlt()
 		-- CSpell::GetDescription
 		-- CSpell::GetIcon (change last letter to B)
 		popupDetails(16189, spellData.spellRealNameStrref, spellData.spellDescription, icon)
-
-	end
 end
 
 function B3Spell_Menu_TEMPLATE_Action_Tooltip()

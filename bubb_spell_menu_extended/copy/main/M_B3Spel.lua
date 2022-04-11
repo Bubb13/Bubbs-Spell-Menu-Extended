@@ -1068,16 +1068,16 @@ end
 
 function B3Spell_Menu_TEMPLATE_Action_ActionAlt()
 
-		local spellData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Action"].instanceData[instanceId].spellData
-		local castIcon = spellData.spellIcon
-		local icon = castIcon:sub(1, #castIcon - 1).."B"
+	local spellData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Action"].instanceData[instanceId].spellData
+	local castIcon = spellData.spellIcon
+	local icon = castIcon:sub(1, #castIcon - 1).."B"
 
-		-- Harcoded arguments:
-		-- 16189
-		-- CSpell::GetGenericName
-		-- CSpell::GetDescription
-		-- CSpell::GetIcon (change last letter to B)
-		popupDetails(16189, spellData.spellRealNameStrref, spellData.spellDescription, icon)
+	-- Harcoded arguments:
+	-- 16189
+	-- CSpell::GetGenericName
+	-- CSpell::GetDescription
+	-- CSpell::GetIcon (change last letter to B)
+	popupDetails(16189, spellData.spellRealNameStrref, spellData.spellDescription, icon)
 end
 
 function B3Spell_Menu_TEMPLATE_Action_Tooltip()

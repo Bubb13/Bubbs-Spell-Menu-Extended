@@ -2,3 +2,4 @@
 .gitattributes export-ignore
 .gitignore export-ignore
 README.md export-ignore
+bubb_spell_menu_extended/tools export-ignore

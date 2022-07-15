@@ -210,6 +210,21 @@ menu
 		}
 		name "B3Spell_Menu_TEMPLATE_Action"
 	}
+
+	template
+	{
+		label
+		{
+			enabled true
+			text lua "B3Spell_Menu_TEMPLATE_Text_Text()"
+			text style "normal"
+			text font "MODESTOM"
+			text color lua "B3Spell_Menu_TEMPLATE_Text_Color()"
+			text shadow 1
+			text useFontZoom 0
+		}
+		name "B3Spell_Menu_TEMPLATE_Text"
+	}
 }
 
 --------------------------

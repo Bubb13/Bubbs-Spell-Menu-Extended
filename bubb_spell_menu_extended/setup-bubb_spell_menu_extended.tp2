@@ -1,14 +1,15 @@
 BACKUP ~bubb_spell_menu_extended/backup~
 AUTHOR ~Bubb~
-VERSION 4.4
+VERSION 4.5
 
 BEGIN ~Bubb's Spell Menu Extended~
 REQUIRE_PREDICATE (FILE_EXISTS_IN_GAME ~UI.MENU~) ~UI.MENU not found in game.~
 REQUIRE_PREDICATE (GAME_IS ~bgee bg2ee eet iwdee~) ~Game not supported.~
 REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 
-	ACTION_IF MOD_IS_INSTALLED ~dragonspear_ui++.tp2~ ~1~ BEGIN
+	ACTION_IF MOD_IS_INSTALLED ~dragonspear_ui++.tp2~ ~0~ BEGIN
 
+		PRINT ~Using Dragonspear UI++ Configuration ...~
 		OUTER_SPRINT bam_folder ~bubb_spell_menu_extended\copy\bgee-sod~
 
 		OUTER_SET B3Spell_SidebarWidth = 80
@@ -27,7 +28,11 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 		OUTER_SET B3Spell_Menu_SearchBackground_w = 340
 		OUTER_SET B3Spell_Menu_SearchBackground_h = 32
 
-		OUTER_SET B3Spell_Menu_Search_yoffset = 1
+		ACTION_IF GAME_IS ~iwdee~ BEGIN
+			OUTER_SET B3Spell_Menu_Search_yoffset = 6
+		END ELSE BEGIN
+			OUTER_SET B3Spell_Menu_Search_yoffset = 1
+		END
 
 	END ELSE ACTION_IF GAME_IS ~bgee bg2ee eet~ BEGIN
 
@@ -39,6 +44,7 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 		OUTER_SET B3Spell_Menu_OptimizeSlotSize_h = 44
 
 		ACTION_IF MOD_IS_INSTALLED ~LeUI-BG1EE.tp2~ ~0~ BEGIN
+			PRINT ~Using LeUI-BG1EE Configuration ...~
 			OUTER_SPRINT bam_folder ~bubb_spell_menu_extended\copy\bgee~
 			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~mosaic "GUISLDR"~
 			OUTER_SPRINT B3Spell_Menu_OptimizeSlotSize_bam ~GUIOSTUM~
@@ -48,6 +54,7 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 			OUTER_SET B3Spell_Menu_SearchBackground_h = 32
 			OUTER_SET B3Spell_Menu_Search_yoffset = 0
 		END ELSE ACTION_IF MOD_IS_INSTALLED ~LeUI-SoD.tp2~ ~0~ BEGIN
+			PRINT ~Using LeUI-SoD Configuration ...~
 			OUTER_SPRINT bam_folder ~bubb_spell_menu_extended\copy\bgee-sod~
 			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~mosaic "GUISLDR"~
 			OUTER_SPRINT B3Spell_Menu_OptimizeSlotSize_bam ~GUIOSTUM~
@@ -57,6 +64,7 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 			OUTER_SET B3Spell_Menu_SearchBackground_h = 32
 			OUTER_SET B3Spell_Menu_Search_yoffset = 0
 		END ELSE ACTION_IF MOD_IS_INSTALLED ~LeUI.tp2~ ~0~ BEGIN
+			PRINT ~Using LeUI Configuration ...~
 			OUTER_SPRINT bam_folder ~bubb_spell_menu_extended\copy\bg2ee~
 			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~mosaic "GUISLDR"~
 			OUTER_SPRINT B3Spell_Menu_OptimizeSlotSize_bam ~GUIOSTUM~
@@ -66,6 +74,7 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 			OUTER_SET B3Spell_Menu_SearchBackground_h = 27
 			OUTER_SET B3Spell_Menu_Search_yoffset = "-2"
 		END ELSE ACTION_IF (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR MOD_IS_INSTALLED ~EET_GUI.TP2~ ~0~ BEGIN
+			PRINT ~Using BG:EE with SoD / EET_GUI Configuration ...~
 			OUTER_SPRINT bam_folder ~bubb_spell_menu_extended\copy\bgee-sod~
 			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~sliderBackground "SLDRBACK"~
 			OUTER_SPRINT B3Spell_Menu_OptimizeSlotSize_bam ~GUIBUTNT~
@@ -75,6 +84,7 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 			OUTER_SET B3Spell_Menu_SearchBackground_h = 32
 			OUTER_SET B3Spell_Menu_Search_yoffset = 1
 		END ELSE ACTION_IF GAME_IS ~bgee~ BEGIN
+			PRINT ~Using BG:EE Configuration ...~
 			OUTER_SPRINT bam_folder ~bubb_spell_menu_extended\copy\bgee~
 			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~mosaic "GUISLDR"~
 			OUTER_SPRINT B3Spell_Menu_OptimizeSlotSize_bam ~GUIOSTUM~
@@ -84,6 +94,7 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 			OUTER_SET B3Spell_Menu_SearchBackground_h = 32
 			OUTER_SET B3Spell_Menu_Search_yoffset = 5
 		END ELSE ACTION_IF GAME_IS ~bg2ee eet~ BEGIN
+			PRINT ~Using BG2:EE / EET Configuration ...~
 			OUTER_SPRINT bam_folder ~bubb_spell_menu_extended\copy\bg2ee~
 			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~mosaic "GUISLDR"~
 			OUTER_SPRINT B3Spell_Menu_OptimizeSlotSize_bam ~GUIOSTUM~
@@ -98,6 +109,7 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 
 	END ELSE ACTION_IF GAME_IS ~iwdee~ BEGIN
 
+		PRINT ~Using IWD:EE Configuration ...~
 		OUTER_SPRINT bam_folder ~bubb_spell_menu_extended\copy\iwdee~
 
 		OUTER_SET B3Spell_SidebarWidth = 80

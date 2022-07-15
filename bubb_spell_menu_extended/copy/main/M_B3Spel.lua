@@ -62,6 +62,7 @@ B3Spell_DisableControlBar             = Infinity_GetINIValue('Bubbs Spell Menu E
 B3Spell_DisableSearchBar              = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Disable Search Bar',               0)
 B3Spell_IgnoreSpecialAbilities        = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Ignore Special Abilities',         0)
 B3Spell_Modal                         = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Modal',                            1)
+B3Spell_ShowKeyBindings               = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Show Key Bindings',                0)
 
 function B3Spell_SetAlignCenter(newVal)
 	B3Spell_AlignCenter = newVal
@@ -177,6 +178,47 @@ function B3Spell_LaunchSpellMenu(mode)
 	end
 
 	Infinity_PushMenu('B3Spell_Menu')
+end
+
+B3Spell_KeyBindingCategory = {
+	["PRIEST_SPELLS"] = 5,
+	["MAGE_SPELLS"] = 6,
+}
+
+function B3Spell_GetKeyBindingName(category, keybinding)
+	local toReturn = ""
+	local name = keybinding[4]
+	if category < 5 then
+		toReturn = t(name)
+		if toReturn == name then
+			toReturn = Infinity_FetchString(name)
+		end
+	else
+		toReturn = Infinity_FetchString(name)
+	end
+	return toReturn
+end
+
+function B3Spell_GetKeyBindingKeyName(keybinding)
+	local key = keybinding[6]
+	return key >= 33 and key <= 126 and string.format("%c", key) or t("SDL_"..key)
+end
+
+function B3Spell_CacheSpellKeyBindingNames()
+	local spellNameToKeyName = {}
+	for _, category in ipairs({
+		B3Spell_KeyBindingCategory.PRIEST_SPELLS,
+		B3Spell_KeyBindingCategory.MAGE_SPELLS
+	})
+	do
+		for _, keybinding in ipairs(keybindings[category]) do
+			local keybindingName = B3Spell_GetKeyBindingName(category, keybinding)
+			if not spellNameToKeyName[keybindingName] then
+				spellNameToKeyName[keybindingName] = B3Spell_GetKeyBindingKeyName(keybinding)
+			end
+		end
+	end
+	return spellNameToKeyName
 end
 
 -- Fills: B3Spell_SlotRowInfo
@@ -779,9 +821,25 @@ function B3Spell_CreateBam(bam, frame, x, y, w, h)
 	return instanceData
 end
 
+function B3Spell_CreateKeyBindingText(text, x, y)
+	local textW, textH
+	local pointSize = 1
+	repeat
+		textW, textH = B3Spell_GetTextWidthHeight("MODESTOM", pointSize, text.." ") -- space for wrapping to get width
+		pointSize = pointSize + 1
+	until textH >= B3Spell_SlotSize * 1/2
+	local instanceData = B3Spell_CreateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_Text", x + B3Spell_SlotSize * 5/52, y + B3Spell_SlotSize * 2/52, textW, textH)
+	instanceData.text = text
+	instanceData.color = 0x00FF00
+	return instanceData
+end
+
 function B3Spell_CreateSpell(data, isGreen, x, y, w, h)
 	local slotData = B3Spell_CreateBam(isGreen and "B3SLOTG" or "B3SLOT", 1, x, y, w, h)
 	local iconData = B3Spell_CreateIcon(data.spellIcon, data.spellCastableCount, data.spellDisabled, x, y, w, h)
+	if B3Spell_ShowKeyBindings == 1 then
+		B3Spell_CreateKeyBindingText(data.spellKeyBindingName, x, y)
+	end
 	local actionInstance = B3Spell_CreateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_Action", x, y, w, h)
 	actionInstance.spellData = data
 	actionInstance.pairedSlotID = slotData.id
@@ -1081,11 +1139,26 @@ function B3Spell_Menu_TEMPLATE_Action_ActionAlt()
 end
 
 function B3Spell_Menu_TEMPLATE_Action_Tooltip()
-	return B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Action"].instanceData[instanceId].spellData.spellName
+	local spellData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Action"].instanceData[instanceId].spellData
+	return B3Spell_ShowKeyBindings == 1 and spellData.spellKeyBindingName ~= ""
+		and spellData.spellKeyBindingName.." : "..spellData.spellName
+		or spellData.spellName
 end
 
 function B3Spell_Menu_TEMPLATE_Action_Tick()
 	return B3Spell_UpdateSlotPressedState()
+end
+
+-------------------------------------
+-- B3Spell_Menu_TEMPLATE_Text_Text --
+-------------------------------------
+
+function B3Spell_Menu_TEMPLATE_Text_Text()
+	return B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Text"].instanceData[instanceId].text
+end
+
+function B3Spell_Menu_TEMPLATE_Text_Color()
+	return B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Text"].instanceData[instanceId].color
 end
 
 -------------------------------
@@ -1193,10 +1266,16 @@ B3Spell_Options = {
 		["get"] = function() return B3Spell_Modal end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Modal', B3Spell_Modal) end,
 	},
+	{"Show Key Bindings: ",
+		["set"] = function(newVal) B3Spell_ShowKeyBindings = newVal end,
+		["get"] = function() return B3Spell_ShowKeyBindings end,
+		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Show Key Bindings', B3Spell_ShowKeyBindings) end,
+		["onChange"] = function() B3Spell_Options_SlotsNeedReinit = true end,
+	},
 }
 
 function B3Spell_GetTextWidthHeight(font, pointSize, text)
-	local oneLineHeight = Infinity_GetContentHeight(font, 0, '', pointSize, 0)
+	local oneLineHeight = Infinity_GetContentHeight(font, 0, "", pointSize, 0)
 	local currentWidth = 0
 	local currentHeight = nil
 	repeat

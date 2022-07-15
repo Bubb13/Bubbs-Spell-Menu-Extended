@@ -248,6 +248,8 @@ function B3Spell_FillFromMemorized()
 		return
 	end
 
+	local spellKeyBindings = B3Spell_CacheSpellKeyBindingNames()
+
 	local buttonType = nil
 	if B3Spell_Mode == B3Spell_Modes.Innate then
 
@@ -355,6 +357,7 @@ function B3Spell_FillFromMemorized()
 					["spellDescription"]    = spellHeader.genericDescription,
 					["spellDisabled"]       = m_CButtonData.m_bDisabled == 1,
 					["spellIcon"]           = m_CButtonData.m_icon:get(),
+					["spellKeyBindingName"] = spellKeyBindings[name] or "",
 					["spellLevel"]          = level,
 					["spellName"]           = name,
 					["spellNameStrref"]     = nameStrref,

@@ -1,8 +1,8 @@
 BACKUP ~bubb_spell_menu_extended/backup~
 AUTHOR ~Bubb~
-VERSION 4.5
+VERSION 4.5.1
 
-BEGIN ~Bubb's Spell Menu Extended~
+BEGIN ~Bubb's Spell Menu Extended~ LABEL ~B3-BubbsSpellMenuExtended-Main~
 REQUIRE_PREDICATE (FILE_EXISTS_IN_GAME ~UI.MENU~) ~UI.MENU not found in game.~
 REQUIRE_PREDICATE (GAME_IS ~bgee bg2ee eet iwdee~) ~Game not supported.~
 REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~

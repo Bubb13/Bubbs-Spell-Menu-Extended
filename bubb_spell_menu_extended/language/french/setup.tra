@@ -1,0 +1,134 @@
+
+//////////////////////////////////
+// bubb_spell_menu_extended.tp2 //
+//////////////////////////////////
+
+@0 = ~Bubb's Spell Menu Extended~
+
+//////////////////
+// M_B3Spel.lua //
+//////////////////
+
+@1 = ~Taille des emplacements des sorts : ~                            // %B3Spell_Tooltip_Slot_Size%
+@2 = ~Pause automatique : ~                                            // %B3Spell_Tooltip_Auto_Pause%
+@3 = ~Adapter automatiquement la barre de recherche : ~                // %B3Spell_Tooltip_Automatically_Focus_Search_Bar%
+@4 = ~Adapter automatiquement la taille des emplacements des sorts : ~ // %B3Spell_Tooltip_Automatically_Optimize_Slot_Size%
+@5 = ~Obscurcir le second plan : ~                                     // %B3Spell_Tooltip_Darken_Background%
+@6 = ~Désactiver la barre de contrôle : ~                              // %B3Spell_Tooltip_Disable_Control_Bar%
+@7 = ~Désactiver la barre de recherche : ~                             // %B3Spell_Tooltip_Disable_Search_Bar%
+@8 = ~Ignorer les capacités spéciales : ~                              // %B3Spell_Tooltip_Ignore_Special_Abilities%
+@9 = ~Fenêtre modale : ~                                               // %B3Spell_Tooltip_Modal%
+@10 = ~Afficher les raccourcis clavier : ~                             // %B3Spell_Tooltip_Show_Key_Bindings%
+
+//////////////////
+// B3Spell.menu //
+//////////////////
+
+@11 = ~Optimiser la taille des emplacements des sorts~ // %B3Spell_Tooltip_Optimize_Slot_Size%
+@12 = ~Options du Bubb's Spell Menu~                   // %B3Spell_Tooltip_Bubbs_Spell_Menu_Options%
+@13 = ~Sorts profanes~                                 // %B3Spell_Tooltip_Mage_Spells%
+@14 = ~Tous les sorts~                                 // %B3Spell_Tooltip_All_Spells%
+@15 = ~Sorts divins~                                   // %B3Spell_Tooltip_Cleric_Spells%
+@16 = ~Ancrer à gauche~                                // %B3Spell_Tooltip_Align_Left%
+@17 = ~Centrer~                                        // %B3Spell_Tooltip_Align_Center%
+
+///////////////////
+// WeiDU Prompts //
+///////////////////
+
+@-1000= "Le mod %TP2_FILE_NAME% contient"
+@-1001= "composants optionnels distincts.
+Pour gagner du temps, vous pouvez choisir ce que vous souhaitez faire d'eux
+au niveau general plutot que de repondre aux questions pour chacun.
+"
+@-1002= "Que faut-il faire de tous les composants qui NE sont PAS ENCORE installes ?
+Les [I]nstaller, les [S]auter, dem[A]nder pour chacun ? "
+@-1003= "Que faut-il faire de tous les composants qui sont DEJA installes ?
+Les [R]einstaller, les s[U]pprimer, les [S]auter, dem[A]nder pour chacun ? "
+
+@-1004= "S'IL VOUS PLAIT, envoyez par e-mail le fichier"
+@-1005= "a"
+
+@-1006= "Installer le composant ["
+@-1007= "] ?
+[R]einstaller, co[N]server, s[U]pprimer ou [Q]uitter ? "
+@-1008= "] ?
+[I]nstaller, [N]e pas installer ou [Q]uitter ? "
+
+@-1009= "Entrez une partie du nom du module : "
+
+@-1010= "Reinstallation du composant ["
+@-1011= "] "
+@-1012= "Reinstallation dans la langue"
+
+@-1013= "Suppression de l'ancienne installation de ["
+@-1014= "] au prealable..."
+@-1015= "SUPPRESSION REUSSIE DE L'ANCIEN"
+
+@-1016= "Installation en cours"
+@-1017= "ERREUR pendant l'installation de ["
+@-1018= "], retour a l'etat anterieur"
+@-1019= "INSTALLATION REUSSIE"
+@-1020= "Saute"
+@-1021= "Suppression de ["
+@-1022= "] (composant #"
+@-1023= ")"
+@-1024= "SUPPRESSION REUSSIE DE ["
+
+@-1025= "] ?
+[R]einstaller, co[N]server, s[U]pprimer, [Q]uitter ou choisir un parmi :"
+@-1026= "] ?
+[N]e pas installer, [Q]uitter ou choisir un parmi :"
+@-1027= " (installe actuellement)"
+
+@-1028= "Souhaitez-vous afficher les composants de ["
+@-1029= "] ?
+[Y]Oui, [N]on ? "
+
+@-1030= "] ?
+choisir un parmi :"
+@-1031= "] ?
+[R]einstaller, co[N]server, [Q]uitter ou choisir un parmi :"
+@-1032= "INSTALLATION ECHOUEE A CAUSE D'ERREURS"
+@-1033= "INSTALLATION AVEC DES ALERTES"
+@-1034= "Souhaitez-vous afficher les instructions (ReadMe) ? [Y]Oui [N]on"
+@-1035= "Dans la langue"
+
+@-1036= "Saute le GROUPE ["
+@-1037= "] pour cause d'absence des pre-requis."
+
+@-1038= "dem[A]nder pour chaque composant, tout [S]auter, ou choisir une selection pre-definie :"
+@-1039= "dem[A]nder pour chaque composant, [R]einstaller la configuration courante, tout s[U]pprimer, tout [S]auter, ou choisir une selection pre-definie :"
+
+@-1040= "
+Veuillez choisir la langue dans laquelle vous souhaitez jouer au jeu.
+Si par la suite vous desirez jouer au jeu dans une langue differente, il vous
+faudra editer le fichier weidu.conf et reinstaller vos mods.
+"
+@-1041= "Tcheque"
+@-1042= "Allemand"
+@-1043= "Anglais"
+@-1044= "Espagnol"
+@-1045= "Francais"
+@-1046= "Italien"
+@-1047= "Polonais"
+@-1048= "Portugais"
+@-1049= "Turc"
+@-1050= "Japonais"
+@-1051= "Coreen"
+@-1052= "Chinois simplifie"
+@-1053= "Russe"
+@-1054= "Ukrainien"
+
+@-1060= "
+Ce jeu est disponible en plusieurs langues mais WeiDU ne sait pas laquelle a ete choisie quand ce mod a ete installe.
+
+Veuillez indiquer quelle langue du jeu a ete utilisee quand vous avez installe ce mod. Votre choix servira jusqu'a ce que WeiDU s'arrete mais ne sera pas memorise.
+"
+@-1061= "
+Utilisation de"
+@-1062= " et "
+
+@-1063= "INSTALLATION ABANDONNEE"
+@-1064= "Abandon de l'installation de ["
+@-1065= "], retour a l'etat anterieur"

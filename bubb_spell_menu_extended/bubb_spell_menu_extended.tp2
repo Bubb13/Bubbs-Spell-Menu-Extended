@@ -1,8 +1,12 @@
 BACKUP ~bubb_spell_menu_extended/backup~
 AUTHOR ~Bubb~
-VERSION 4.5.1
+VERSION ~v4.5.2~
 
-BEGIN ~Bubb's Spell Menu Extended~ LABEL ~B3-BubbsSpellMenuExtended-Main~
+AUTO_TRA ~bubb_spell_menu_extended/language/%s~
+LANGUAGE ~English~ ~english~ ~bubb_spell_menu_extended/language/english/setup.tra~
+LANGUAGE ~Francais~ ~french~ ~bubb_spell_menu_extended/language/french/setup.tra~
+
+BEGIN @0 LABEL ~B3-BubbsSpellMenuExtended-Main~
 REQUIRE_PREDICATE (FILE_EXISTS_IN_GAME ~UI.MENU~) ~UI.MENU not found in game.~
 REQUIRE_PREDICATE (GAME_IS ~bgee bg2ee eet iwdee~) ~Game not supported.~
 REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
@@ -134,7 +138,27 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 		FAIL ~No GUI config defined for game. This is a logic error, please report to @Bubb.~
 	END
 
-	COPY ~bubb_spell_menu_extended\copy~ ~override~ IF_EXISTS
-	COPY ~bubb_spell_menu_extended\copy\main\M_B3Spel.lua~ ~override~ EVALUATE_BUFFER IF_EXISTS
-	COPY ~bubb_spell_menu_extended\copy\menu\B3Spell.menu~ ~override~ EVALUATE_BUFFER IF_EXISTS
-	COPY ~%bam_folder%~ ~override~ IF_EXISTS
+	COPY ~bubb_spell_menu_extended\copy~ ~override~
+
+	SPRINT B3Spell_Tooltip_Slot_Size @1
+	SPRINT B3Spell_Tooltip_Auto_Pause @2
+	SPRINT B3Spell_Tooltip_Automatically_Focus_Search_Bar @3
+	SPRINT B3Spell_Tooltip_Automatically_Optimize_Slot_Size @4
+	SPRINT B3Spell_Tooltip_Darken_Background @5
+	SPRINT B3Spell_Tooltip_Disable_Control_Bar @6
+	SPRINT B3Spell_Tooltip_Disable_Search_Bar @7
+	SPRINT B3Spell_Tooltip_Ignore_Special_Abilities @8
+	SPRINT B3Spell_Tooltip_Modal @9
+	SPRINT B3Spell_Tooltip_Show_Key_Bindings @10
+	COPY ~bubb_spell_menu_extended\copy\main\M_B3Spel.lua~ ~override~ EVALUATE_BUFFER
+
+	SPRINT %B3Spell_Tooltip_Optimize_Slot_Size% @11
+	SPRINT %B3Spell_Tooltip_Bubbs_Spell_Menu_Options% @12
+	SPRINT %B3Spell_Tooltip_Mage_Spells% @13
+	SPRINT %B3Spell_Tooltip_All_Spells% @14
+	SPRINT %B3Spell_Tooltip_Cleric_Spells% @15
+	SPRINT %B3Spell_Tooltip_Align_Left% @16
+	SPRINT %B3Spell_Tooltip_Align_Center% @17
+	COPY ~bubb_spell_menu_extended\copy\menu\B3Spell.menu~ ~override~ EVALUATE_BUFFER
+
+	COPY ~%bam_folder%~ ~override~

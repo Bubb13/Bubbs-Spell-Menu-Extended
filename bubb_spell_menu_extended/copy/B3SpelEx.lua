@@ -39,6 +39,10 @@ end
 
 function B3Spell_ActionbarListener(config, state)
 
+	if EEex_Actionbar_IsThievingHotkeyOpeningSpecialAbilities() then
+		return
+	end
+
 	-- Cast Spell               = 21, State(s) 102(Quick) and 103
 	-- Special Abilities        = 23, State(s) 106
 	-- Opcode #214              = 28, State(s) 111

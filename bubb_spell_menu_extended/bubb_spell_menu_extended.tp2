@@ -1,10 +1,11 @@
 BACKUP ~bubb_spell_menu_extended/backup~
 AUTHOR ~Bubb~
-VERSION ~v4.5.3~
+VERSION ~v4.5.4~
 
 AUTO_TRA ~bubb_spell_menu_extended/language/%s~
 LANGUAGE ~English~ ~english~ ~bubb_spell_menu_extended/language/english/setup.tra~
 LANGUAGE ~Francais~ ~french~ ~bubb_spell_menu_extended/language/french/setup.tra~
+LANGUAGE ~Spanish~ ~spanish~ ~bubb_spell_menu_extended/language/spanish/setup.tra~
 
 BEGIN @0 LABEL ~B3-BubbsSpellMenuExtended-Main~
 REQUIRE_PREDICATE (FILE_EXISTS_IN_GAME ~UI.MENU~) ~UI.MENU not found in game.~

@@ -11,6 +11,7 @@
 !bubb_spell_menu_extended/language/*
 !bubb_spell_menu_extended/language/english/*
 !bubb_spell_menu_extended/language/french/*
+!bubb_spell_menu_extended/language/spanish/*
 !bubb_spell_menu_extended/tools/*
 !.gitattributes
 !.gitignore

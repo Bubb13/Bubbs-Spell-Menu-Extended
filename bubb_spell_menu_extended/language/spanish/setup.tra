@@ -1,0 +1,33 @@
+
+//////////////////////////////////
+// bubb_spell_menu_extended.tp2 //
+//////////////////////////////////
+
+@0 = ~Bubb's Spell Menu Extended~
+
+//////////////////
+// M_B3Spel.lua //
+//////////////////
+
+@1 = ~Tamaño: ~                                       // %B3Spell_Tooltip_Slot_Size%
+@2 = ~Auto-Pausa: ~                                   // %B3Spell_Tooltip_Auto_Pause%
+@3 = ~Centrar automáticamente la barra de búsqueda: ~ // %B3Spell_Tooltip_Automatically_Focus_Search_Bar%
+@4 = ~Optimizar automaticamente el tamaño: ~          // %B3Spell_Tooltip_Automatically_Optimize_Slot_Size%
+@5 = ~Fondo oscuro: ~                                 // %B3Spell_Tooltip_Darken_Background%
+@6 = ~Deshabilitar la barra deslizante: ~             // %B3Spell_Tooltip_Disable_Control_Bar%
+@7 = ~Deshabilitar la barra de busqueda: ~            // %B3Spell_Tooltip_Disable_Search_Bar%
+@8 = ~Ignorar habilidades especiales: ~               // %B3Spell_Tooltip_Ignore_Special_Abilities%
+@9 = ~Modales: ~                                      // %B3Spell_Tooltip_Modal%
+@10 = ~Mostrar atajos de teclado: ~                   // %B3Spell_Tooltip_Show_Key_Bindings%
+
+//////////////////
+// B3Spell.menu //
+//////////////////
+
+@11 = ~Optimizar tamaño~              // %B3Spell_Tooltip_Optimize_Slot_Size%
+@12 = ~Opciones de Bubb's Spell Menu~ // %B3Spell_Tooltip_Bubbs_Spell_Menu_Options%
+@13 = ~Magias de mago~                // %B3Spell_Tooltip_Mage_Spells%
+@14 = ~Todas las magias~              // %B3Spell_Tooltip_All_Spells%
+@15 = ~Magias de clérigo~             // %B3Spell_Tooltip_Cleric_Spells%
+@16 = ~Alinear a la izquierda~        // %B3Spell_Tooltip_Align_Left%
+@17 = ~Alinear al centro~             // %B3Spell_Tooltip_Align_Center%

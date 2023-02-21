@@ -79,7 +79,7 @@ menu
 		name    "B3Spell_Menu_OptimizeSlotSize"
 		action  "B3Spell_Menu_OptimizeSlotSize_Action()"
 		enabled "B3Spell_Menu_OptimizeSlotSize_Enabled()"
-		text "%B3Spell_Tooltip_Optimize_Slot_Size%"
+		text lua "B3Spell_Tooltip_Optimize_Slot_Size"
 		text style "button"
 		bam "%B3Spell_Menu_OptimizeSlotSize_bam%" -- "GUIOSTUM"
 		area 0 %B3Spell_Menu_OptimizeSlotSize_y% %B3Spell_Menu_OptimizeSlotSize_w% %B3Spell_Menu_OptimizeSlotSize_h% -- X set via Infinity_SetArea
@@ -90,7 +90,7 @@ menu
 	{
 		name   "B3Spell_Menu_OptionsButton"
 		action "B3Spell_Menu_OptionsButton_Action()"
-		tooltip "%B3Spell_Tooltip_Bubbs_Spell_Menu_Options%"
+		tooltip lua "B3Spell_Tooltip_Bubbs_Spell_Menu_Options"
 		bam "GUILS10"
 		area 0 0 72 55 -- X set via Infinity_SetArea
 		sequence 7
@@ -101,7 +101,7 @@ menu
 		name    "B3Spell_Menu_FilterSlotsMage"
 		enabled "B3Spell_Menu_FilterSlotsMage_Enabled()"
 		action  "B3Spell_Menu_FilterSlotsMage_Action()"
-		tooltip "%B3Spell_Tooltip_Mage_Spells%"
+		tooltip lua "B3Spell_Tooltip_Mage_Spells"
 		bam "GUIBTACT"
 		area 0 0 52 52 -- X set via Infinity_SetArea
 		align center center
@@ -113,7 +113,7 @@ menu
 		name    "B3Spell_Menu_FilterSlotsAll"
 		enabled "B3Spell_Menu_FilterSlotsAll_Enabled()"
 		action  "B3Spell_Menu_FilterSlotsAll_Action()"
-		tooltip "%B3Spell_Tooltip_All_Spells%"
+		tooltip lua "B3Spell_Tooltip_All_Spells"
 		bam "GUIBTACT"
 		area 0 0 52 52 -- X set via Infinity_SetArea
 		align center center
@@ -125,7 +125,7 @@ menu
 		name    "B3Spell_Menu_FilterSlotsCleric"
 		enabled "B3Spell_Menu_FilterSlotsCleric_Enabled()"
 		action  "B3Spell_Menu_FilterSlotsCleric_Action()"
-		tooltip "%B3Spell_Tooltip_Cleric_Spells%"
+		tooltip lua "B3Spell_Tooltip_Cleric_Spells"
 		bam "GUIBTACT"
 		area 0 0 52 52 -- X set via Infinity_SetArea
 		align center center
@@ -137,7 +137,7 @@ menu
 		name    "B3Spell_Menu_MoveSlotsLeft"
 		enabled "B3Spell_Menu_MoveSlotsLeft_Enabled()"
 		action  "B3Spell_Menu_MoveSlotsLeft_Action()"
-		tooltip "%B3Spell_Tooltip_Align_Left%"
+		tooltip lua "B3Spell_Tooltip_Align_Left"
 		bam "GUIBTACT"
 		area 0 0 52 52 -- X set via Infinity_SetArea
 		align center center
@@ -149,7 +149,7 @@ menu
 		name    "B3Spell_Menu_MoveSlotsRight"
 		enabled "B3Spell_Menu_MoveSlotsRight_Enabled()"
 		action  "B3Spell_Menu_MoveSlotsRight_Action()"
-		tooltip "%B3Spell_Tooltip_Align_Center%"
+		tooltip lua "B3Spell_Tooltip_Align_Center"
 		bam "GUIBTACT"
 		area 0 0 52 52 -- X set via Infinity_SetArea
 		align center center

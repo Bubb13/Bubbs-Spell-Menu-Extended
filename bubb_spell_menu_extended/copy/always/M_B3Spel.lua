@@ -1,4 +1,5 @@
 
+Infinity_DoFile("B3SplTxt")
 Infinity_DoFile("B3SpelEx")
 
 -----------------------
@@ -122,11 +123,6 @@ B3Spell_InfoModeIcons = {
 	[B3Spell_InfoModes.BelowSpells] = {"GUIBTACT", 52},
 	[B3Spell_InfoModes.AboveSpells] = {"GUIBTACT", 53},
 }
-
-B3Spell_Menu_SearchBackground_h = %B3Spell_Menu_SearchBackground_h%
-B3Spell_Menu_Search_yoffset = %B3Spell_Menu_Search_yoffset%
-B3Spell_SidebarWidth = %B3Spell_SidebarWidth%
-B3Spell_Menu_OptimizeSlotSize_AlignmentX = 208 + %B3Spell_Menu_SlotSizeSlider_w%
 
 B3Spell_SlotSizeMinimum   = 5
 B3Spell_SlotsGapX         = 1
@@ -1012,7 +1008,7 @@ function B3Spell_Menu_SlotSizeSlider_Enabled()
 end
 
 function B3Spell_Menu_SlotSizeSlider_Tooltip()
-	return "%B3Spell_Tooltip_Slot_Size%"..B3Spell_SlotSize
+	return B3Spell_Tooltip_Slot_Size..B3Spell_SlotSize
 end
 
 function B3Spell_Menu_SlotSizeSlider_Action()
@@ -1224,49 +1220,49 @@ end
 B3Spell_Options_SlotsNeedReinit = false
 
 B3Spell_Options = {
-	{"%B3Spell_Tooltip_Auto_Pause%",
+	{B3Spell_Tooltip_Auto_Pause,
 		["set"] = function(newVal) B3Spell_AutoPause = newVal end,
 		["get"] = function() return B3Spell_AutoPause end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Auto-Pause', B3Spell_AutoPause) end,
 	},
-	{"%B3Spell_Tooltip_Automatically_Focus_Search_Bar%",
+	{B3Spell_Tooltip_Automatically_Focus_Search_Bar,
 		["set"] = function(newVal) B3Spell_AutoFocusSearchBar = newVal end,
 		["get"] = function() return B3Spell_AutoFocusSearchBar end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Automatically Focus Search Bar', B3Spell_AutoFocusSearchBar) end,
 	},
-	{"%B3Spell_Tooltip_Automatically_Optimize_Slot_Size%",
+	{B3Spell_Tooltip_Automatically_Optimize_Slot_Size,
 		["set"] = function(newVal) B3Spell_AutomaticallyOptimizeSlotSize = newVal end,
 		["get"] = function() return B3Spell_AutomaticallyOptimizeSlotSize end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Automatically Optimize Slot Size', B3Spell_AutomaticallyOptimizeSlotSize) end,
 	},
-	{"%B3Spell_Tooltip_Darken_Background%",
+	{B3Spell_Tooltip_Darken_Background,
 		["set"] = function(newVal) B3Spell_DarkenBackground = newVal end,
 		["get"] = function() return B3Spell_DarkenBackground end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Darken Background', B3Spell_DarkenBackground) end
 	},
-	{"%B3Spell_Tooltip_Disable_Control_Bar%",
+	{B3Spell_Tooltip_Disable_Control_Bar,
 		["set"] = function(newVal) B3Spell_DisableControlBar = newVal end,
 		["get"] = function() return B3Spell_DisableControlBar end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Disable Control Bar', B3Spell_DisableControlBar) end,
 		["onChange"] = function() B3Spell_Options_SlotsNeedReinit = true end,
 	},
-	{"%B3Spell_Tooltip_Disable_Search_Bar%",
+	{B3Spell_Tooltip_Disable_Search_Bar,
 		["set"] = function(newVal) B3Spell_DisableSearchBar = newVal end,
 		["get"] = function() return B3Spell_DisableSearchBar end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Disable Search Bar', B3Spell_DisableSearchBar) end,
 		["onChange"] = function() B3Spell_Options_SlotsNeedReinit = true end,
 	},
-	{"%B3Spell_Tooltip_Ignore_Special_Abilities%",
+	{B3Spell_Tooltip_Ignore_Special_Abilities,
 		["set"] = function(newVal) B3Spell_IgnoreSpecialAbilities = newVal end,
 		["get"] = function() return B3Spell_IgnoreSpecialAbilities end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Ignore Special Abilities', B3Spell_IgnoreSpecialAbilities) end,
 	},
-	{"%B3Spell_Tooltip_Modal%",
+	{B3Spell_Tooltip_Modal,
 		["set"] = function(newVal) B3Spell_Modal = newVal end,
 		["get"] = function() return B3Spell_Modal end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Modal', B3Spell_Modal) end,
 	},
-	{"%B3Spell_Tooltip_Show_Key_Bindings%",
+	{B3Spell_Tooltip_Show_Key_Bindings,
 		["set"] = function(newVal) B3Spell_ShowKeyBindings = newVal end,
 		["get"] = function() return B3Spell_ShowKeyBindings end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Show Key Bindings', B3Spell_ShowKeyBindings) end,

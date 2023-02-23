@@ -1,5 +1,5 @@
 
-Infinity_DoFile("B3SplTxt")
+Infinity_DoFile("B3SplWei")
 Infinity_DoFile("B3SpelEx")
 
 -----------------------

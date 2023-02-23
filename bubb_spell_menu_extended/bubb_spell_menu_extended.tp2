@@ -151,13 +151,13 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 	SPRINT B3Spell_Tooltip_Ignore_Special_Abilities @8
 	SPRINT B3Spell_Tooltip_Modal @9
 	SPRINT B3Spell_Tooltip_Show_Key_Bindings @10
-	SPRINT %B3Spell_Tooltip_Optimize_Slot_Size% @11
-	SPRINT %B3Spell_Tooltip_Bubbs_Spell_Menu_Options% @12
-	SPRINT %B3Spell_Tooltip_Mage_Spells% @13
-	SPRINT %B3Spell_Tooltip_All_Spells% @14
-	SPRINT %B3Spell_Tooltip_Cleric_Spells% @15
-	SPRINT %B3Spell_Tooltip_Align_Left% @16
-	SPRINT %B3Spell_Tooltip_Align_Center% @17
+	SPRINT B3Spell_Tooltip_Optimize_Slot_Size @11
+	SPRINT B3Spell_Tooltip_Bubbs_Spell_Menu_Options @12
+	SPRINT B3Spell_Tooltip_Mage_Spells @13
+	SPRINT B3Spell_Tooltip_All_Spells @14
+	SPRINT B3Spell_Tooltip_Cleric_Spells @15
+	SPRINT B3Spell_Tooltip_Align_Left @16
+	SPRINT B3Spell_Tooltip_Align_Center @17
 	COPY ~bubb_spell_menu_extended/copy/always_evaluate~ ~override~ EVALUATE_BUFFER
 
 	COPY ~%bam_folder%~ ~override~

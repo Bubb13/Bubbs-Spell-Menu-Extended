@@ -42,8 +42,8 @@ menu
 	{
 		name    "B3Spell_Menu_SearchBackground"
 		enabled "B3Spell_Menu_SearchBackground_Enabled()"
-		bam "%B3Spell_Menu_SearchBackground_bam%" -- "GUIGENC6"
-		area 0 0 %B3Spell_Menu_SearchBackground_w% %B3Spell_Menu_SearchBackground_h% -- X, Y set via Infinity_SetArea
+		bam lua "B3Spell_Menu_SearchBackground_Bam" -- "GUIGENC6"
+		-- X, Y, W, H set via Infinity_SetArea
 	}
 
 	edit
@@ -52,7 +52,7 @@ menu
 		enabled "B3Spell_Menu_Search_Enabled()"
 		var     "B3Spell_SearchEdit"
 		action  "return B3Spell_Menu_Search_Action()"
-		area 0 0 %B3Spell_Menu_SearchBackground_w% 24 -- X, Y set via Infinity_SetArea
+		area 0 0 0 24 -- X, Y, W set via Infinity_SetArea
 		text style "edit"
 		align center bottom
 		maxlines 1
@@ -68,7 +68,7 @@ menu
 		bam "SLDRSTAR"
 		%B3Spell_Menu_SlotSizeSlider_sliderBackground%
 		scaleToClip
-		area 0 %B3Spell_Menu_SlotSizeSlider_y% %B3Spell_Menu_SlotSizeSlider_w% %B3Spell_Menu_SlotSizeSlider_h% -- X set via Infinity_SetArea
+		-- X, Y, W, H set via Infinity_SetArea
 		sequence 0
 		frame 1
 		settings 48
@@ -81,8 +81,8 @@ menu
 		enabled "B3Spell_Menu_OptimizeSlotSize_Enabled()"
 		text lua "B3Spell_Tooltip_Optimize_Slot_Size"
 		text style "button"
-		bam "%B3Spell_Menu_OptimizeSlotSize_bam%" -- "GUIOSTUM"
-		area 0 %B3Spell_Menu_OptimizeSlotSize_y% %B3Spell_Menu_OptimizeSlotSize_w% %B3Spell_Menu_OptimizeSlotSize_h% -- X set via Infinity_SetArea
+		bam lua "B3Spell_Menu_OptimizeSlotSize_Bam" -- "GUIOSTUM"
+		-- X, Y, W, H set via Infinity_SetArea
 		sequence 6
 	}
 

@@ -337,29 +337,48 @@ function B3Spell_InitializeSlots()
 			{ ['name'] = 'B3Spell_Menu_FilterSlotsMage',   ['x'] = 52  },
 			{ ['name'] = 'B3Spell_Menu_FilterSlotsAll',    ['x'] = 104 },
 			{ ['name'] = 'B3Spell_Menu_FilterSlotsCleric', ['x'] = 156 },
-			{ ['name'] = 'B3Spell_Menu_SlotSizeSlider',    ['x'] = 208 },
-			{ ['name'] = 'B3Spell_Menu_OptimizeSlotSize',  ['x'] = B3Spell_Menu_OptimizeSlotSize_AlignmentX },
+			{
+				['name'] = 'B3Spell_Menu_SlotSizeSlider',
+				['x'] = 208,
+				['y'] = B3Spell_Menu_SlotSizeSlider_Y,
+				['width'] = B3Spell_Menu_SlotSizeSlider_W,
+				['height'] = B3Spell_Menu_SlotSizeSlider_H,
+			},
+			{
+				['name'] = 'B3Spell_Menu_OptimizeSlotSize',
+				['x'] = B3Spell_Menu_OptimizeSlotSize_AlignmentX,
+				['y'] = B3Spell_Menu_OptimizeSlotSize_Y,
+				['width'] = B3Spell_Menu_OptimizeSlotSize_W,
+				['height'] = B3Spell_Menu_OptimizeSlotSize_H,
+			},
 		})
 
+		local searchBackgroundTop = B3Spell_DisableControlBar == 0 and 57 or (55 - B3Spell_Menu_SearchBackground_H) / 2
 		B3Spell_CenterItemsX(
 		{
-			{ ['name'] = 'B3Spell_Menu_SearchBackground', ['x'] = 0 },
-			{ ['name'] = 'B3Spell_Menu_Search',           ['x'] = 0 },
+			{
+				['name'] = 'B3Spell_Menu_SearchBackground',
+				['y'] = searchBackgroundTop,
+				['width'] = B3Spell_Menu_SearchBackground_W,
+				['height'] = B3Spell_Menu_SearchBackground_H,
+			},
+			{
+				['name'] = 'B3Spell_Menu_Search',
+				['y'] = searchBackgroundTop + B3Spell_Menu_Search_YOffset,
+				['width'] = B3Spell_Menu_SearchBackground_W,
+			}
 		})
-		local searchBackgroundTop = B3Spell_DisableControlBar == 0 and 57 or (55 - B3Spell_Menu_SearchBackground_h) / 2
-		Infinity_SetArea('B3Spell_Menu_SearchBackground', nil, searchBackgroundTop,                               nil, nil)
-		Infinity_SetArea('B3Spell_Menu_Search',           nil, searchBackgroundTop + B3Spell_Menu_Search_yoffset, nil, nil)
 	else
-		Infinity_SetArea('B3Spell_Menu_FilterSlotsMage',   B3Spell_SidebarWidth,       nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_FilterSlotsAll',    B3Spell_SidebarWidth + 52,  nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_FilterSlotsCleric', B3Spell_SidebarWidth + 104, nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_MoveSlotsRight',    B3Spell_SidebarWidth + 156, nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_SlotSizeSlider',    B3Spell_SidebarWidth + 208, nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_OptimizeSlotSize',  B3Spell_SidebarWidth + B3Spell_Menu_OptimizeSlotSize_AlignmentX, nil, nil, nil)
+		Infinity_SetArea('B3Spell_Menu_FilterSlotsMage',   B3Spell_SidebarWidth,                                            nil,                             nil,                             nil)
+		Infinity_SetArea('B3Spell_Menu_FilterSlotsAll',    B3Spell_SidebarWidth + 52,                                       nil,                             nil,                             nil)
+		Infinity_SetArea('B3Spell_Menu_FilterSlotsCleric', B3Spell_SidebarWidth + 104,                                      nil,                             nil,                             nil)
+		Infinity_SetArea('B3Spell_Menu_MoveSlotsRight',    B3Spell_SidebarWidth + 156,                                      nil,                             nil,                             nil)
+		Infinity_SetArea('B3Spell_Menu_SlotSizeSlider',    B3Spell_SidebarWidth + 208,                                      B3Spell_Menu_SlotSizeSlider_Y,   B3Spell_Menu_SlotSizeSlider_W,   B3Spell_Menu_SlotSizeSlider_H)
+		Infinity_SetArea('B3Spell_Menu_OptimizeSlotSize',  B3Spell_SidebarWidth + B3Spell_Menu_OptimizeSlotSize_AlignmentX, B3Spell_Menu_OptimizeSlotSize_Y, B3Spell_Menu_OptimizeSlotSize_W, B3Spell_Menu_OptimizeSlotSize_H)
 
-		local searchBackgroundTop = B3Spell_DisableControlBar == 0 and 57 or (55 - B3Spell_Menu_SearchBackground_h) / 2
-		Infinity_SetArea('B3Spell_Menu_SearchBackground', B3Spell_SidebarWidth, searchBackgroundTop,                               nil, nil)
-		Infinity_SetArea('B3Spell_Menu_Search',           B3Spell_SidebarWidth, searchBackgroundTop + B3Spell_Menu_Search_yoffset, nil, nil)
+		local searchBackgroundTop = B3Spell_DisableControlBar == 0 and 57 or (55 - B3Spell_Menu_SearchBackground_H) / 2
+		Infinity_SetArea('B3Spell_Menu_SearchBackground', B3Spell_SidebarWidth, searchBackgroundTop,                               B3Spell_Menu_SearchBackground_W, B3Spell_Menu_SearchBackground_H)
+		Infinity_SetArea('B3Spell_Menu_Search',           B3Spell_SidebarWidth, searchBackgroundTop + B3Spell_Menu_Search_YOffset, B3Spell_Menu_SearchBackground_W, nil)
 	end
 
 	-- Destroy all the slots I've already spawned
@@ -561,7 +580,7 @@ end
 function B3Spell_GetMinY()
 	local total = 0
 	if B3Spell_DisableControlBar == 0 then total = total + 52 + 5 end
-	if B3Spell_DisableSearchBar == 0 then total = total + B3Spell_Menu_SearchBackground_h + 5 end
+	if B3Spell_DisableSearchBar == 0 then total = total + B3Spell_Menu_SearchBackground_H + 5 end
 	if total < 55 then total = 55 end
 	return total
 end
@@ -742,19 +761,17 @@ function B3Spell_GetAvailableHorizontalSpace()
 	return horizontalAvailableSpace
 end
 
-function B3Spell_CenterItemsX(names)
+function B3Spell_CenterItemsX(itemEntries)
 	local greatestX = 0
-	for i = 1, #names, 1 do
-		local name = names[i]
-		local itemX, itemY, itemWidth, itemHeight = Infinity_GetArea(name.name)
-		local itemRightEdge = name.x + itemWidth
+	for _, itemEntry in ipairs(itemEntries) do
+		local width = itemEntry.width and itemEntry.width or select(3, Infinity_GetArea(itemEntry.name))
+		local itemRightEdge = (itemEntry.x or 0) + width
 		if itemRightEdge > greatestX then greatestX = itemRightEdge end
 	end
-	local screenWidth, screenHeight = Infinity_GetScreenSize()
+	local screenWidth, _ = Infinity_GetScreenSize()
 	local centerXStart = screenWidth / 2 - greatestX / 2
-	for i = 1, #names, 1 do
-		local name = names[i]
-		Infinity_SetArea(name.name, centerXStart + name.x, nil, nil, nil)
+	for _, itemEntry in ipairs(itemEntries) do
+		Infinity_SetArea(itemEntry.name, centerXStart + (itemEntry.x or 0), itemEntry.y, itemEntry.width, itemEntry.height)
 	end
 end
 

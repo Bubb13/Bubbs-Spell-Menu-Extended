@@ -1,4 +1,8 @@
 
+---------------------
+-- Translated Text --
+---------------------
+
 B3Spell_Tooltip_Slot_Size = "%B3Spell_Tooltip_Slot_Size%"
 B3Spell_Tooltip_Auto_Pause = "%B3Spell_Tooltip_Auto_Pause%"
 B3Spell_Tooltip_Automatically_Focus_Search_Bar = "%B3Spell_Tooltip_Automatically_Focus_Search_Bar%"
@@ -18,7 +22,20 @@ B3Spell_Tooltip_Cleric_Spells = "%B3Spell_Tooltip_Cleric_Spells%"
 B3Spell_Tooltip_Align_Left = "%B3Spell_Tooltip_Align_Left%"
 B3Spell_Tooltip_Align_Center = "%B3Spell_Tooltip_Align_Center%"
 
-B3Spell_Menu_SearchBackground_h = %B3Spell_Menu_SearchBackground_h%
-B3Spell_Menu_Search_yoffset = %B3Spell_Menu_Search_yoffset%
+---------------------------------
+-- WeiDU-defined Lua Constants --
+---------------------------------
+
+B3Spell_Menu_OptimizeSlotSize_AlignmentX = 208 + %B3Spell_Menu_SlotSizeSlider_W%
+B3Spell_Menu_OptimizeSlotSize_Bam = "%B3Spell_Menu_OptimizeSlotSize_Bam%"
+B3Spell_Menu_OptimizeSlotSize_H = %B3Spell_Menu_OptimizeSlotSize_H%
+B3Spell_Menu_OptimizeSlotSize_W = %B3Spell_Menu_OptimizeSlotSize_W%
+B3Spell_Menu_OptimizeSlotSize_Y = %B3Spell_Menu_OptimizeSlotSize_Y%
+B3Spell_Menu_Search_YOffset = %B3Spell_Menu_Search_YOffset%
+B3Spell_Menu_SearchBackground_Bam = "%B3Spell_Menu_SearchBackground_Bam%"
+B3Spell_Menu_SearchBackground_H = %B3Spell_Menu_SearchBackground_H%
+B3Spell_Menu_SearchBackground_W = %B3Spell_Menu_SearchBackground_W%
+B3Spell_Menu_SlotSizeSlider_H = %B3Spell_Menu_SlotSizeSlider_H%
+B3Spell_Menu_SlotSizeSlider_W = %B3Spell_Menu_SlotSizeSlider_W%
+B3Spell_Menu_SlotSizeSlider_Y = %B3Spell_Menu_SlotSizeSlider_Y%
 B3Spell_SidebarWidth = %B3Spell_SidebarWidth%
-B3Spell_Menu_OptimizeSlotSize_AlignmentX = 208 + %B3Spell_Menu_SlotSizeSlider_w%

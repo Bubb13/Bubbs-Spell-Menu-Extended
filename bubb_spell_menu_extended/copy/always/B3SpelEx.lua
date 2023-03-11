@@ -7,12 +7,30 @@
 -- Example: B3Spell_CastSpellKey = "f"
 B3Spell_CastSpellKey = ""
 B3Spell_CastInnateKey = ""
+B3Spell_ToggleSearchBarFocusKey = EEex_Key_GetFromName("Left Ctrl")
 
 function B3Spell_KeyPressedListener(keyPressed)
 
 	if worldScreen ~= e:GetActiveEngine() then return end
 	if not Infinity_IsMenuOnStack("WORLD_ACTIONBAR") then return end
-	if Infinity_IsMenuOnStack("B3Spell_Menu") or Infinity_IsMenuOnStack("B3Spell_Menu_Options") then return end
+	if Infinity_IsMenuOnStack("B3Spell_Menu_Options") then return end
+
+	if Infinity_IsMenuOnStack("B3Spell_Menu") then
+
+		if Infinity_TextEditHasFocus() == 0 then
+			local spellData = B3Spell_KeyToSpellData[keyPressed]
+			if spellData then
+				B3Spell_CastSpellData(spellData)
+				return true -- consume keypress so world screen doesn't see it
+			elseif keyPressed == B3Spell_ToggleSearchBarFocusKey then
+				B3Spell_Menu_AttemptFocusSearchBar()
+			end
+		elseif keyPressed == B3Spell_ToggleSearchBarFocusKey then
+			Infinity_FocusTextEdit()
+		end
+
+		return
+	end
 
 	local keyToCode = function(string)
 		return #string ~= 0 and string:byte() or -1
@@ -32,6 +50,7 @@ function B3Spell_KeyPressedListener(keyPressed)
 		end
 	end
 end
+EEex_Key_AddPressedListener(B3Spell_KeyPressedListener)
 
 --------------------
 -- Hook Actionbar --
@@ -79,17 +98,7 @@ function B3Spell_ActionbarListener(config, state)
 		B3Spell_LaunchSpellMenu(mode)
 	end
 end
-
---------------------
--- Listeners Init --
---------------------
-
-function B3Spell_InitListeners()
-	EEex_Key_AddPressedListener(B3Spell_KeyPressedListener)
-	EEex_Actionbar_AddListener(B3Spell_ActionbarListener)
-	EEex_Menu_AddBeforeMainFileReloadedListener(B3Spell_InitListeners)
-end
-B3Spell_InitListeners()
+EEex_Actionbar_AddListener(B3Spell_ActionbarListener)
 
 -----------------------
 -- General Functions --
@@ -222,9 +231,9 @@ function B3Spell_SetQuickSlotToResref(resref)
 	end
 end
 
--------------------------------------------------------------------
--- Filling B3Spell_SpellListInfo / B3Spell_FilteredSpellListInfo --
--------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+-- Filling B3Spell_SpellListInfo / B3Spell_KeyToSpellData / B3Spell_FilteredSpellListInfo --
+--------------------------------------------------------------------------------------------
 
 -- Used in M_B3Spel.lua
 function B3Spell_FillSpellListInfo()
@@ -234,6 +243,7 @@ end
 function B3Spell_FillFromMemorized()
 
 	B3Spell_SpellListInfo = {}
+	B3Spell_KeyToSpellData = {}
 	local belowSpellsIndex = nil
 	local levelToIndex = {}
 	local aboveSpellsIndex = nil
@@ -252,7 +262,7 @@ function B3Spell_FillFromMemorized()
 		return
 	end
 
-	local spellKeyBindings = B3Spell_CacheSpellKeyBindingNames()
+	local spellNameToKey = B3Spell_CacheSpellNameToKeyBindings()
 
 	local buttonType = nil
 	if B3Spell_Mode == B3Spell_Modes.Innate then
@@ -356,24 +366,30 @@ function B3Spell_FillFromMemorized()
 
 				end
 
-				table.insert(levelToFill, {
+				local key = spellNameToKey[name]
+
+				local spellData = {
 					["spellCastableCount"]  = B3Spell_Mode ~= B3Spell_Modes.Opcode214 and m_CButtonData.m_count or 0,
 					["spellDescription"]    = spellHeader.genericDescription,
 					["spellDisabled"]       = m_CButtonData.m_bDisabled == 1,
 					["spellIcon"]           = m_CButtonData.m_icon:get(),
-					["spellKeyBindingName"] = spellKeyBindings[name] or "",
+					["spellKeyBindingName"] = key and B3Spell_GetKeyBindingKeyName(key) or "",
 					["spellLevel"]          = level,
 					["spellName"]           = name,
 					["spellNameStrref"]     = nameStrref,
 					["spellRealNameStrref"] = spellHeader.genericName,
 					["spellResref"]         = resref,
 					["spellType"]           = spellHeader.itemType,
-				})
+				}
 
+				table.insert(levelToFill, spellData)
+
+				if key and not B3Spell_KeyToSpellData[key] then
+					B3Spell_KeyToSpellData[key] = spellData
+				end
 			else
 				print("[B3Spell_FillSpellListInfo] (ASSERT) Not implemented, report to @Bubb")
 			end
-
 		else
 			print("[B3Spell_FillSpellListInfo] (ASSERT) Empty resref, report to @Bubb")
 		end

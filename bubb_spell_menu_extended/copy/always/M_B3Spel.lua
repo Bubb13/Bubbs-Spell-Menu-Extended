@@ -140,11 +140,12 @@ B3Spell_PausedOnOpen         = false
 B3Spell_SlotsSuppressOnOpen  = false
 B3Spell_SlotsSuppressOnClose = false
 
-B3Spell_SearchEdit    = ""
-B3Spell_OldSearchEdit = ""
-B3Spell_MenuTick      = -1
+B3Spell_SearchEdit             = ""
+B3Spell_OldSearchEdit          = ""
+B3Spell_AutoFocusSearchBarTick = -1
 
 B3Spell_SpellListInfo         = {}
+B3Spell_KeyToSpellData        = {}
 B3Spell_FilteredSpellListInfo = {}
 B3Spell_SlotRowInfo           = {}
 B3Spell_QuickSpellData        = nil
@@ -195,26 +196,26 @@ function B3Spell_GetKeyBindingName(category, keybinding)
 	return toReturn
 end
 
-function B3Spell_GetKeyBindingKeyName(keybinding)
-	local key = keybinding[6]
+function B3Spell_GetKeyBindingKeyName(key)
 	return key >= 33 and key <= 126 and string.format("%c", key) or t("SDL_"..key)
 end
 
-function B3Spell_CacheSpellKeyBindingNames()
-	local spellNameToKeyName = {}
+function B3Spell_CacheSpellNameToKeyBindings()
+	local spellNameToKey = {}
 	for _, category in ipairs({
 		B3Spell_KeyBindingCategory.PRIEST_SPELLS,
 		B3Spell_KeyBindingCategory.MAGE_SPELLS
 	})
 	do
 		for _, keybinding in ipairs(keybindings[category]) do
+			local key = keybinding[6]
 			local keybindingName = B3Spell_GetKeyBindingName(category, keybinding)
-			if not spellNameToKeyName[keybindingName] then
-				spellNameToKeyName[keybindingName] = B3Spell_GetKeyBindingKeyName(keybinding)
+			if not spellNameToKey[keybindingName] then
+				spellNameToKey[keybindingName] = key
 			end
 		end
 	end
-	return spellNameToKeyName
+	return spellNameToKey
 end
 
 -- Fills: B3Spell_SlotRowInfo
@@ -917,24 +918,32 @@ function B3Spell_Menu_Modal()
 end
 
 function B3Spell_Menu_FocusSearchBar()
-	if B3Spell_AutoFocusSearchBar == 1 and B3Spell_DisableSearchBar == 0 and not B3Spell_IsCaptureActive() then
+	if B3Spell_DisableSearchBar == 0 then
 		Infinity_FocusTextEdit('B3Spell_Menu_Search')
+	end
+end
+
+function B3Spell_Menu_AttemptFocusSearchBar()
+	if B3Spell_AutoFocusSearchBarTick == -1 and not B3Spell_IsCaptureActive() then
+		B3Spell_AutoFocusSearchBarTick = 0
 	end
 end
 
 -- Used to update slots based on current search field
 function B3Spell_Menu_Tick()
 
-	if B3Spell_MenuTick == -1 and not B3Spell_IsCaptureActive() then
-		B3Spell_MenuTick = 0
+	if B3Spell_AutoFocusSearchBar == 1 then
+		B3Spell_Menu_AttemptFocusSearchBar()
 	end
 
-	if B3Spell_MenuTick >= 0 then
-		if B3Spell_MenuTick >= 1 then
-			B3Spell_Menu_FocusSearchBar()
-			B3Spell_MenuTick = -1
+	if B3Spell_AutoFocusSearchBarTick >= 0 then
+		if B3Spell_AutoFocusSearchBarTick >= 1 then
+			if not B3Spell_IsCaptureActive() then
+				B3Spell_Menu_FocusSearchBar()
+			end
+			B3Spell_AutoFocusSearchBarTick = -1
 		else
-			B3Spell_MenuTick = B3Spell_MenuTick + 1
+			B3Spell_AutoFocusSearchBarTick = B3Spell_AutoFocusSearchBarTick + 1
 		end
 	end
 

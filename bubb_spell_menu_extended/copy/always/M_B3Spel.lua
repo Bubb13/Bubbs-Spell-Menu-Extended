@@ -333,39 +333,44 @@ function B3Spell_InitializeSlots()
 	-- Destroy all the slots I've already spawned
 	B3Spell_DestroyInstances("B3Spell_Menu")
 
-	B3Spell_CreateNamedSlotBamButton("B3Spell_Menu_FilterSlotsMage",   "GUIBTACT", 68, B3Spell_Tooltip_Mage_Spells,   B3Spell_Menu_FilterSlotsMage_Action,   0, 0, 52, 52)
-	B3Spell_CreateNamedSlotBamButton("B3Spell_Menu_FilterSlotsAll",    "GUIBTACT", 12, B3Spell_Tooltip_All_Spells,    B3Spell_Menu_FilterSlotsAll_Action,    0, 0, 52, 52)
-	B3Spell_CreateNamedSlotBamButton("B3Spell_Menu_FilterSlotsCleric", "GUIBTACT", 70, B3Spell_Tooltip_Cleric_Spells, B3Spell_Menu_FilterSlotsCleric_Action, 0, 0, 52, 52)
+	if B3Spell_DisableControlBar == 0 then
+		B3Spell_CreateNamedSlotBamButton("B3Spell_Menu_FilterSlotsMage",   "GUIBTACT", 68, B3Spell_Tooltip_Mage_Spells,   B3Spell_Menu_FilterSlotsMage_Action,   0, 0, 52, 52)
+		B3Spell_CreateNamedSlotBamButton("B3Spell_Menu_FilterSlotsAll",    "GUIBTACT", 12, B3Spell_Tooltip_All_Spells,    B3Spell_Menu_FilterSlotsAll_Action,    0, 0, 52, 52)
+		B3Spell_CreateNamedSlotBamButton("B3Spell_Menu_FilterSlotsCleric", "GUIBTACT", 70, B3Spell_Tooltip_Cleric_Spells, B3Spell_Menu_FilterSlotsCleric_Action, 0, 0, 52, 52)
+	end
 
 	if B3Spell_AlignCenter == 1 then
 
-		B3Spell_CreateNamedSlotBamButton("B3Spell_Menu_MoveSlotsLeft", "GUIBTACT", 64, B3Spell_Tooltip_Align_Left, B3Spell_Menu_MoveSlotsLeft_Action, 0, 0, 52, 52)
+		if B3Spell_DisableControlBar == 0 then
 
-		B3Spell_CenterItemsX(
-		{
-			{ ['name'] = 'B3Spell_Menu_MoveSlotsLeft',          ['x'] = 0   },
-			{ ['name'] = 'B3Spell_Menu_MoveSlotsLeft_Slot',     ['x'] = 0   },
-			{ ['name'] = 'B3Spell_Menu_FilterSlotsMage',        ['x'] = 52  },
-			{ ['name'] = 'B3Spell_Menu_FilterSlotsMage_Slot',   ['x'] = 52  },
-			{ ['name'] = 'B3Spell_Menu_FilterSlotsAll',         ['x'] = 104 },
-			{ ['name'] = 'B3Spell_Menu_FilterSlotsAll_Slot',    ['x'] = 104 },
-			{ ['name'] = 'B3Spell_Menu_FilterSlotsCleric',      ['x'] = 156 },
-			{ ['name'] = 'B3Spell_Menu_FilterSlotsCleric_Slot', ['x'] = 156 },
+			B3Spell_CreateNamedSlotBamButton("B3Spell_Menu_MoveSlotsLeft", "GUIBTACT", 64, B3Spell_Tooltip_Align_Left, B3Spell_Menu_MoveSlotsLeft_Action, 0, 0, 52, 52)
+
+			B3Spell_CenterItemsX(
 			{
-				['name'] = 'B3Spell_Menu_SlotSizeSlider',
-				['x'] = 208,
-				['y'] = B3Spell_Menu_SlotSizeSlider_Y,
-				['width'] = B3Spell_Menu_SlotSizeSlider_W,
-				['height'] = B3Spell_Menu_SlotSizeSlider_H,
-			},
-			{
-				['name'] = 'B3Spell_Menu_OptimizeSlotSize',
-				['x'] = B3Spell_Menu_OptimizeSlotSize_AlignmentX,
-				['y'] = B3Spell_Menu_OptimizeSlotSize_Y,
-				['width'] = B3Spell_Menu_OptimizeSlotSize_W,
-				['height'] = B3Spell_Menu_OptimizeSlotSize_H,
-			},
-		})
+				{ ['name'] = 'B3Spell_Menu_MoveSlotsLeft',          ['x'] = 0   },
+				{ ['name'] = 'B3Spell_Menu_MoveSlotsLeft_Slot',     ['x'] = 0   },
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsMage',        ['x'] = 52  },
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsMage_Slot',   ['x'] = 52  },
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsAll',         ['x'] = 104 },
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsAll_Slot',    ['x'] = 104 },
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsCleric',      ['x'] = 156 },
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsCleric_Slot', ['x'] = 156 },
+				{
+					['name'] = 'B3Spell_Menu_SlotSizeSlider',
+					['x'] = 208,
+					['y'] = B3Spell_Menu_SlotSizeSlider_Y,
+					['width'] = B3Spell_Menu_SlotSizeSlider_W,
+					['height'] = B3Spell_Menu_SlotSizeSlider_H,
+				},
+				{
+					['name'] = 'B3Spell_Menu_OptimizeSlotSize',
+					['x'] = B3Spell_Menu_OptimizeSlotSize_AlignmentX,
+					['y'] = B3Spell_Menu_OptimizeSlotSize_Y,
+					['width'] = B3Spell_Menu_OptimizeSlotSize_W,
+					['height'] = B3Spell_Menu_OptimizeSlotSize_H,
+				},
+			})
+		end
 
 		local searchBackgroundTop = B3Spell_DisableControlBar == 0 and 57 or (55 - B3Spell_Menu_SearchBackground_H) / 2
 		B3Spell_CenterItemsX(
@@ -383,19 +388,22 @@ function B3Spell_InitializeSlots()
 			}
 		})
 	else
-		B3Spell_CreateNamedSlotBamButton("B3Spell_Menu_MoveSlotsRight", "GUIBTACT", 66, B3Spell_Tooltip_Align_Center, B3Spell_Menu_MoveSlotsRight_Action, 0, 0, 52, 52)
+		if B3Spell_DisableControlBar == 0 then
 
-		Infinity_SetArea('B3Spell_Menu_FilterSlotsMage',        B3Spell_SidebarWidth,       nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_FilterSlotsMage_Slot',   B3Spell_SidebarWidth,       nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_FilterSlotsAll',         B3Spell_SidebarWidth + 52,  nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_FilterSlotsAll_Slot',    B3Spell_SidebarWidth + 52,  nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_FilterSlotsCleric',      B3Spell_SidebarWidth + 104, nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_FilterSlotsCleric_Slot', B3Spell_SidebarWidth + 104, nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_MoveSlotsRight',         B3Spell_SidebarWidth + 156, nil, nil, nil)
-		Infinity_SetArea('B3Spell_Menu_MoveSlotsRight_Slot',    B3Spell_SidebarWidth + 156, nil, nil, nil)
+			B3Spell_CreateNamedSlotBamButton("B3Spell_Menu_MoveSlotsRight", "GUIBTACT", 66, B3Spell_Tooltip_Align_Center, B3Spell_Menu_MoveSlotsRight_Action, 0, 0, 52, 52)
 
-		Infinity_SetArea('B3Spell_Menu_SlotSizeSlider',    B3Spell_SidebarWidth + 208,                                      B3Spell_Menu_SlotSizeSlider_Y,   B3Spell_Menu_SlotSizeSlider_W,   B3Spell_Menu_SlotSizeSlider_H)
-		Infinity_SetArea('B3Spell_Menu_OptimizeSlotSize',  B3Spell_SidebarWidth + B3Spell_Menu_OptimizeSlotSize_AlignmentX, B3Spell_Menu_OptimizeSlotSize_Y, B3Spell_Menu_OptimizeSlotSize_W, B3Spell_Menu_OptimizeSlotSize_H)
+			Infinity_SetArea('B3Spell_Menu_FilterSlotsMage',        B3Spell_SidebarWidth,       nil, nil, nil)
+			Infinity_SetArea('B3Spell_Menu_FilterSlotsMage_Slot',   B3Spell_SidebarWidth,       nil, nil, nil)
+			Infinity_SetArea('B3Spell_Menu_FilterSlotsAll',         B3Spell_SidebarWidth + 52,  nil, nil, nil)
+			Infinity_SetArea('B3Spell_Menu_FilterSlotsAll_Slot',    B3Spell_SidebarWidth + 52,  nil, nil, nil)
+			Infinity_SetArea('B3Spell_Menu_FilterSlotsCleric',      B3Spell_SidebarWidth + 104, nil, nil, nil)
+			Infinity_SetArea('B3Spell_Menu_FilterSlotsCleric_Slot', B3Spell_SidebarWidth + 104, nil, nil, nil)
+			Infinity_SetArea('B3Spell_Menu_MoveSlotsRight',         B3Spell_SidebarWidth + 156, nil, nil, nil)
+			Infinity_SetArea('B3Spell_Menu_MoveSlotsRight_Slot',    B3Spell_SidebarWidth + 156, nil, nil, nil)
+
+			Infinity_SetArea('B3Spell_Menu_SlotSizeSlider',    B3Spell_SidebarWidth + 208,                                      B3Spell_Menu_SlotSizeSlider_Y,   B3Spell_Menu_SlotSizeSlider_W,   B3Spell_Menu_SlotSizeSlider_H)
+			Infinity_SetArea('B3Spell_Menu_OptimizeSlotSize',  B3Spell_SidebarWidth + B3Spell_Menu_OptimizeSlotSize_AlignmentX, B3Spell_Menu_OptimizeSlotSize_Y, B3Spell_Menu_OptimizeSlotSize_W, B3Spell_Menu_OptimizeSlotSize_H)
+		end
 
 		local searchBackgroundTop = B3Spell_DisableControlBar == 0 and 57 or (55 - B3Spell_Menu_SearchBackground_H) / 2
 		Infinity_SetArea('B3Spell_Menu_SearchBackground', B3Spell_SidebarWidth, searchBackgroundTop,                               B3Spell_Menu_SearchBackground_W, B3Spell_Menu_SearchBackground_H)
@@ -1175,10 +1183,6 @@ end
 -- B3Spell_Menu_FilterSlotsMage --
 ----------------------------------
 
-function B3Spell_Menu_FilterSlotsMage_Enabled()
-	return B3Spell_DisableControlBar == 0
-end
-
 function B3Spell_Menu_FilterSlotsMage_Action()
 	B3Spell_FilterSpellListInfoMage()
 	B3Spell_OldSearchEdit = ''
@@ -1188,10 +1192,6 @@ end
 ---------------------------------
 -- B3Spell_Menu_FilterSlotsAll --
 ---------------------------------
-
-function B3Spell_Menu_FilterSlotsAll_Enabled()
-	return B3Spell_DisableControlBar == 0
-end
 
 function B3Spell_Menu_FilterSlotsAll_Action()
 	B3Spell_FilterSpellListInfoAll()
@@ -1203,10 +1203,6 @@ end
 -- B3Spell_Menu_FilterSlotsCleric --
 ------------------------------------
 
-function B3Spell_Menu_FilterSlotsCleric_Enabled()
-	return B3Spell_DisableControlBar == 0
-end
-
 function B3Spell_Menu_FilterSlotsCleric_Action()
 	B3Spell_FilterSpellListInfoCleric()
 	B3Spell_OldSearchEdit = ''
@@ -1217,10 +1213,6 @@ end
 -- B3Spell_Menu_MoveSlotsLeft --
 --------------------------------
 
-function B3Spell_Menu_MoveSlotsLeft_Enabled()
-	return B3Spell_DisableControlBar == 0 and B3Spell_AlignCenter == 1
-end
-
 function B3Spell_Menu_MoveSlotsLeft_Action()
 	B3Spell_SetAlignCenter(0)
 	B3Spell_InitializeSlots()
@@ -1229,10 +1221,6 @@ end
 ---------------------------------
 -- B3Spell_Menu_MoveSlotsRight --
 ---------------------------------
-
-function B3Spell_Menu_MoveSlotsRight_Enabled()
-	return B3Spell_DisableControlBar == 0 and B3Spell_AlignCenter == 0
-end
 
 function B3Spell_Menu_MoveSlotsRight_Action()
 	B3Spell_SetAlignCenter(1)

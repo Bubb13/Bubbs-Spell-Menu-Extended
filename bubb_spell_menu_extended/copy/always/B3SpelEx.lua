@@ -421,8 +421,11 @@ function B3Spell_UpdateSlotPressedState()
 
 		if not data.didOffset then
 
-			local slotData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Bam"].instanceData[data.pairedSlotID]
-			slotData.bam = data.isGreen and "B3SLOTGD" or "B3SLOTD"
+			if not RgUISkin then
+				-- Infinity UI++ does not have slot-pressed frames
+				local slotData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Bam"].instanceData[data.pairedSlotID]
+				slotData.bam = data.isGreen and "B3SLOTGD" or "B3SLOTD"
+			end
 
 			EEex_Menu_StoreTemplateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_Icon", data.pairedIconID, "B3Spell_StoredInstance")
 			local iconX, iconY, iconWidth, iconHeight = Infinity_GetArea("B3Spell_StoredInstance")
@@ -433,8 +436,11 @@ function B3Spell_UpdateSlotPressedState()
 
 	elseif data.didOffset then
 
-		local slotData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Bam"].instanceData[data.pairedSlotID]
-		slotData.bam = data.isGreen and "B3SLOTG" or "B3SLOT"
+		if not RgUISkin then
+			-- Infinity UI++ does not have slot-pressed frames
+			local slotData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Bam"].instanceData[data.pairedSlotID]
+			slotData.bam = data.isGreen and "B3SLOTG" or "B3SLOT"
+		end
 
 		EEex_Menu_StoreTemplateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_Icon", data.pairedIconID, "B3Spell_StoredInstance")
 		local iconX, iconY, iconWidth, iconHeight = Infinity_GetArea("B3Spell_StoredInstance")

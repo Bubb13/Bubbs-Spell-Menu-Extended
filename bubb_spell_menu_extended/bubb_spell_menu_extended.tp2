@@ -12,7 +12,33 @@ REQUIRE_PREDICATE (FILE_EXISTS_IN_GAME ~UI.MENU~) ~UI.MENU not found in game.~
 REQUIRE_PREDICATE (GAME_IS ~bgee bg2ee eet iwdee~) ~Game not supported.~
 REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 
-	ACTION_IF MOD_IS_INSTALLED ~dragonspear_ui++.tp2~ ~0~ BEGIN
+	ACTION_IF MOD_IS_INSTALLED ~infinity_ui.tp2~ ~0~ BEGIN
+
+		PRINT ~Using Infinity UI++ Configuration ...~
+		OUTER_SPRINT bam_folder ~bubb_spell_menu_extended/copy/infinity-ui++~
+
+		OUTER_SET B3Spell_SidebarWidth = 80
+
+		OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~sliderBackground "RGDSLDRB"~
+		OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_Bam ~RGDSLDRS~
+		OUTER_SET B3Spell_Menu_SlotSizeSlider_Y = 8
+		OUTER_SET B3Spell_Menu_SlotSizeSlider_W = 200
+		OUTER_SET B3Spell_Menu_SlotSizeSlider_H = 36
+
+		OUTER_SPRINT B3Spell_Menu_OptimizeSlotSize_Bam ~rgdsbut2~
+		OUTER_SET B3Spell_Menu_OptimizeSlotSize_Y = 4
+		OUTER_SET B3Spell_Menu_OptimizeSlotSize_W = 222
+		OUTER_SET B3Spell_Menu_OptimizeSlotSize_H = 50
+
+		OUTER_SPRINT B3Spell_Menu_SearchBackground_Bam ~rgdmbut2~
+		OUTER_SET B3Spell_Menu_SearchBackground_Frame = 1
+		OUTER_SET B3Spell_Menu_SearchBackground_W = 340
+		OUTER_SET B3Spell_Menu_SearchBackground_H = 40
+
+		OUTER_SET B3Spell_Menu_Search_YOffset = 11
+		OUTER_SET B3Spell_NumberSequence = "-1"
+
+	END ELSE ACTION_IF MOD_IS_INSTALLED ~dragonspear_ui++.tp2~ ~0~ BEGIN
 
 		PRINT ~Using Dragonspear UI++ Configuration ...~
 		OUTER_SPRINT bam_folder ~bubb_spell_menu_extended/copy/bgee-sod~
@@ -20,6 +46,7 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 		OUTER_SET B3Spell_SidebarWidth = 80
 
 		OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~mosaic "GUISLDR"~
+		OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_Bam ~SLDRSTAR~
 		OUTER_SET B3Spell_Menu_SlotSizeSlider_Y = 8
 		OUTER_SET B3Spell_Menu_SlotSizeSlider_W = 200
 		OUTER_SET B3Spell_Menu_SlotSizeSlider_H = 36
@@ -30,6 +57,7 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 		OUTER_SET B3Spell_Menu_OptimizeSlotSize_H = 44
 
 		OUTER_SPRINT B3Spell_Menu_SearchBackground_Bam ~GUIBUTWS~
+		OUTER_SET B3Spell_Menu_SearchBackground_Frame = 0
 		OUTER_SET B3Spell_Menu_SearchBackground_W = 340
 		OUTER_SET B3Spell_Menu_SearchBackground_H = 32
 
@@ -38,6 +66,8 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 		END ELSE BEGIN
 			OUTER_SET B3Spell_Menu_Search_YOffset = 1
 		END
+
+		OUTER_SET B3Spell_NumberSequence = 2
 
 	END ELSE ACTION_IF GAME_IS ~bgee bg2ee eet~ BEGIN
 
@@ -52,62 +82,80 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 			PRINT ~Using LeUI-BG1EE Configuration ...~
 			OUTER_SPRINT bam_folder ~bubb_spell_menu_extended/copy/bgee~
 			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~mosaic "GUISLDR"~
+			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_Bam ~SLDRSTAR~
 			OUTER_SPRINT B3Spell_Menu_OptimizeSlotSize_Bam ~GUIOSTUM~
 			OUTER_SET B3Spell_Menu_OptimizeSlotSize_W = 201
 			OUTER_SPRINT B3Spell_Menu_SearchBackground_Bam ~GUICHLNG~
+			OUTER_SET B3Spell_Menu_SearchBackground_Frame = 0
 			OUTER_SET B3Spell_Menu_SearchBackground_W = 340
 			OUTER_SET B3Spell_Menu_SearchBackground_H = 32
 			OUTER_SET B3Spell_Menu_Search_YOffset = 0
+			OUTER_SET B3Spell_NumberSequence = 1
 		END ELSE ACTION_IF MOD_IS_INSTALLED ~LeUI-SoD.tp2~ ~0~ BEGIN
 			PRINT ~Using LeUI-SoD Configuration ...~
 			OUTER_SPRINT bam_folder ~bubb_spell_menu_extended/copy/bgee-sod~
 			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~mosaic "GUISLDR"~
+			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_Bam ~SLDRSTAR~
 			OUTER_SPRINT B3Spell_Menu_OptimizeSlotSize_Bam ~GUIOSTUM~
 			OUTER_SET B3Spell_Menu_OptimizeSlotSize_W = 201
 			OUTER_SPRINT B3Spell_Menu_SearchBackground_Bam ~GUICHLNG~
+			OUTER_SET B3Spell_Menu_SearchBackground_Frame = 0
 			OUTER_SET B3Spell_Menu_SearchBackground_W = 340
 			OUTER_SET B3Spell_Menu_SearchBackground_H = 32
 			OUTER_SET B3Spell_Menu_Search_YOffset = 0
+			OUTER_SET B3Spell_NumberSequence = 2
 		END ELSE ACTION_IF MOD_IS_INSTALLED ~LeUI.tp2~ ~0~ BEGIN
 			PRINT ~Using LeUI Configuration ...~
 			OUTER_SPRINT bam_folder ~bubb_spell_menu_extended/copy/bg2ee~
 			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~mosaic "GUISLDR"~
+			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_Bam ~SLDRSTAR~
 			OUTER_SPRINT B3Spell_Menu_OptimizeSlotSize_Bam ~GUIOSTUM~
 			OUTER_SET B3Spell_Menu_OptimizeSlotSize_W = 201
 			OUTER_SPRINT B3Spell_Menu_SearchBackground_Bam ~GUIGENC6~
+			OUTER_SET B3Spell_Menu_SearchBackground_Frame = 0
 			OUTER_SET B3Spell_Menu_SearchBackground_W = 297
 			OUTER_SET B3Spell_Menu_SearchBackground_H = 27
 			OUTER_SET B3Spell_Menu_Search_YOffset = "-2"
+			OUTER_SET B3Spell_NumberSequence = 3
 		END ELSE ACTION_IF (GAME_IS ~bgee~ AND GAME_INCLUDES ~sod~) OR MOD_IS_INSTALLED ~EET_GUI.TP2~ ~0~ BEGIN
 			PRINT ~Using BG:EE with SoD / EET_GUI Configuration ...~
 			OUTER_SPRINT bam_folder ~bubb_spell_menu_extended/copy/bgee-sod~
 			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~sliderBackground "SLDRBACK"~
+			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_Bam ~SLDRSTAR~
 			OUTER_SPRINT B3Spell_Menu_OptimizeSlotSize_Bam ~GUIBUTNT~
 			OUTER_SET B3Spell_Menu_OptimizeSlotSize_W = 200
 			OUTER_SPRINT B3Spell_Menu_SearchBackground_Bam ~GUIBUTWS~
+			OUTER_SET B3Spell_Menu_SearchBackground_Frame = 0
 			OUTER_SET B3Spell_Menu_SearchBackground_W = 340
 			OUTER_SET B3Spell_Menu_SearchBackground_H = 32
 			OUTER_SET B3Spell_Menu_Search_YOffset = 1
+			OUTER_SET B3Spell_NumberSequence = 2
 		END ELSE ACTION_IF GAME_IS ~bgee~ BEGIN
 			PRINT ~Using BG:EE Configuration ...~
 			OUTER_SPRINT bam_folder ~bubb_spell_menu_extended/copy/bgee~
 			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~mosaic "GUISLDR"~
+			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_Bam ~SLDRSTAR~
 			OUTER_SPRINT B3Spell_Menu_OptimizeSlotSize_Bam ~GUIOSTUM~
 			OUTER_SET B3Spell_Menu_OptimizeSlotSize_W = 203
 			OUTER_SPRINT B3Spell_Menu_SearchBackground_Bam ~GUICHLNG~
+			OUTER_SET B3Spell_Menu_SearchBackground_Frame = 0
 			OUTER_SET B3Spell_Menu_SearchBackground_W = 340
 			OUTER_SET B3Spell_Menu_SearchBackground_H = 32
 			OUTER_SET B3Spell_Menu_Search_YOffset = 5
+			OUTER_SET B3Spell_NumberSequence = 1
 		END ELSE ACTION_IF GAME_IS ~bg2ee eet~ BEGIN
 			PRINT ~Using BG2:EE / EET Configuration ...~
 			OUTER_SPRINT bam_folder ~bubb_spell_menu_extended/copy/bg2ee~
 			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~mosaic "GUISLDR"~
+			OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_Bam ~SLDRSTAR~
 			OUTER_SPRINT B3Spell_Menu_OptimizeSlotSize_Bam ~GUIOSTUM~
 			OUTER_SET B3Spell_Menu_OptimizeSlotSize_W = 203
 			OUTER_SPRINT B3Spell_Menu_SearchBackground_Bam ~GUIGENC6~
+			OUTER_SET B3Spell_Menu_SearchBackground_Frame = 0
 			OUTER_SET B3Spell_Menu_SearchBackground_W = 297
 			OUTER_SET B3Spell_Menu_SearchBackground_H = 27
 			OUTER_SET B3Spell_Menu_Search_YOffset = 3
+			OUTER_SET B3Spell_NumberSequence = 3
 		END ELSE BEGIN
 			FAIL ~No GUI config defined for game. This is a logic error, please report to @Bubb.~
 		END
@@ -120,6 +168,7 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 		OUTER_SET B3Spell_SidebarWidth = 80
 
 		OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_sliderBackground ~mosaic "GUISLDR"~
+		OUTER_SPRINT B3Spell_Menu_SlotSizeSlider_Bam ~SLDRSTAR~
 		OUTER_SET B3Spell_Menu_SlotSizeSlider_Y = 6
 		OUTER_SET B3Spell_Menu_SlotSizeSlider_W = 252
 		OUTER_SET B3Spell_Menu_SlotSizeSlider_H = 42
@@ -130,10 +179,12 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 		OUTER_SET B3Spell_Menu_OptimizeSlotSize_H = 44
 
 		OUTER_SPRINT B3Spell_Menu_SearchBackground_Bam ~GUIBUTWS~
+		OUTER_SET B3Spell_Menu_SearchBackground_Frame = 0
 		OUTER_SET B3Spell_Menu_SearchBackground_W = 340
 		OUTER_SET B3Spell_Menu_SearchBackground_H = 32
 
 		OUTER_SET B3Spell_Menu_Search_YOffset = 6
+		OUTER_SET B3Spell_NumberSequence = 4
 
 	END ELSE BEGIN
 		FAIL ~No GUI config defined for game. This is a logic error, please report to @Bubb.~

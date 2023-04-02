@@ -330,14 +330,27 @@ function B3Spell_InitializeSlots()
 	local verticalMarginSpace = screenHeight - B3Spell_GetMinY() - verticalAreaUsed
 	local currentYOffset = B3Spell_GetMinY() + (verticalMarginSpace / 2)
 
+	-- Destroy all the slots I've already spawned
+	B3Spell_DestroyInstances("B3Spell_Menu")
+
+	B3Spell_CreateNamedSlotBamButton("B3Spell_Menu_FilterSlotsMage",   "GUIBTACT", 68, B3Spell_Tooltip_Mage_Spells,   B3Spell_Menu_FilterSlotsMage_Action,   0, 0, 52, 52)
+	B3Spell_CreateNamedSlotBamButton("B3Spell_Menu_FilterSlotsAll",    "GUIBTACT", 12, B3Spell_Tooltip_All_Spells,    B3Spell_Menu_FilterSlotsAll_Action,    0, 0, 52, 52)
+	B3Spell_CreateNamedSlotBamButton("B3Spell_Menu_FilterSlotsCleric", "GUIBTACT", 70, B3Spell_Tooltip_Cleric_Spells, B3Spell_Menu_FilterSlotsCleric_Action, 0, 0, 52, 52)
+
 	if B3Spell_AlignCenter == 1 then
+
+		B3Spell_CreateNamedSlotBamButton("B3Spell_Menu_MoveSlotsLeft", "GUIBTACT", 64, B3Spell_Tooltip_Align_Left, B3Spell_Menu_MoveSlotsLeft_Action, 0, 0, 52, 52)
 
 		B3Spell_CenterItemsX(
 		{
-			{ ['name'] = 'B3Spell_Menu_MoveSlotsLeft',     ['x'] = 0   },
-			{ ['name'] = 'B3Spell_Menu_FilterSlotsMage',   ['x'] = 52  },
-			{ ['name'] = 'B3Spell_Menu_FilterSlotsAll',    ['x'] = 104 },
-			{ ['name'] = 'B3Spell_Menu_FilterSlotsCleric', ['x'] = 156 },
+			{ ['name'] = 'B3Spell_Menu_MoveSlotsLeft',          ['x'] = 0   },
+			{ ['name'] = 'B3Spell_Menu_MoveSlotsLeft_Slot',     ['x'] = 0   },
+			{ ['name'] = 'B3Spell_Menu_FilterSlotsMage',        ['x'] = 52  },
+			{ ['name'] = 'B3Spell_Menu_FilterSlotsMage_Slot',   ['x'] = 52  },
+			{ ['name'] = 'B3Spell_Menu_FilterSlotsAll',         ['x'] = 104 },
+			{ ['name'] = 'B3Spell_Menu_FilterSlotsAll_Slot',    ['x'] = 104 },
+			{ ['name'] = 'B3Spell_Menu_FilterSlotsCleric',      ['x'] = 156 },
+			{ ['name'] = 'B3Spell_Menu_FilterSlotsCleric_Slot', ['x'] = 156 },
 			{
 				['name'] = 'B3Spell_Menu_SlotSizeSlider',
 				['x'] = 208,
@@ -370,10 +383,17 @@ function B3Spell_InitializeSlots()
 			}
 		})
 	else
-		Infinity_SetArea('B3Spell_Menu_FilterSlotsMage',   B3Spell_SidebarWidth,                                            nil,                             nil,                             nil)
-		Infinity_SetArea('B3Spell_Menu_FilterSlotsAll',    B3Spell_SidebarWidth + 52,                                       nil,                             nil,                             nil)
-		Infinity_SetArea('B3Spell_Menu_FilterSlotsCleric', B3Spell_SidebarWidth + 104,                                      nil,                             nil,                             nil)
-		Infinity_SetArea('B3Spell_Menu_MoveSlotsRight',    B3Spell_SidebarWidth + 156,                                      nil,                             nil,                             nil)
+		B3Spell_CreateNamedSlotBamButton("B3Spell_Menu_MoveSlotsRight", "GUIBTACT", 66, B3Spell_Tooltip_Align_Center, B3Spell_Menu_MoveSlotsRight_Action, 0, 0, 52, 52)
+
+		Infinity_SetArea('B3Spell_Menu_FilterSlotsMage',        B3Spell_SidebarWidth,       nil, nil, nil)
+		Infinity_SetArea('B3Spell_Menu_FilterSlotsMage_Slot',   B3Spell_SidebarWidth,       nil, nil, nil)
+		Infinity_SetArea('B3Spell_Menu_FilterSlotsAll',         B3Spell_SidebarWidth + 52,  nil, nil, nil)
+		Infinity_SetArea('B3Spell_Menu_FilterSlotsAll_Slot',    B3Spell_SidebarWidth + 52,  nil, nil, nil)
+		Infinity_SetArea('B3Spell_Menu_FilterSlotsCleric',      B3Spell_SidebarWidth + 104, nil, nil, nil)
+		Infinity_SetArea('B3Spell_Menu_FilterSlotsCleric_Slot', B3Spell_SidebarWidth + 104, nil, nil, nil)
+		Infinity_SetArea('B3Spell_Menu_MoveSlotsRight',         B3Spell_SidebarWidth + 156, nil, nil, nil)
+		Infinity_SetArea('B3Spell_Menu_MoveSlotsRight_Slot',    B3Spell_SidebarWidth + 156, nil, nil, nil)
+
 		Infinity_SetArea('B3Spell_Menu_SlotSizeSlider',    B3Spell_SidebarWidth + 208,                                      B3Spell_Menu_SlotSizeSlider_Y,   B3Spell_Menu_SlotSizeSlider_W,   B3Spell_Menu_SlotSizeSlider_H)
 		Infinity_SetArea('B3Spell_Menu_OptimizeSlotSize',  B3Spell_SidebarWidth + B3Spell_Menu_OptimizeSlotSize_AlignmentX, B3Spell_Menu_OptimizeSlotSize_Y, B3Spell_Menu_OptimizeSlotSize_W, B3Spell_Menu_OptimizeSlotSize_H)
 
@@ -382,11 +402,9 @@ function B3Spell_InitializeSlots()
 		Infinity_SetArea('B3Spell_Menu_Search',           B3Spell_SidebarWidth, searchBackgroundTop + B3Spell_Menu_Search_YOffset, B3Spell_Menu_SearchBackground_W, nil)
 	end
 
-	-- Destroy all the slots I've already spawned
-	B3Spell_DestroyInstances("B3Spell_Menu")
-
 	B3Spell_QuickSpellData = nil
 	local foundGreen = false
+	local numSequence = B3Spell_GetNumSequence()
 
 	local slotRowCount = #B3Spell_SlotRowInfo
 
@@ -404,17 +422,17 @@ function B3Spell_InitializeSlots()
 
 		if not slotRowInfo.isFlowover then
 			if rowInfoMode == B3Spell_InfoModes.Spells then
-				B3Spell_CreateBam("B3NUM"..rowInfo.spellLevel, 1, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
+				B3Spell_CreateBam("B3NUM", numSequence, rowInfo.spellLevel - 1, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
 			else
 				local iconDef = B3Spell_InfoModeIcons[rowInfoMode]
-				B3Spell_CreateBam(iconDef[1], iconDef[2], currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
+				B3Spell_CreateSlotBamBam(iconDef[1], 0, iconDef[2], currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
 			end
 		end
 		currentXOffset = currentXOffset + B3Spell_SlotSize + B3Spell_SlotsGapX
 
 		-- Spawn Left Arrows
 		if slotRowInfo.hasArrows then
-			local arrowData = B3Spell_CreateBamButton("GUIBTACT", 64, "", false, B3Spell_ArrowLeft, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
+			local arrowData = B3Spell_CreateSlotBamButton("GUIBTACT", 64, "", false, B3Spell_ArrowLeft, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
 			arrowData.row = row
 			-- Spawn 2 fewer spell slots, (to make room for the arrows)
 			spellSlotCount = spellSlotCount - 2
@@ -424,7 +442,7 @@ function B3Spell_InitializeSlots()
 		if rowInfoMode == B3Spell_InfoModes.Abilities then
 			for column = 1, spellSlotCount, 1 do
 				local data = B3Spell_GetDataForSlot(row, column)
-				local abilityData = B3Spell_CreateBamButton(data.bam, data.frame, data.tooltip, data.disableTint, data.func, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
+				local abilityData = B3Spell_CreateSlotBamButton(data.bam, data.frame, data.tooltip, data.disableTint, data.func, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
 				slotRowInfo.slotInstances[column] = abilityData
 				currentXOffset = currentXOffset + B3Spell_SlotSize + B3Spell_SlotsGapX
 			end
@@ -446,7 +464,7 @@ function B3Spell_InitializeSlots()
 
 		-- Spawn Right Arrows
 		if slotRowInfo.hasArrows then
-			local arrowData = B3Spell_CreateBamButton("GUIBTACT", 66, "", false, B3Spell_ArrowRight, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
+			local arrowData = B3Spell_CreateSlotBamButton("GUIBTACT", 66, "", false, B3Spell_ArrowRight, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
 			arrowData.row = row
 		end
 
@@ -765,14 +783,18 @@ end
 function B3Spell_CenterItemsX(itemEntries)
 	local greatestX = 0
 	for _, itemEntry in ipairs(itemEntries) do
-		local width = itemEntry.width and itemEntry.width or select(3, Infinity_GetArea(itemEntry.name))
-		local itemRightEdge = (itemEntry.x or 0) + width
-		if itemRightEdge > greatestX then greatestX = itemRightEdge end
+		if nameToItem[itemEntry.name] then
+			local width = itemEntry.width and itemEntry.width or select(3, Infinity_GetArea(itemEntry.name))
+			local itemRightEdge = (itemEntry.x or 0) + width
+			if itemRightEdge > greatestX then greatestX = itemRightEdge end
+		end
 	end
 	local screenWidth, _ = Infinity_GetScreenSize()
 	local centerXStart = screenWidth / 2 - greatestX / 2
 	for _, itemEntry in ipairs(itemEntries) do
-		Infinity_SetArea(itemEntry.name, centerXStart + (itemEntry.x or 0), itemEntry.y, itemEntry.width, itemEntry.height)
+		if nameToItem[itemEntry.name] then
+			Infinity_SetArea(itemEntry.name, centerXStart + (itemEntry.x or 0), itemEntry.y, itemEntry.width, itemEntry.height)
+		end
 	end
 end
 
@@ -828,9 +850,10 @@ function B3Spell_CreateIcon(icon, count, disableTint, x, y, w, h)
 	return instanceData
 end
 
-function B3Spell_CreateBam(bam, frame, x, y, w, h)
+function B3Spell_CreateBam(bam, sequence, frame, x, y, w, h)
 	local instanceData = B3Spell_CreateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_Bam", x, y, w, h)
 	instanceData.bam = bam
+	instanceData.sequence = sequence
 	instanceData.frame = frame
 	return instanceData
 end
@@ -848,8 +871,36 @@ function B3Spell_CreateKeyBindingText(text, x, y)
 	return instanceData
 end
 
+function B3Spell_CreateSlotBam(isGreen, x, y, w, h)
+
+	local slotBam
+	local slotSequence
+	local slotFrame
+
+	if RgUISkin then
+		-- Infinity UI++
+		slotBam = isGreen and "B3SLOTG" or "rgdslot"
+		slotSequence = RgUISkin
+		slotFrame = 0
+	else
+		slotBam = isGreen and "B3SLOTG" or "B3SLOT"
+		slotSequence = 1
+		slotFrame = 1
+	end
+
+	return B3Spell_CreateBam(slotBam, slotSequence, slotFrame, x, y, w, h)
+end
+
+function B3Spell_CreateSlotBamBam(bam, sequence, frame, x, y, w, h)
+	if RgUISkin then
+		-- Infinity UI++
+		B3Spell_CreateSlotBam(false, x, y, w, h)
+	end
+	return B3Spell_CreateBam(bam, sequence, frame, x, y, w, h)
+end
+
 function B3Spell_CreateSpell(data, isGreen, x, y, w, h)
-	local slotData = B3Spell_CreateBam(isGreen and "B3SLOTG" or "B3SLOT", 1, x, y, w, h)
+	local slotData = B3Spell_CreateSlotBam(isGreen, x, y, w, h)
 	local iconData = B3Spell_CreateIcon(data.spellIcon, data.spellCastableCount, data.spellDisabled, x, y, w, h)
 	if B3Spell_ShowKeyBindings == 1 then
 		B3Spell_CreateKeyBindingText(data.spellKeyBindingName, x, y)
@@ -870,6 +921,40 @@ function B3Spell_CreateBamButton(bam, frame, tooltip, disableTint, func, x, y, w
 	instanceData.disableTint = disableTint
 	instanceData.func = func
 	return instanceData
+end
+
+function B3Spell_CreateSlotBamButton(bam, frame, tooltip, disableTint, func, x, y, w, h)
+	if RgUISkin then
+		-- Infinity UI++
+		B3Spell_CreateSlotBam(false, x, y, w, h)
+	end
+	return B3Spell_CreateBamButton(bam, frame, tooltip, disableTint, func, x, y, w, h)
+end
+
+function B3Spell_CreateNamedSlotBamButton(name, bam, frame, tooltip, func, x, y, w, h)
+
+	if RgUISkin then
+		-- Infinity UI++
+		local instanceData = B3Spell_CreateSlotBam(false, x, y, w, h)
+		EEex_Menu_StoreTemplateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_Bam", instanceData.id, name.."_Slot")
+	end
+
+	local instanceData = B3Spell_CreateBamButton(bam, frame, tooltip, false, func, x, y, w, h)
+	EEex_Menu_StoreTemplateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_BamButton", instanceData.id, name)
+end
+
+function B3Spell_GetNumSequence()
+	if RgUISkin then
+		-- Infinity UI++
+		return ({
+			[0] = 2, -- BG:EE - Dragonspear
+			[1] = 4, -- IWD:EE
+			[2] = 0, -- BG:EE - Grey Stone
+			[3] = 3, -- BG2:EE
+		})[RgUISkin]
+	else
+		return B3Spell_NumberSequence
+	end
 end
 
 ------------------
@@ -1003,6 +1088,15 @@ function B3Spell_Menu_SearchBackground_Enabled()
 	return B3Spell_DisableSearchBar == 0
 end
 
+function B3Spell_Menu_SearchBackground_Sequence()
+	if RgUISkin then
+		-- Infinity UI++
+		return RgUISkin
+	else
+		return 0
+	end
+end
+
 -------------------------
 -- B3Spell_Menu_Search --
 -------------------------
@@ -1055,6 +1149,15 @@ function B3Spell_Menu_OptimizeSlotSize_Action()
 	B3Spell_AutomaticallyOptimizeSlotSize = 1
 	B3Spell_InitializeSlots()
 	B3Spell_AutomaticallyOptimizeSlotSize = savedValue
+end
+
+function B3Spell_Menu_OptimizeSlotSize_Sequence()
+	if RgUISkin then
+		-- Infinity UI++
+		return RgUISkin
+	else
+		return 0
+	end
 end
 
 --------------------------------
@@ -1189,6 +1292,10 @@ end
 
 function B3Spell_Menu_TEMPLATE_Bam_Bam()
 	return B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Bam"].instanceData[instanceId].bam
+end
+
+function B3Spell_Menu_TEMPLATE_Bam_Sequence()
+	return B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Bam"].instanceData[instanceId].sequence
 end
 
 function B3Spell_Menu_TEMPLATE_Bam_Frame()
@@ -1337,14 +1444,17 @@ function B3Spell_Menu_Options_OnOpen()
 	Infinity_SetArea('B3Spell_Menu_Options_ExitBackground', nil, nil, screenW, screenH)
 	Infinity_SetArea('B3Spell_Menu_Options_ExitBackgroundDark', nil, nil, screenW + 4, screenH + 4)
 
-	local oneLineHeight = Infinity_GetContentHeight('NORMAL', 0, '', 12, 0)
+	local font = styles["normal"].font
+	local fontPoint = styles["normal"].point
+
+	local oneLineHeight = Infinity_GetContentHeight(font, 0, '', fontPoint, 0)
 	local textData = {}
 
 	local currentY = 8
 	local maxWidth = 0
 
 	for _, option in ipairs(B3Spell_Options) do
-		local textW, textH = B3Spell_GetTextWidthHeight('NORMAL', 12, option[1])
+		local textW, textH = B3Spell_GetTextWidthHeight(font, fontPoint, option[1])
 		if textW > maxWidth then maxWidth = textW end
 		table.insert(textData, {['text'] = option[1], ['yOffset'] = currentY, ['w'] = textW, ['h'] = textH})
 		currentY = currentY + textH + 20

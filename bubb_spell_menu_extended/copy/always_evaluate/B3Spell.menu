@@ -40,9 +40,12 @@ menu
 
 	label
 	{
-		name    "B3Spell_Menu_SearchBackground"
-		enabled "B3Spell_Menu_SearchBackground_Enabled()"
-		bam lua "B3Spell_Menu_SearchBackground_Bam" -- "GUIGENC6"
+		name         "B3Spell_Menu_SearchBackground"
+		enabled      "B3Spell_Menu_SearchBackground_Enabled()"
+		bam lua      "B3Spell_Menu_SearchBackground_Bam" -- "GUIGENC6"
+		sequence lua "B3Spell_Menu_SearchBackground_Sequence()"
+		frame lua    "B3Spell_Menu_SearchBackground_Frame"
+		scaleToClip
 		-- X, Y, W, H set via Infinity_SetArea
 	}
 
@@ -65,25 +68,27 @@ menu
 		position    "B3Spell_SlotSizeSlider"
 		tooltip lua "B3Spell_Menu_SlotSizeSlider_Tooltip()"
 		action      "B3Spell_Menu_SlotSizeSlider_Action()"
-		bam "SLDRSTAR"
-		%B3Spell_Menu_SlotSizeSlider_sliderBackground%
-		scaleToClip
-		-- X, Y, W, H set via Infinity_SetArea
+		bam lua     "B3Spell_Menu_SlotSizeSlider_Bam"
 		sequence 0
 		frame 1
+		%B3Spell_Menu_SlotSizeSlider_sliderBackground%
 		settings 48
+		scaleToClip
+		-- X, Y, W, H set via Infinity_SetArea
 	}
 
 	button
 	{
-		name    "B3Spell_Menu_OptimizeSlotSize"
-		action  "B3Spell_Menu_OptimizeSlotSize_Action()"
-		enabled "B3Spell_Menu_OptimizeSlotSize_Enabled()"
+		name     "B3Spell_Menu_OptimizeSlotSize"
+		action   "B3Spell_Menu_OptimizeSlotSize_Action()"
+		enabled  "B3Spell_Menu_OptimizeSlotSize_Enabled()"
 		text lua "B3Spell_Tooltip_Optimize_Slot_Size"
 		text style "button"
-		bam lua "B3Spell_Menu_OptimizeSlotSize_Bam" -- "GUIOSTUM"
+		pad 0 15 0 15
+		bam lua      "B3Spell_Menu_OptimizeSlotSize_Bam" -- "GUIOSTUM"
+		sequence lua "B3Spell_Menu_OptimizeSlotSize_Sequence()"
+		scaleToClip
 		-- X, Y, W, H set via Infinity_SetArea
-		sequence 6
 	}
 
 	button
@@ -94,66 +99,6 @@ menu
 		bam "GUILS10"
 		area 0 0 72 55 -- X set via Infinity_SetArea
 		sequence 7
-	}
-
-	button
-	{
-		name    "B3Spell_Menu_FilterSlotsMage"
-		enabled "B3Spell_Menu_FilterSlotsMage_Enabled()"
-		action  "B3Spell_Menu_FilterSlotsMage_Action()"
-		tooltip lua "B3Spell_Tooltip_Mage_Spells"
-		bam "GUIBTACT"
-		area 0 0 52 52 -- X set via Infinity_SetArea
-		align center center
-		frame 68
-	}
-
-	button
-	{
-		name    "B3Spell_Menu_FilterSlotsAll"
-		enabled "B3Spell_Menu_FilterSlotsAll_Enabled()"
-		action  "B3Spell_Menu_FilterSlotsAll_Action()"
-		tooltip lua "B3Spell_Tooltip_All_Spells"
-		bam "GUIBTACT"
-		area 0 0 52 52 -- X set via Infinity_SetArea
-		align center center
-		frame 12
-	}
-
-	button
-	{
-		name    "B3Spell_Menu_FilterSlotsCleric"
-		enabled "B3Spell_Menu_FilterSlotsCleric_Enabled()"
-		action  "B3Spell_Menu_FilterSlotsCleric_Action()"
-		tooltip lua "B3Spell_Tooltip_Cleric_Spells"
-		bam "GUIBTACT"
-		area 0 0 52 52 -- X set via Infinity_SetArea
-		align center center
-		frame 70
-	}
-
-	button
-	{
-		name    "B3Spell_Menu_MoveSlotsLeft"
-		enabled "B3Spell_Menu_MoveSlotsLeft_Enabled()"
-		action  "B3Spell_Menu_MoveSlotsLeft_Action()"
-		tooltip lua "B3Spell_Tooltip_Align_Left"
-		bam "GUIBTACT"
-		area 0 0 52 52 -- X set via Infinity_SetArea
-		align center center
-		frame 64
-	}
-
-	button
-	{
-		name    "B3Spell_Menu_MoveSlotsRight"
-		enabled "B3Spell_Menu_MoveSlotsRight_Enabled()"
-		action  "B3Spell_Menu_MoveSlotsRight_Action()"
-		tooltip lua "B3Spell_Tooltip_Align_Center"
-		bam "GUIBTACT"
-		area 0 0 52 52 -- X set via Infinity_SetArea
-		align center center
-		frame 66
 	}
 
 	template
@@ -175,8 +120,9 @@ menu
 		label
 		{
 			enabled true
-			bam lua   "B3Spell_Menu_TEMPLATE_Bam_Bam()"
-			frame lua "B3Spell_Menu_TEMPLATE_Bam_Frame()"
+			bam lua      "B3Spell_Menu_TEMPLATE_Bam_Bam()"
+			sequence lua "B3Spell_Menu_TEMPLATE_Bam_Sequence()"
+			frame lua    "B3Spell_Menu_TEMPLATE_Bam_Frame()"
 			scaleToClip
 		}
 		name "B3Spell_Menu_TEMPLATE_Bam"

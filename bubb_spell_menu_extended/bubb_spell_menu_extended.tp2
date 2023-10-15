@@ -1,6 +1,6 @@
 BACKUP ~bubb_spell_menu_extended/backup~
 AUTHOR ~Bubb~
-VERSION ~v4.6~
+VERSION ~v4.7~
 
 AUTO_TRA ~bubb_spell_menu_extended/language/%s~
 LANGUAGE ~English~ ~english~ ~bubb_spell_menu_extended/language/english/setup.tra~
@@ -38,7 +38,10 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 		OUTER_SET B3Spell_Menu_Search_YOffset = 11
 		OUTER_SET B3Spell_NumberSequence = "-1"
 
-	END ELSE ACTION_IF MOD_IS_INSTALLED ~dragonspear_ui++.tp2~ ~0~ BEGIN
+	END ELSE ACTION_IF
+			   (FILE_EXISTS ~override/M_BG.lua~ AND MOD_IS_INSTALLED ~dragonspear_ui++.tp2~ ~1~) // Old Dragonspear UI++ main component
+		OR (NOT FILE_EXISTS ~override/M_BG.lua~ AND MOD_IS_INSTALLED ~dragonspear_ui++.tp2~ ~0~) // New Dragonspear UI++ main component (anongit@71ddbf8)
+	BEGIN
 
 		PRINT ~Using Dragonspear UI++ Configuration ...~
 		OUTER_SPRINT bam_folder ~bubb_spell_menu_extended/copy/bgee-sod~

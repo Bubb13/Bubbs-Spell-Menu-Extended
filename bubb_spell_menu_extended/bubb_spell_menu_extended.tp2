@@ -1,9 +1,10 @@
 BACKUP ~bubb_spell_menu_extended/backup~
 AUTHOR ~Bubb~
-VERSION ~v4.7~
+VERSION ~v4.7.1~
 
 AUTO_TRA ~bubb_spell_menu_extended/language/%s~
 LANGUAGE ~English~ ~english~ ~bubb_spell_menu_extended/language/english/setup.tra~
+LANGUAGE ~Brazilian Portuguese~ ~brazilian_portuguese~ ~bubb_spell_menu_extended/language/brazilian_portuguese/setup.tra~
 LANGUAGE ~Francais~ ~french~ ~bubb_spell_menu_extended/language/french/setup.tra~
 LANGUAGE ~Spanish~ ~spanish~ ~bubb_spell_menu_extended/language/spanish/setup.tra~
 

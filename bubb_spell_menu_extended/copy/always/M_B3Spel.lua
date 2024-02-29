@@ -50,26 +50,6 @@ end
 -- Global Variables --
 ----------------------
 
--------------
--- Options --
--------------
-
-B3Spell_AlignCenter                   = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Align Center',                     1)
-B3Spell_AutoPause                     = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Auto-Pause',                       1)
-B3Spell_AutoFocusSearchBar            = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Automatically Focus Search Bar',   1)
-B3Spell_AutomaticallyOptimizeSlotSize = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Automatically Optimize Slot Size', 1)
-B3Spell_DarkenBackground              = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Darken Background',                0)
-B3Spell_DisableControlBar             = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Disable Control Bar',              0)
-B3Spell_DisableSearchBar              = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Disable Search Bar',               0)
-B3Spell_IgnoreSpecialAbilities        = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Ignore Special Abilities',         0)
-B3Spell_Modal                         = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Modal',                            1)
-B3Spell_ShowKeyBindings               = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Show Key Bindings',                0)
-
-function B3Spell_SetAlignCenter(newVal)
-	B3Spell_AlignCenter = newVal
-	Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Align Center', B3Spell_AlignCenter)
-end
-
 ---------------
 -- Constants --
 ---------------
@@ -81,6 +61,11 @@ B3Spell_Modes = {
 	["Innate"]    = 1,
 	["Quick"]     = 2,
 	["Opcode214"] = 3,
+}
+
+B3Spell_ForbiddenTransferModes = {
+	[B3Spell_Modes.Quick] = true,
+	[B3Spell_Modes.Opcode214] = true,
 }
 
 B3Spell_FillFunctions = {
@@ -124,16 +109,40 @@ B3Spell_InfoModeIcons = {
 	[B3Spell_InfoModes.AboveSpells] = {"GUIBTACT", 53},
 }
 
-B3Spell_SlotSizeMinimum   = 5
-B3Spell_SlotsGapX         = 1
-B3Spell_SlotsGapY         = 2
-B3Spell_SlotsGapYFlowover = 1
+B3Spell_SlotSizeHardMinimum       = 5
+B3Spell_SlotSizeAlwaysOpenMinimum = 36
+B3Spell_SlotsGapX                 = 1
+B3Spell_SlotsGapY                 = 2
+B3Spell_SlotsGapYFlowover         = 1
+
+-------------
+-- Options --
+-------------
+
+B3Spell_AlignCenter                   = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Align Center',                     1)
+B3Spell_AlwaysOpen                    = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Always Open',                      0)
+B3Spell_AutoPause                     = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Auto-Pause',                       1)
+B3Spell_AutoFocusSearchBar            = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Automatically Focus Search Bar',   1)
+B3Spell_AutomaticallyOptimizeSlotSize = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Automatically Optimize Slot Size', 1)
+B3Spell_DarkenBackground              = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Darken Background',                0)
+B3Spell_DisableControlBar             = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Disable Control Bar',              0)
+B3Spell_DisableSearchBar              = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Disable Search Bar',               0)
+B3Spell_IgnoreSpecialAbilities        = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Ignore Special Abilities',         0)
+B3Spell_Modal                         = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Modal',                            1)
+B3Spell_ShowKeyBindings               = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Show Key Bindings',                0)
+
+function B3Spell_SetAlignCenter(newVal)
+	B3Spell_AlignCenter = newVal
+	Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Align Center', B3Spell_AlignCenter)
+end
 
 -----------
 -- State --
 -----------
 
-B3Spell_Mode = nil
+B3Spell_Mode         = B3Spell_Modes.Normal
+B3Spell_PreviousMode = B3Spell_Mode
+B3Spell_SpriteID     = nil
 
 B3Spell_ActionbarDisable     = false
 B3Spell_PausedOnOpen         = false
@@ -145,13 +154,20 @@ B3Spell_OldSearchEdit          = ""
 B3Spell_AutoFocusSearchBarTick = -1
 
 B3Spell_SpellListInfo         = {}
+B3Spell_SpellResrefToData     = {}
 B3Spell_KeyToSpellData        = {}
 B3Spell_FilteredSpellListInfo = {}
 B3Spell_SlotRowInfo           = {}
 B3Spell_QuickSpellData        = nil
 
-B3Spell_SlotSize       = 52
-B3Spell_SlotSizeSlider = B3Spell_SlotSize - B3Spell_SlotSizeMinimum
+B3Spell_SlotSizeMinimum = B3Spell_AlwaysOpen == 1 and B3Spell_SlotSizeAlwaysOpenMinimum or B3Spell_SlotSizeHardMinimum
+B3Spell_SlotSize        = 52
+B3Spell_SlotSizeSlider  = B3Spell_SlotSize - B3Spell_SlotSizeMinimum
+
+function B3Spell_SetSlotSizeMinimum(newVal)
+	B3Spell_SlotSizeMinimum = math.max(B3Spell_SlotSizeHardMinimum, newVal)
+	B3Spell_SlotSizeSlider = B3Spell_SlotSize - B3Spell_SlotSizeMinimum
+end
 
 B3Spell_SlotsAvailable    = nil
 B3Spell_LinesAvailable    = nil
@@ -161,20 +177,47 @@ B3Spell_UsedVerticalSpace = nil
 -- Menu Initialization --
 -------------------------
 
-function B3Spell_LaunchSpellMenu(mode)
+function B3Spell_LaunchSpellMenu(mode, spriteID)
 
-	B3Spell_Mode = mode
+	if Infinity_IsMenuOnStack("B3Spell_Menu") then
 
-	if not worldScreen:CheckIfPaused() then
-		B3Spell_PausedOnOpen = false
-		if B3Spell_AutoPause == 1 then
-			worldScreen:TogglePauseGame(true)
+		if spriteID == B3Spell_SpriteID and mode == B3Spell_Mode then
+			-- Attempting to launch the same mode again
+			return
 		end
-	else
-		B3Spell_PausedOnOpen = true
-	end
 
-	Infinity_PushMenu('B3Spell_Menu')
+		-- Refresh menu
+		B3Spell_PreviousMode = B3Spell_Mode
+		B3Spell_Mode = mode
+		B3Spell_SpriteID = spriteID
+		B3Spell_RefreshMenu()
+	else
+
+		if Infinity_IsMenuOnStack("B3Spell_Menu_Options") then
+			-- Don't allow the spell menu to open while the options panel is being displayed...
+			return
+		end
+
+		if mode ~= B3Spell_Mode then
+			-- Starting a new mode
+			B3Spell_PreviousMode = B3Spell_Mode
+			B3Spell_Mode = mode
+		end
+
+		B3Spell_SpriteID = spriteID
+		Infinity_PushMenu("B3Spell_Menu")
+	end
+end
+
+function B3Spell_RefreshMenu()
+	B3Spell_FillSpellListInfo()
+	B3Spell_InitializeSlots()
+end
+
+function B3Spell_GetTransferMode(spriteID)
+	return (spriteID == B3Spell_SpriteID or not B3Spell_ForbiddenTransferModes[B3Spell_Mode])
+		and B3Spell_Mode        -- Opening the previous mode
+		or B3Spell_Modes.Normal -- Previous mode was forbidden, fallback to normal...
 end
 
 B3Spell_KeyBindingCategory = {
@@ -248,6 +291,7 @@ function B3Spell_FillSlotRowInfo()
 					["isFlowover"] = false, -- (Possibly) Updated down below
 					["hasArrows"] = false,  -- (Possibly) Updated down below
 					["slotInstances"] = {},
+					["spellResrefs"] = {},
 				}
 
 				-- The current spell level has taken more than one row to display
@@ -325,9 +369,7 @@ function B3Spell_InitializeSlots()
 	end
 
 	-- Calculate currentYOffset
-	local _, screenHeight = Infinity_GetScreenSize()
-	local verticalAreaUsed = B3Spell_UsedVerticalSpace
-	local verticalMarginSpace = screenHeight - B3Spell_GetMinY() - verticalAreaUsed
+	local verticalMarginSpace = B3Spell_GetAvailableVerticalSpace() - B3Spell_UsedVerticalSpace
 	local currentYOffset = B3Spell_GetMinY() + (verticalMarginSpace / 2)
 
 	-- Destroy all the slots I've already spawned
@@ -411,7 +453,7 @@ function B3Spell_InitializeSlots()
 	end
 
 	B3Spell_QuickSpellData = nil
-	local foundGreen = false
+	local foundGreen = B3Spell_DisableSearchBar == 1
 	local numSequence = B3Spell_GetNumSequence()
 
 	local slotRowCount = #B3Spell_SlotRowInfo
@@ -457,6 +499,7 @@ function B3Spell_InitializeSlots()
 		else
 			for column = 1, spellSlotCount, 1 do
 				local data = B3Spell_GetDataForSlot(row, column)
+				table.insert(slotRowInfo.spellResrefs, data.spellResref)
 				if not foundGreen and not data.spellDisabled then
 					local slotData = B3Spell_CreateSpell(data, true, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
 					slotRowInfo.slotInstances[column] = slotData
@@ -519,10 +562,30 @@ end
 --     B3Spell_LinesAvailable
 --     B3Spell_UsedVerticalSpace
 function B3Spell_OptimizeSlotSize()
-	for tempSlotSize = 52, B3Spell_SlotSizeMinimum, -1 do
-		B3Spell_SlotSize = tempSlotSize
-		if B3Spell_CalculateLines() then break end
+
+	if B3Spell_AlwaysOpen == 0 then
+		for tempSlotSize = 52, B3Spell_SlotSizeMinimum, -1 do
+			B3Spell_SlotSize = tempSlotSize
+			if B3Spell_CalculateLines() then break end
+		end
+	else
+
+		-- The "Always Open" mode needs to be more conservative with how willing it is to
+		-- grow vertically. The following only allows larger slots if the spell menu fits
+		-- within 50% of the available vertical space. Otherwise it shrinks the slots
+		-- down to a predetermined minimum, stopping when it finds the largest slot size
+		-- that fits.
+
+		local desiredUsedVerticalSpace = B3Spell_GetAvailableVerticalSpace() / 2
+
+		for tempSlotSize = 52, B3Spell_SlotSizeMinimum, -1 do
+			B3Spell_SlotSize = tempSlotSize
+			if B3Spell_CalculateLines() and B3Spell_UsedVerticalSpace <= desiredUsedVerticalSpace then
+				break
+			end
+		end
 	end
+
 	B3Spell_SlotSizeSlider = B3Spell_SlotSize - B3Spell_SlotSizeMinimum
 end
 
@@ -532,8 +595,7 @@ end
 --     B3Spell_UsedVerticalSpace
 function B3Spell_CalculateLines()
 
-	local _, screenHeight = Infinity_GetScreenSize()
-	local verticalAreaAvailable = screenHeight - B3Spell_GetMinY()
+	local verticalAreaAvailable = B3Spell_GetAvailableVerticalSpace()
 	local totalLinesNeeded = 0
 
 	local paddingSpaceRequired = 0
@@ -608,8 +670,22 @@ function B3Spell_GetMinY()
 	local total = 0
 	if B3Spell_DisableControlBar == 0 then total = total + 52 + 5 end
 	if B3Spell_DisableSearchBar == 0 then total = total + B3Spell_Menu_SearchBackground_H + 5 end
-	if total < 55 then total = 55 end
+	if B3Spell_AlwaysOpen == 0 and total < 55 then total = 55 end
 	return total
+end
+
+function B3Spell_GetAvailableHorizontalSpace()
+	local screenWidth, _ = Infinity_GetScreenSize()
+	local horizontalAvailableSpace = screenWidth - (B3Spell_SidebarWidth * 2)
+	if B3Spell_AlwaysOpen == 1 then
+		local messagesX = select(1, EEex_Menu_GetArea("WORLD_MESSAGES"))
+		horizontalAvailableSpace = horizontalAvailableSpace - (screenWidth - messagesX - B3Spell_SidebarWidth)
+	end
+	return horizontalAvailableSpace
+end
+
+function B3Spell_GetAvailableVerticalSpace()
+	return select(2, Infinity_GetScreenSize()) - B3Spell_GetMinY()
 end
 
 -------------------------------------------------------------------
@@ -748,8 +824,10 @@ function B3Spell_IncrementRowOffset(slotRow)
 end
 
 function B3Spell_UpdateRow(slotRow)
+
 	local slotRowInfo = B3Spell_SlotRowInfo[slotRow]
 	local rowInfoMode = B3Spell_FilteredSpellListInfo[slotRowInfo.originatingRow].infoMode
+
 	if rowInfoMode == B3Spell_InfoModes.Abilities then
 		for slotColumn, slotData in ipairs(slotRowInfo.slotInstances) do
 			local newSlotData = B3Spell_GetDataForSlot(slotRow, slotColumn)
@@ -757,11 +835,25 @@ function B3Spell_UpdateRow(slotRow)
 			bamButtonInstanceData[slotData.id] = newSlotData
 		end
 	else
+
+		-- Clear the iconData references associated with the row
+		for _, resref in ipairs(slotRowInfo.spellResrefs) do
+			B3Spell_SpellResrefToData[resref].iconData = nil
+		end
+
+		slotRowInfo.spellResrefs = {}
+
 		for slotColumn, slotData in ipairs(slotRowInfo.slotInstances) do
+
 			local newSlotData = B3Spell_GetDataForSlot(slotRow, slotColumn)
+
 			local iconData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Icon"].instanceData[slotData.pairedIconID]
 			slotData.spellData = newSlotData
 			iconData.icon = newSlotData.spellIcon
+			iconData.count = newSlotData.spellCastableCount
+
+			-- Add the new iconData references associated with the row
+			B3Spell_SpellResrefToData[newSlotData.spellResref].iconData = iconData
 		end
 	end
 end
@@ -781,12 +873,6 @@ end
 -----------------------
 -- Alignment Utility --
 -----------------------
-
-function B3Spell_GetAvailableHorizontalSpace()
-	local screenWidth, _ = Infinity_GetScreenSize()
-	local horizontalAvailableSpace = screenWidth - (B3Spell_SidebarWidth * 2)
-	return horizontalAvailableSpace
-end
 
 function B3Spell_CenterItemsX(itemEntries)
 	local greatestX = 0
@@ -838,7 +924,6 @@ B3Spell_SliderChangeQueued = false
 
 function B3Spell_CastSpellData(spellData)
 
-	Infinity_PopMenu("B3Spell_Menu")
 	local castFunction = (B3Spell_CheatMode and B3Spell_CheatCastFunctions or B3Spell_CastFunctions)[B3Spell_Mode]
 
 	if B3Spell_Mode == B3Spell_Modes.Normal then
@@ -847,6 +932,12 @@ function B3Spell_CastSpellData(spellData)
 		castFunction(spellData.spellResref, 4)
 	else
 		castFunction(spellData.spellResref)
+	end
+
+	if B3Spell_AlwaysOpen == 0 then
+		Infinity_PopMenu("B3Spell_Menu")
+	elseif B3Spell_Mode == B3Spell_Modes.Opcode214 then
+		B3Spell_LaunchSpellMenu(B3Spell_PreviousMode, B3Spell_SpriteID)
 	end
 end
 
@@ -908,17 +999,64 @@ function B3Spell_CreateSlotBamBam(bam, sequence, frame, x, y, w, h)
 end
 
 function B3Spell_CreateSpell(data, isGreen, x, y, w, h)
+
 	local slotData = B3Spell_CreateSlotBam(isGreen, x, y, w, h)
+
 	local iconData = B3Spell_CreateIcon(data.spellIcon, data.spellCastableCount, data.spellDisabled, x, y, w, h)
+	B3Spell_SpellResrefToData[data.spellResref].iconData = iconData
+
 	if B3Spell_ShowKeyBindings == 1 then
 		B3Spell_CreateKeyBindingText(data.spellKeyBindingName, x, y)
 	end
+
 	local actionInstance = B3Spell_CreateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_Action", x, y, w, h)
 	actionInstance.spellData = data
 	actionInstance.pairedSlotID = slotData.id
 	actionInstance.pairedIconID = iconData.id
 	actionInstance.isGreen = isGreen
 	return actionInstance
+end
+
+function B3Spell_UpdateSpellCastableCount(spellResref, countDelta)
+
+	local resrefData = B3Spell_SpellResrefToData[spellResref]
+	if not resrefData then
+		-- I don't know about this spell, refresh the menu
+		B3Spell_RefreshMenu()
+		return
+	end
+
+	-- Update internal castable count
+	local spellData = resrefData.spellData
+	local newCastCount = spellData.spellCastableCount + countDelta
+
+	if newCastCount == 0 then
+		-- Reinitialize slots if the spell was brought to 0 remaining memorization slots
+		B3Spell_RefreshMenu()
+		return
+	end
+
+	spellData.spellCastableCount = newCastCount
+
+	-- Update displayed castable count
+	local iconData = resrefData.iconData
+	if iconData ~= nil then
+		iconData.count = iconData.count + countDelta
+	end
+end
+
+function B3Spell_ResetSpellCastableCounts()
+
+	for resref, resrefData in pairs(B3Spell_SpellResrefToData) do
+
+		resrefData.spellData.spellCastableCount = 0
+
+		-- Update displayed castable count
+		local iconData = resrefData.iconData
+		if iconData ~= nil then
+			iconData.count = 0
+		end
+	end
 end
 
 function B3Spell_CreateBamButton(bam, frame, tooltip, disableTint, func, x, y, w, h)
@@ -977,33 +1115,43 @@ function B3Spell_Menu_OnOpen()
 
 	if not B3Spell_SlotsSuppressOnOpen then
 
-		B3Spell_ActionbarDisable = true
+		if not worldScreen:CheckIfPaused() then
+			B3Spell_PausedOnOpen = false
+			if B3Spell_AutoPause == 1 then
+				worldScreen:TogglePauseGame(true)
+			end
+		else
+			B3Spell_PausedOnOpen = true
+		end
 
-		local screenWidth, screenHeight = Infinity_GetScreenSize()
-
-		Infinity_SetArea('B3Spell_Menu_ExitBackground', nil, nil, screenWidth, screenHeight)
-		Infinity_SetArea('B3Spell_Menu_ExitBackgroundDark', nil, nil, screenWidth + 4, screenHeight + 4)
-		Infinity_SetArea('B3Spell_Menu_OptionsButton', screenWidth - B3Spell_SidebarWidth - 72, nil, nil, nil)
-
-		B3Spell_OldSearchEdit = ''
-		B3Spell_SearchEdit = ''
-
-		B3Spell_FillSpellListInfo()
-		B3Spell_InitializeSlots()
-
+		if B3Spell_AlwaysOpen == 0 then
+			B3Spell_ActionbarDisable = true
+		end
 	end
+
+	local screenWidth, screenHeight = Infinity_GetScreenSize()
+
+	Infinity_SetArea('B3Spell_Menu_ExitBackground', nil, nil, screenWidth, screenHeight)
+	Infinity_SetArea('B3Spell_Menu_ExitBackgroundDark', nil, nil, screenWidth + 4, screenHeight + 4)
+	Infinity_SetArea('B3Spell_Menu_OptionsButton', screenWidth - B3Spell_SidebarWidth - 72, nil, nil, nil)
+
+	B3Spell_OldSearchEdit = ''
+	B3Spell_SearchEdit = ''
+
+	B3Spell_RefreshMenu()
 end
 
 function B3Spell_Menu_OnClose()
 
-	if not B3Spell_SlotsSuppressOnClose then
-
-		if B3Spell_AutoPause == 1 and not B3Spell_PausedOnOpen and worldScreen:CheckIfPaused() then
-			worldScreen:TogglePauseGame(true)
-		end
-
-		B3Spell_ActionbarDisable = false
+	if B3Spell_SlotsSuppressOnClose then
+		return
 	end
+
+	if B3Spell_AutoPause == 1 and not B3Spell_PausedOnOpen and worldScreen:CheckIfPaused() then
+		worldScreen:TogglePauseGame(true)
+	end
+
+	B3Spell_ActionbarDisable = false
 end
 
 function B3Spell_Menu_Modal()
@@ -1067,7 +1215,7 @@ end
 ---------------------------------
 
 function B3Spell_Menu_ExitBackground_Enabled()
-	return B3Spell_DarkenBackground == 0
+	return B3Spell_AlwaysOpen == 0 and B3Spell_DarkenBackground == 0
 end
 
 function B3Spell_Menu_ExitBackground_Action()
@@ -1338,58 +1486,113 @@ end
 -- General Code --
 ------------------
 
-B3Spell_Options_SlotsNeedReinit = false
-
 B3Spell_Options = {
-	{B3Spell_Tooltip_Auto_Pause,
+	{"AutoPause", B3Spell_Tooltip_Auto_Pause,
 		["set"] = function(newVal) B3Spell_AutoPause = newVal end,
 		["get"] = function() return B3Spell_AutoPause end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Auto-Pause', B3Spell_AutoPause) end,
+		["forceOthers"] = {
+			[1] = {
+				{"AlwaysOpen", 0},
+			},
+		},
 	},
-	{B3Spell_Tooltip_Automatically_Focus_Search_Bar,
+	{"AutomaticallyFocusSearchBar", B3Spell_Tooltip_Automatically_Focus_Search_Bar,
 		["set"] = function(newVal) B3Spell_AutoFocusSearchBar = newVal end,
 		["get"] = function() return B3Spell_AutoFocusSearchBar end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Automatically Focus Search Bar', B3Spell_AutoFocusSearchBar) end,
 	},
-	{B3Spell_Tooltip_Automatically_Optimize_Slot_Size,
+	{"AutomaticallyOptimizeSlotSize", B3Spell_Tooltip_Automatically_Optimize_Slot_Size,
 		["set"] = function(newVal) B3Spell_AutomaticallyOptimizeSlotSize = newVal end,
 		["get"] = function() return B3Spell_AutomaticallyOptimizeSlotSize end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Automatically Optimize Slot Size', B3Spell_AutomaticallyOptimizeSlotSize) end,
+		["forceOthers"] = {
+			[0] = {
+				{"AlwaysOpen", 0},
+			},
+		},
 	},
-	{B3Spell_Tooltip_Darken_Background,
+	{"DarkenBackground", B3Spell_Tooltip_Darken_Background,
 		["set"] = function(newVal) B3Spell_DarkenBackground = newVal end,
 		["get"] = function() return B3Spell_DarkenBackground end,
-		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Darken Background', B3Spell_DarkenBackground) end
+		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Darken Background', B3Spell_DarkenBackground) end,
+		["forceOthers"] = {
+			[1] = {
+				{"AlwaysOpen", 0},
+			},
+		},
 	},
-	{B3Spell_Tooltip_Disable_Control_Bar,
+	{"DisableControlBar", B3Spell_Tooltip_Disable_Control_Bar,
 		["set"] = function(newVal) B3Spell_DisableControlBar = newVal end,
 		["get"] = function() return B3Spell_DisableControlBar end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Disable Control Bar', B3Spell_DisableControlBar) end,
-		["onChange"] = function() B3Spell_Options_SlotsNeedReinit = true end,
+		["forceOthers"] = {
+			[0] = {
+				{"AlwaysOpen", 0},
+			},
+		},
 	},
-	{B3Spell_Tooltip_Disable_Search_Bar,
+	{"DisableSearchBar", B3Spell_Tooltip_Disable_Search_Bar,
 		["set"] = function(newVal) B3Spell_DisableSearchBar = newVal end,
 		["get"] = function() return B3Spell_DisableSearchBar end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Disable Search Bar', B3Spell_DisableSearchBar) end,
-		["onChange"] = function() B3Spell_Options_SlotsNeedReinit = true end,
+		["forceOthers"] = {
+			[0] = {
+				{"AlwaysOpen", 0},
+			},
+		},
 	},
-	{B3Spell_Tooltip_Ignore_Special_Abilities,
+	{"IgnoreSpecialAbilities", B3Spell_Tooltip_Ignore_Special_Abilities,
 		["set"] = function(newVal) B3Spell_IgnoreSpecialAbilities = newVal end,
 		["get"] = function() return B3Spell_IgnoreSpecialAbilities end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Ignore Special Abilities', B3Spell_IgnoreSpecialAbilities) end,
 	},
-	{B3Spell_Tooltip_Modal,
+	{"Modal", B3Spell_Tooltip_Modal,
 		["set"] = function(newVal) B3Spell_Modal = newVal end,
 		["get"] = function() return B3Spell_Modal end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Modal', B3Spell_Modal) end,
+		["forceOthers"] = {
+			[1] = {
+				{"AlwaysOpen", 0},
+			},
+		},
 	},
-	{B3Spell_Tooltip_Show_Key_Bindings,
+	{"AlwaysOpen", B3Spell_Tooltip_Overlay_Mode,
+		["set"] = function(newVal) B3Spell_AlwaysOpen = newVal end,
+		["get"] = function() return B3Spell_AlwaysOpen end,
+		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Always Open', B3Spell_AlwaysOpen) end,
+		["forceOthers"] = {
+			[1] = {
+				{"AutoPause", 0},
+				{"AutomaticallyOptimizeSlotSize", 1},
+				{"DarkenBackground", 0},
+				{"DisableControlBar", 1},
+				{"DisableSearchBar", 1},
+				{"Modal", 0},
+			},
+		},
+		["onChange"] = function(self)
+			if self.get() == 0 then
+				B3Spell_SetSlotSizeMinimum(B3Spell_SlotSizeHardMinimum)
+				B3Spell_ActionbarDisable = true
+			else
+				B3Spell_SetSlotSizeMinimum(B3Spell_SlotSizeAlwaysOpenMinimum)
+				B3Spell_ActionbarDisable = false
+				B3Spell_SetAlignCenter(0)
+			end
+		end
+	},
+	{"ShowKeyBindings", B3Spell_Tooltip_Show_Key_Bindings,
 		["set"] = function(newVal) B3Spell_ShowKeyBindings = newVal end,
 		["get"] = function() return B3Spell_ShowKeyBindings end,
 		["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Show Key Bindings', B3Spell_ShowKeyBindings) end,
-		["onChange"] = function() B3Spell_Options_SlotsNeedReinit = true end,
 	},
 }
+
+B3Spell_Options_Map = {}
+for _, option in ipairs(B3Spell_Options) do
+	B3Spell_Options_Map[option[1]] = option
+end
 
 function B3Spell_GetTextWidthHeight(font, pointSize, text)
 	local oneLineHeight = Infinity_GetContentHeight(font, 0, "", pointSize, 0)
@@ -1442,9 +1645,9 @@ function B3Spell_Menu_Options_OnOpen()
 	local maxWidth = 0
 
 	for _, option in ipairs(B3Spell_Options) do
-		local textW, textH = B3Spell_GetTextWidthHeight(font, fontPoint, option[1])
+		local textW, textH = B3Spell_GetTextWidthHeight(font, fontPoint, option[2])
 		if textW > maxWidth then maxWidth = textW end
-		table.insert(textData, {['text'] = option[1], ['yOffset'] = currentY, ['w'] = textW, ['h'] = textH})
+		table.insert(textData, {['text'] = option[2], ['yOffset'] = currentY, ['w'] = textW, ['h'] = textH})
 		currentY = currentY + textH + 20
 	end
 
@@ -1477,18 +1680,20 @@ function B3Spell_Menu_Options_OnClose()
 	for _, option in ipairs(B3Spell_Options) do
 		option.write()
 		if option.onChange and option.get() ~= option.old then
-			option.onChange()
+			option:onChange()
 		end
 	end
 
-	if B3Spell_Options_SlotsNeedReinit then
-		B3Spell_Options_SlotsNeedReinit = false
-		B3Spell_InitializeSlots()
+	local spriteID = EEex_Sprite_GetSelectedID()
+	if spriteID ~= -1 then
+		-- Attempt to relaunch the spell menu
+		B3Spell_SlotsSuppressOnOpen = true
+		B3Spell_LaunchSpellMenu(B3Spell_GetTransferMode(spriteID), spriteID)
+		B3Spell_SlotsSuppressOnOpen = false
+	else
+		-- Can't relaunch the spell menu, so close it out logically...
+		B3Spell_Menu_OnClose()
 	end
-
-	B3Spell_SlotsSuppressOnOpen = true
-	Infinity_PushMenu('B3Spell_Menu')
-	B3Spell_SlotsSuppressOnOpen = false
 end
 
 function B3Spell_Menu_Options_Modal()
@@ -1500,7 +1705,7 @@ end
 -----------------------------------------
 
 function B3Spell_Menu_Options_ExitBackground_Enabled()
-	return B3Spell_DarkenBackground == 0
+	return B3Spell_AlwaysOpen == 0 and B3Spell_DarkenBackground == 0
 end
 
 function B3Spell_Menu_Options_ExitBackground_Action()
@@ -1512,7 +1717,7 @@ end
 ---------------------------------------------
 
 function B3Spell_Menu_Options_ExitBackgroundDark_Enabled()
-	return B3Spell_DarkenBackground == 1
+	return B3Spell_AlwaysOpen == 1 or B3Spell_DarkenBackground == 1
 end
 
 function B3Spell_Menu_Options_ExitBackgroundDark_Action()
@@ -1536,6 +1741,16 @@ function B3Spell_Menu_Options_TEMPLATE_Toggle_Frame()
 end
 
 function B3Spell_Menu_Options_TEMPLATE_Toggle_Action()
+
 	local optionData = B3Spell_InstanceIDs['B3Spell_Menu_Options']['TEMPLATE_B3Spell_Menu_Options_Toggle'].instanceData[instanceId].optionData
-	optionData.set(optionData.get() == 0 and 1 or 0)
+	local newVal = optionData.get() == 0 and 1 or 0
+
+	local forceOthers = optionData.forceOthers
+	if forceOthers then
+		for _, forceEntry in ipairs(forceOthers[newVal] or {}) do
+			B3Spell_Options_Map[forceEntry[1]].set(forceEntry[2])
+		end
+	end
+
+	optionData.set(newVal)
 end

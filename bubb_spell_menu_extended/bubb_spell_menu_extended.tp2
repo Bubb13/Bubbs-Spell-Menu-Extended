@@ -4,9 +4,9 @@ VERSION ~v4.7.1~
 
 AUTO_TRA ~bubb_spell_menu_extended/language/%s~
 LANGUAGE ~English~ ~english~ ~bubb_spell_menu_extended/language/english/setup.tra~
-LANGUAGE ~Brazilian Portuguese~ ~brazilian_portuguese~ ~bubb_spell_menu_extended/language/brazilian_portuguese/setup.tra~
-LANGUAGE ~Francais~ ~french~ ~bubb_spell_menu_extended/language/french/setup.tra~
-LANGUAGE ~Spanish~ ~spanish~ ~bubb_spell_menu_extended/language/spanish/setup.tra~
+LANGUAGE ~Brazilian Portuguese~ ~brazilian_portuguese~ ~bubb_spell_menu_extended/language/english/setup.tra~ ~bubb_spell_menu_extended/language/brazilian_portuguese/setup.tra~
+LANGUAGE ~Francais~ ~french~ ~bubb_spell_menu_extended/language/english/setup.tra~ ~bubb_spell_menu_extended/language/french/setup.tra~
+LANGUAGE ~Spanish~ ~spanish~ ~bubb_spell_menu_extended/language/english/setup.tra~ ~bubb_spell_menu_extended/language/spanish/setup.tra~
 
 BEGIN @0 LABEL ~B3-BubbsSpellMenuExtended-Main~
 REQUIRE_PREDICATE (FILE_EXISTS_IN_GAME ~UI.MENU~) ~UI.MENU not found in game.~
@@ -213,6 +213,7 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 	SPRINT B3Spell_Tooltip_Cleric_Spells @15
 	SPRINT B3Spell_Tooltip_Align_Left @16
 	SPRINT B3Spell_Tooltip_Align_Center @17
+	SPRINT B3Spell_Tooltip_Overlay_Mode @18
 	COPY ~bubb_spell_menu_extended/copy/always_evaluate~ ~override~ EVALUATE_BUFFER
 
 	COPY ~%bam_folder%~ ~override~

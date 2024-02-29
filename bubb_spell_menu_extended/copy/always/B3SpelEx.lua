@@ -58,47 +58,131 @@ EEex_Key_AddPressedListener(B3Spell_KeyPressedListener)
 
 function B3Spell_ActionbarListener(config, state)
 
-	if EEex_Actionbar_IsThievingHotkeyOpeningSpecialAbilities() then
+	if e:GetActiveEngine() == worldScreen and EEex_Area_GetVisible() == nil then
+		-- This happens when quickloading - calling Infinity_PushMenu() / Infinity_PopMenu() while in this state CRASHES THE GAME.
 		return
 	end
+
+	local sprite = EEex_Sprite_GetSelected()
+	if not sprite then
+		Infinity_PopMenu("B3Spell_Menu")
+		return
+	end
+
+	if EEex_Actionbar_IsThievingHotkeyOpeningSpecialAbilities() or not Infinity_IsMenuOnStack("WORLD_ACTIONBAR") then
+		return
+	end
+
+	if config == 23 and B3Spell_IgnoreSpecialAbilities == 1 and B3Spell_AlwaysOpen == 1 then
+		-- Pop the spell menu if it is in "Always Open" mode and special abilities are ignored
+		Infinity_PopMenu("B3Spell_Menu")
+		return
+	end
+
+	local spriteID = sprite.m_id
 
 	-- Cast Spell               = 21, State(s) 102(Quick) and 103
 	-- Special Abilities        = 23, State(s) 106
 	-- Opcode #214              = 28, State(s) 111
-	-- Cast Spell (cleric/mage) = 30, State(s) 113 and 114(Quick)
+	-- Cast Spell - Cleric/Mage = 30, State(s) 113 and 114(Quick)
 
-	local launchConfigs = {
-		[21] = true,
-		[23] = B3Spell_IgnoreSpecialAbilities == 0,
-		[28] = true,
-		[30] = true,
-	}
-
-	local launchStates = {
+	local quickStates = {
 		[102] = true,
 		[114] = true,
 	}
 
-	if launchConfigs[config] or launchStates[state] then
+	local decideMode = function()
 
-		local quickStates = {
-			[102] = true,
-			[114] = true,
+		local castConfigs = {
+			[21] = true,
+			[30] = true,
 		}
 
-		local mode = nil
-		-- Please ignore this monstrosity
-		if     quickStates[state] then mode = B3Spell_Modes.Quick
-		elseif config == 23       then mode = B3Spell_Modes.Innate
-		elseif config == 28       then mode = B3Spell_Modes.Opcode214
-		else                           mode = B3Spell_Modes.Normal
+		-- Select mode based on the current actionbar state
+		if     quickStates[state]  then return B3Spell_Modes.Quick
+		elseif castConfigs[config] then return B3Spell_Modes.Normal
+		elseif config == 23        then return B3Spell_Modes.Innate
+		elseif config == 28        then return B3Spell_Modes.Opcode214
 		end
 
+		-- Actionbar isn't in a state that opens the spell menu, and yet I'm launching... I must
+		-- be operating under the "Always Open" option - attempt to open the previous mode.
+		return B3Spell_GetTransferMode(spriteID)
+	end
+
+	local restoreActionbar = function()
+		if not quickStates[state] then
+			B3Spell_UnselectCurrentButton()
+		end
 		EEex_Actionbar_RestoreLastState()
-		B3Spell_LaunchSpellMenu(mode)
+	end
+
+	local launchedFromActionbar = ({
+		[21] = true,                                -- Cast Spell
+		[23] = B3Spell_IgnoreSpecialAbilities == 0, -- Special Abilities
+		[28] = true,                                -- Opcode #214
+		[30] = true,                                -- Cast Spell - Cleric/Mage
+	})[config]
+
+	if B3Spell_AlwaysOpen == 1 then
+		B3Spell_LaunchSpellMenu(decideMode(), spriteID)
+		if launchedFromActionbar then
+			restoreActionbar()
+		end
+	elseif launchedFromActionbar then
+		B3Spell_LaunchSpellMenu(decideMode(), spriteID)
+		restoreActionbar()
 	end
 end
 EEex_Actionbar_AddListener(B3Spell_ActionbarListener)
+
+function B3Spell_OnActionbarOpened()
+	if B3Spell_AlwaysOpen == 1 then
+		B3Spell_LaunchSpellMenu(B3Spell_Mode, EEex_Sprite_GetSelectedID())
+	end
+end
+
+function B3Spell_OnActionbarClosed()
+	-- "B3Spell_Menu_Options" has to be popped before "B3Spell_Menu", since it opens "B3Spell_Menu" on close
+	Infinity_PopMenu("B3Spell_Menu_Options")
+	Infinity_PopMenu("B3Spell_Menu")
+end
+
+function B3Spell_IsSpellMenuOpenForSprite(sprite)
+	return sprite.m_id == B3Spell_SpriteID and Infinity_IsMenuOnStack("B3Spell_Menu")
+end
+
+function B3Spell_OnSpellCountChanged(sprite, resref, changeAmount)
+	if not B3Spell_IsSpellMenuOpenForSprite(sprite) then return end
+	B3Spell_UpdateSpellCastableCount(resref, changeAmount)
+end
+EEex_Sprite_AddQuickListsCheckedListener(B3Spell_OnSpellCountChanged)
+
+function B3Spell_OnSpellCountsReset(sprite)
+	if not B3Spell_IsSpellMenuOpenForSprite(sprite) then return end
+	B3Spell_ResetSpellCastableCounts()
+end
+EEex_Sprite_AddQuickListCountsResetListener(B3Spell_OnSpellCountsReset)
+
+function B3Spell_OnSpellRemoved(sprite, resref)
+	if not B3Spell_IsSpellMenuOpenForSprite(sprite) then return end
+	B3Spell_RefreshMenu()
+end
+EEex_Sprite_AddQuickListNotifyRemovedListener(B3Spell_OnSpellRemoved)
+
+function B3Spell_OnSpellDisableStateChanged(sprite)
+	if not B3Spell_IsSpellMenuOpenForSprite(sprite) then return end
+	B3Spell_RefreshMenu()
+end
+EEex_Sprite_AddSpellDisableStateChangedListener(B3Spell_OnSpellDisableStateChanged)
+
+function B3Spell_OnGameDestroyed()
+	-- Reset these global variables when a game is destroyed so
+	-- they don't confuse the spell menu on next loaded save
+	B3Spell_SpriteID = nil
+	B3Spell_Mode = B3Spell_Modes.Normal
+end
+EEex_GameState_AddDestroyedListener(B3Spell_OnGameDestroyed)
 
 -----------------------
 -- General Functions --
@@ -117,6 +201,18 @@ function B3Spell_InstallActionbarEnabledHook()
 	EEex_Menu_LoadFile("B3Spell")
 
 	local menu = EEex_Menu_Find("WORLD_ACTIONBAR")
+
+	local listenToEngineEvent = function(eventRef, listener)
+		local oldFunc = EEex_Menu_GetItemFunction(eventRef) or function() end
+		EEex_Menu_SetItemFunction(eventRef, function()
+			oldFunc()
+			listener()
+		end)
+	end
+
+	listenToEngineEvent(menu.reference_onOpen, B3Spell_OnActionbarOpened)
+	listenToEngineEvent(menu.reference_onClose, B3Spell_OnActionbarClosed)
+
 	local item = menu.items
 
 	while item do
@@ -200,9 +296,7 @@ function B3Spell_CastResrefInternal(resref)
 	if worldScreen == e:GetActiveEngine() then
 		local object = EEex_GameObject_GetSelected()
 		if object:isSprite() then
-			local spellButtonDataList = object:GetInternalButtonList()
-			B3Spell_UseCGameButtonList(object, spellButtonDataList, resref, true)
-			EEex_Actionbar_RestoreLastState()
+			B3Spell_UseCGameButtonList(object, object:GetInternalButtonList(), resref, true)
 		end
 	end
 end
@@ -231,9 +325,9 @@ function B3Spell_SetQuickSlotToResref(resref)
 	end
 end
 
---------------------------------------------------------------------------------------------
--- Filling B3Spell_SpellListInfo / B3Spell_KeyToSpellData / B3Spell_FilteredSpellListInfo --
---------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
+-- Filling B3Spell_SpellListInfo / B3Spell_SpellResrefToData / B3Spell_KeyToSpellData / B3Spell_FilteredSpellListInfo --
+------------------------------------------------------------------------------------------------------------------------
 
 -- Used in M_B3Spel.lua
 function B3Spell_FillSpellListInfo()
@@ -243,6 +337,7 @@ end
 function B3Spell_FillFromMemorized()
 
 	B3Spell_SpellListInfo = {}
+	B3Spell_SpellResrefToData = {}
 	B3Spell_KeyToSpellData = {}
 	local belowSpellsIndex = nil
 	local levelToIndex = {}
@@ -383,6 +478,9 @@ function B3Spell_FillFromMemorized()
 				}
 
 				table.insert(levelToFill, spellData)
+				B3Spell_SpellResrefToData[resref] = {
+					["spellData"] = spellData,
+				}
 
 				if key and not B3Spell_KeyToSpellData[key] then
 					B3Spell_KeyToSpellData[key] = spellData

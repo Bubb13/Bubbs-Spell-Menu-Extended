@@ -129,7 +129,7 @@ B3Spell_DisableControlBar             = Infinity_GetINIValue('Bubbs Spell Menu E
 B3Spell_DisableSearchBar              = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Disable Search Bar',               0)
 B3Spell_IgnoreSpecialAbilities        = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Ignore Special Abilities',         0)
 B3Spell_Modal                         = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Modal',                            1)
-B3Spell_ShowKeyBindings               = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Show Key Bindings',                0)
+B3Spell_ShowKeyBindings               = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Show Key Bindings',                1)
 
 function B3Spell_SetAlignCenter(newVal)
 	B3Spell_AlignCenter = newVal
@@ -291,7 +291,7 @@ function B3Spell_FillSlotRowInfo()
 					["isFlowover"] = false, -- (Possibly) Updated down below
 					["hasArrows"] = false,  -- (Possibly) Updated down below
 					["slotInstances"] = {},
-					["spellResrefs"] = {},
+					["visibleSpellResrefs"] = {},
 				}
 
 				-- The current spell level has taken more than one row to display
@@ -498,8 +498,12 @@ function B3Spell_InitializeSlots()
 			end
 		else
 			for column = 1, spellSlotCount, 1 do
+
 				local data = B3Spell_GetDataForSlot(row, column)
-				table.insert(slotRowInfo.spellResrefs, data.spellResref)
+
+				-- Initialize the visible spell resrefs associated with the row
+				table.insert(slotRowInfo.visibleSpellResrefs, data.spellResref)
+
 				if not foundGreen and not data.spellDisabled then
 					local slotData = B3Spell_CreateSpell(data, true, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
 					slotRowInfo.slotInstances[column] = slotData
@@ -836,23 +840,27 @@ function B3Spell_UpdateRow(slotRow)
 		end
 	else
 
-		-- Clear the iconData references associated with the row
-		for _, resref in ipairs(slotRowInfo.spellResrefs) do
+		-- Clear the iconData references associated with the row (to rebuild below)
+		for _, resref in ipairs(slotRowInfo.visibleSpellResrefs) do
 			B3Spell_SpellResrefToData[resref].iconData = nil
 		end
 
-		slotRowInfo.spellResrefs = {}
+		-- Clear the visible spell resrefs associated with the row (to rebuild below)
+		slotRowInfo.visibleSpellResrefs = {}
 
 		for slotColumn, slotData in ipairs(slotRowInfo.slotInstances) do
 
 			local newSlotData = B3Spell_GetDataForSlot(slotRow, slotColumn)
+
+			-- Rebuild the visible spell resrefs associated with the row
+			table.insert(slotRowInfo.visibleSpellResrefs, newSlotData.spellResref)
 
 			local iconData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Icon"].instanceData[slotData.pairedIconID]
 			slotData.spellData = newSlotData
 			iconData.icon = newSlotData.spellIcon
 			iconData.count = newSlotData.spellCastableCount
 
-			-- Add the new iconData references associated with the row
+			-- Rebuild the iconData references associated with the row
 			B3Spell_SpellResrefToData[newSlotData.spellResref].iconData = iconData
 		end
 	end
@@ -924,21 +932,27 @@ B3Spell_SliderChangeQueued = false
 
 function B3Spell_CastSpellData(spellData)
 
-	local castFunction = (B3Spell_CheatMode and B3Spell_CheatCastFunctions or B3Spell_CastFunctions)[B3Spell_Mode]
+	local modeBeforeRevert = B3Spell_Mode
 
-	if B3Spell_Mode == B3Spell_Modes.Normal then
+	if B3Spell_AlwaysOpen == 0 then
+		Infinity_PopMenu("B3Spell_Menu")
+	elseif B3Spell_ForbiddenTransferModes[B3Spell_Mode] then
+		-- The current mode is temporary and only allows one interaction, revert to the previous mode.
+		-- This has to be before `castFunction` is called in case it launches the spell menu.
+		B3Spell_LaunchSpellMenu(B3Spell_PreviousMode, B3Spell_SpriteID)
+	end
+
+	local castFunction = (B3Spell_CheatMode and B3Spell_CheatCastFunctions or B3Spell_CastFunctions)[modeBeforeRevert]
+
+	if modeBeforeRevert == B3Spell_Modes.Normal then
 		castFunction(spellData.spellResref, 2)
-	elseif B3Spell_Mode == B3Spell_Modes.Innate then
+	elseif modeBeforeRevert == B3Spell_Modes.Innate then
 		castFunction(spellData.spellResref, 4)
 	else
 		castFunction(spellData.spellResref)
 	end
 
-	if B3Spell_AlwaysOpen == 0 then
-		Infinity_PopMenu("B3Spell_Menu")
-	elseif B3Spell_Mode == B3Spell_Modes.Opcode214 then
-		B3Spell_LaunchSpellMenu(B3Spell_PreviousMode, B3Spell_SpriteID)
-	end
+	B3Spell_CheckHighlightModeButton(modeBeforeRevert)
 end
 
 function B3Spell_CreateIcon(icon, count, disableTint, x, y, w, h)
@@ -1219,7 +1233,6 @@ function B3Spell_Menu_ExitBackground_Enabled()
 end
 
 function B3Spell_Menu_ExitBackground_Action()
-	B3Spell_UnselectCurrentButton()
 	Infinity_PopMenu('B3Spell_Menu')
 end
 
@@ -1232,7 +1245,6 @@ function B3Spell_Menu_ExitBackgroundDark_Enabled()
 end
 
 function B3Spell_Menu_ExitBackgroundDark_Action()
-	B3Spell_UnselectCurrentButton()
 	Infinity_PopMenu('B3Spell_Menu')
 end
 

@@ -1,4 +1,6 @@
 
+B3Spell_DebugDisable = false
+
 -----------------
 -- Keybindings --
 -----------------
@@ -11,24 +13,36 @@ B3Spell_ToggleSearchBarFocusKey = EEex_Key_GetFromName("Left Ctrl")
 
 function B3Spell_KeyPressedListener(keyPressed)
 
-	if worldScreen ~= e:GetActiveEngine() then return end
-	if not Infinity_IsMenuOnStack("WORLD_ACTIONBAR") then return end
-	if Infinity_IsMenuOnStack("B3Spell_Menu_Options") then return end
+	if worldScreen ~= e:GetActiveEngine() or not Infinity_IsMenuOnStack("WORLD_ACTIONBAR") then
+		return
+	end
 
 	if Infinity_IsMenuOnStack("B3Spell_Menu") then
 
 		if Infinity_TextEditHasFocus() == 0 then
+
+			-- Preempt the world screen and handle spell keybindings myself
+			-- whenever the spell menu is open. This is to make sure the
+			-- spell menu is "in the loop" about the spell being cast.
 			local spellData = B3Spell_KeyToSpellData[keyPressed]
 			if spellData then
 				B3Spell_CastSpellData(spellData)
 				return true -- consume keypress so world screen doesn't see it
 			elseif keyPressed == B3Spell_ToggleSearchBarFocusKey then
 				B3Spell_Menu_AttemptFocusSearchBar()
+				return
 			end
-		elseif keyPressed == B3Spell_ToggleSearchBarFocusKey then
+
+		elseif keyPressed == B3Spell_ToggleSearchBarFocusKey and B3Spell_IsSearchBarCaptured() then
 			Infinity_FocusTextEdit()
+			return
 		end
 
+		if B3Spell_AlwaysOpen == 0 then
+			return
+		end
+
+	elseif Infinity_IsMenuOnStack("B3Spell_Menu_Options") then
 		return
 	end
 
@@ -56,15 +70,23 @@ EEex_Key_AddPressedListener(B3Spell_KeyPressedListener)
 -- Hook Actionbar --
 --------------------
 
+function B3Spell_CheckActionbarButtonHighlightState(mode)
+	if mode == B3Spell_Modes.Quick then
+		-- If quick-spell selection was resumed, (say, if the sprite was deselected then selected again),
+		-- highlight the corresponding quick spell button again.
+		B3Spell_HighlightQuickSpellButton()
+	end
+end
+
 function B3Spell_ActionbarListener(config, state)
 
-	if e:GetActiveEngine() == worldScreen and EEex_Area_GetVisible() == nil then
+	if B3Spell_DebugDisable or (e:GetActiveEngine() == worldScreen and EEex_Area_GetVisible() == nil) then
 		-- This happens when quickloading - calling Infinity_PushMenu() / Infinity_PopMenu() while in this state CRASHES THE GAME.
 		return
 	end
 
-	local sprite = EEex_Sprite_GetSelected()
-	if not sprite then
+	local selectedList = EngineGlobals.g_pBaldurChitin.m_pObjectGame.m_group.m_memberList
+	if selectedList.m_nCount ~= 1 then
 		Infinity_PopMenu("B3Spell_Menu")
 		return
 	end
@@ -79,7 +101,7 @@ function B3Spell_ActionbarListener(config, state)
 		return
 	end
 
-	local spriteID = sprite.m_id
+	local spriteID = selectedList.m_pNodeHead.data
 
 	-- Cast Spell               = 21, State(s) 102(Quick) and 103
 	-- Special Abilities        = 23, State(s) 106
@@ -93,21 +115,26 @@ function B3Spell_ActionbarListener(config, state)
 
 	local decideMode = function()
 
+		local toReturn = nil
+
 		local castConfigs = {
 			[21] = true,
 			[30] = true,
 		}
 
 		-- Select mode based on the current actionbar state
-		if     quickStates[state]  then return B3Spell_Modes.Quick
-		elseif castConfigs[config] then return B3Spell_Modes.Normal
-		elseif config == 23        then return B3Spell_Modes.Innate
-		elseif config == 28        then return B3Spell_Modes.Opcode214
+		if     quickStates[state]  then toReturn = B3Spell_Modes.Quick
+		elseif castConfigs[config] then toReturn = B3Spell_Modes.Normal
+		elseif config == 23        then toReturn = B3Spell_Modes.Innate
+		elseif config == 28        then toReturn = B3Spell_Modes.Opcode214
+		else
+			-- Actionbar isn't in a state that opens the spell menu, and yet I'm launching... I must
+			-- be operating under the "Always Open" option - attempt to open the previous mode.
+			toReturn = B3Spell_GetTransferMode(spriteID)
 		end
 
-		-- Actionbar isn't in a state that opens the spell menu, and yet I'm launching... I must
-		-- be operating under the "Always Open" option - attempt to open the previous mode.
-		return B3Spell_GetTransferMode(spriteID)
+		B3Spell_CheckActionbarButtonHighlightState(toReturn)
+		return toReturn
 	end
 
 	local restoreActionbar = function()
@@ -125,19 +152,29 @@ function B3Spell_ActionbarListener(config, state)
 	})[config]
 
 	if B3Spell_AlwaysOpen == 1 then
+		-- "Always Open" mode
 		B3Spell_LaunchSpellMenu(decideMode(), spriteID)
 		if launchedFromActionbar then
 			restoreActionbar()
 		end
+
 	elseif launchedFromActionbar then
+		-- Not "Always Open" mode, but the menu was invoked by the actionbar
 		B3Spell_LaunchSpellMenu(decideMode(), spriteID)
 		restoreActionbar()
+
+	elseif Infinity_IsMenuOnStack("B3Spell_Menu") then
+		-- Not "Always Open" mode, not invoked by the actionbar, but the menu was already open.
+		-- Somehow the user bypassed the exit background and altered the actionbar state. Just
+		-- relaunch the menu to update it.
+		B3Spell_LaunchSpellMenu(decideMode(), spriteID)
 	end
 end
 EEex_Actionbar_AddListener(B3Spell_ActionbarListener)
 
 function B3Spell_OnActionbarOpened()
-	if B3Spell_AlwaysOpen == 1 then
+	if not B3Spell_DebugDisable and B3Spell_AlwaysOpen == 1 then
+		B3Spell_CheckActionbarButtonHighlightState(B3Spell_Mode)
 		B3Spell_LaunchSpellMenu(B3Spell_Mode, EEex_Sprite_GetSelectedID())
 	end
 end
@@ -188,8 +225,15 @@ EEex_GameState_AddDestroyedListener(B3Spell_OnGameDestroyed)
 -- General Functions --
 -----------------------
 
+-- Used in M_B3Spel.lua
 function B3Spell_IsCaptureActive()
 	return EngineGlobals.capture.item ~= nil
+end
+
+-- Internal to this file
+function B3Spell_IsSearchBarCaptured()
+	local captured = EngineGlobals.capture.item
+	return captured ~= nil and EEex_UDToLightUD(captured) == nameToItem["B3Spell_Menu_Search"]
 end
 
 ---------------
@@ -234,6 +278,17 @@ EEex_Menu_AddMainFileLoadedListener(B3Spell_InstallActionbarEnabledHook)
 ---------------------------------
 
 -- Internal to this file
+function B3Spell_HighlightQuickSpellButton()
+	local actionbarArray = EEex_Actionbar_GetArray()
+	actionbarArray.m_nSelectedButton = EEex_Actionbar_ButtonType.QUICK_SPELL_1 + actionbarArray.m_quickButtonToConfigure
+end
+
+-- Internal to this file
+function B3Spell_UnselectCurrentButton()
+	EEex_Actionbar_GetArray().m_nSelectedButton = CButtonType.NONE
+end
+
+-- Internal to this file
 function B3Spell_SetQuickSlot(m_CButtonData, nButton, nType)
 	EEex_CInfButtonArray.SetQuickSlot(m_CButtonData, nButton, nType)
 end
@@ -261,8 +316,27 @@ function B3Spell_UseCGameButtonList(m_CGameSprite, m_CGameButtonList, resref, of
 end
 
 -- Used in M_B3Spel.lua
-function B3Spell_UnselectCurrentButton()
-	EEex_Actionbar_GetArray().m_nSelectedButton = CButtonType.NONE
+function B3Spell_CheckHighlightModeButton(mode)
+
+	local cursorState = EngineGlobals.g_pBaldurChitin.m_pObjectGame.m_nState
+
+	if     cursorState == 1 -- Any point within range (4)
+		or cursorState == 2 -- Living actor (1) / Dead actor (3)
+	then
+		local highlightButtonTypeMap = {
+			[B3Spell_Modes.Normal]    = EEex_Actionbar_ButtonType.CAST_SPELL,
+			[B3Spell_Modes.Innate]    = EEex_Actionbar_ButtonType.SPECIAL_ABILITIES,
+			[B3Spell_Modes.Quick]     = EEex_Actionbar_ButtonType.CAST_SPELL,
+		}
+
+		local highlightButtonType = mode == B3Spell_Modes.Opcode214
+			and highlightButtonTypeMap[B3Spell_Mode] -- op214 should have already reverted the spell menu mode
+			or  highlightButtonTypeMap[mode]
+
+		if highlightButtonType then
+			EEex_Actionbar_GetArray().m_nSelectedButton = highlightButtonType
+		end
+	end
 end
 
 -- Used in M_B3Spel.lua

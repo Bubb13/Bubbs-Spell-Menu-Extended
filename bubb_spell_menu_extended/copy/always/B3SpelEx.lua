@@ -42,7 +42,7 @@ function B3Spell_KeyPressedListener(keyPressed)
 			return
 		end
 
-	elseif Infinity_IsMenuOnStack("B3Spell_Menu_Options") then
+	elseif Infinity_IsMenuOnStack("B3Spell_Menu_Options") or Infinity_IsMenuOnStack("B3Spell_Menu_SelectSlotArea") then
 		return
 	end
 
@@ -180,6 +180,8 @@ function B3Spell_OnActionbarOpened()
 end
 
 function B3Spell_OnActionbarClosed()
+	-- "B3Spell_Menu_SelectSlotArea" has to be popped before "B3Spell_Menu_Options", since it opens "B3Spell_Menu_Options" on close
+	Infinity_PopMenu("B3Spell_Menu_SelectSlotArea")
 	-- "B3Spell_Menu_Options" has to be popped before "B3Spell_Menu", since it opens "B3Spell_Menu" on close
 	Infinity_PopMenu("B3Spell_Menu_Options")
 	Infinity_PopMenu("B3Spell_Menu")
@@ -239,6 +241,28 @@ end
 ---------------
 -- Hook Menu --
 ---------------
+
+function B3Spell_DrawSelectSlotsAreaRect(item)
+	EEex.DrawSlicedRect("B3Spell_SelectSlotsAreaRect", {item:getArea()})
+end
+
+EEex_Once("B3SpelEx_Once", function()
+	EEex.RegisterSlicedRect("B3Spell_SelectSlotsAreaRect", {
+		["topLeft"]     = {0x00, 0x00, 0x40, 0x40},
+		["top"]         = {0x40, 0x00, 0x80, 0x40},
+		["topRight"]    = {0xC0, 0x00, 0x40, 0x40},
+		["right"]       = {0xC0, 0x40, 0x40, 0x80},
+		["bottomRight"] = {0xC0, 0xC0, 0x40, 0x40},
+		["bottom"]      = {0x40, 0xC0, 0x80, 0x40},
+		["bottomLeft"]  = {0x00, 0xC0, 0x40, 0x40},
+		["left"]        = {0x00, 0x40, 0x40, 0x80},
+		["center"]      = {0x80, 0x80, 0x02, 0x02},
+		["dimensions"]  = {0x100, 0x100},
+		["resref"]      = "B3SPLBOX",
+		["flags"]       = 1,
+	})
+	EEex_Menu_AddBeforeUIItemRenderListener("B3Spell_Menu_SelectSlotArea_Rect", B3Spell_DrawSelectSlotsAreaRect)
+end)
 
 function B3Spell_InstallActionbarEnabledHook()
 

@@ -72,7 +72,7 @@ menu
 		sequence 0
 		frame 1
 		%B3Spell_Menu_SlotSizeSlider_sliderBackground%
-		settings 48
+		settings lua "B3Spell_Menu_SlotSizeSlider_Settings()"
 		scaleToClip
 		-- X, Y, W, H set via Infinity_SetArea
 	}
@@ -241,5 +241,71 @@ menu
 			scaleToClip
 		}
 		name "TEMPLATE_B3Spell_Menu_Options_Toggle"
+	}
+
+	button
+	{
+		name "B3Spell_Menu_Options_SelectSlotArea"
+		-- X, Y, W, H set via Infinity_SetArea
+		bam lua "B3Spell_Menu_OptimizeSlotSize_Bam"
+		text lua "B3Spell_Tooltip_Select_Slots_Area"
+		text style "button"
+		action "B3Spell_Menu_Options_SelectSlotArea_Action()"
+	}
+}
+
+---------------------------------
+-- B3Spell_Menu_SelectSlotArea --
+---------------------------------
+
+menu
+{
+	name "B3Spell_Menu_SelectSlotArea"
+	onopen "B3Spell_Menu_SelectSlotArea_OnOpen()"
+	onclose "B3Spell_Menu_SelectSlotArea_OnClose()"
+
+	label
+	{
+		name "B3Spell_Menu_SelectSlotArea_Rect"
+		-- X, Y, W, H set via Infinity_SetArea
+	}
+
+	handle
+	{
+		name "B3Spell_Menu_SelectSlotArea_TopHandle"
+		-- X, Y, W, H set via Infinity_SetArea
+		actionDrag "B3Spell_Menu_SelectSlotArea_TopHandle_ActionDrag()"
+	}
+
+	handle
+	{
+		name "B3Spell_Menu_SelectSlotArea_RightHandle"
+		-- X, Y, W, H set via Infinity_SetArea
+		actionDrag "B3Spell_Menu_SelectSlotArea_RightHandle_ActionDrag()"
+	}
+
+	handle
+	{
+		name "B3Spell_Menu_SelectSlotArea_BottomHandle"
+		-- X, Y, W, H set via Infinity_SetArea
+		actionDrag "B3Spell_Menu_SelectSlotArea_BottomHandle_ActionDrag()"
+	}
+
+	handle
+	{
+		name "B3Spell_Menu_SelectSlotArea_LeftHandle"
+		-- X, Y, W, H set via Infinity_SetArea
+		actionDrag "B3Spell_Menu_SelectSlotArea_LeftHandle_ActionDrag()"
+	}
+
+	button
+	{
+		name "B3Spell_Menu_SelectSlotArea_Accept"
+		-- X, Y, W, H set via Infinity_SetArea
+		bam lua "B3Spell_Menu_OptimizeSlotSize_Bam"
+		text lua "B3Spell_Tooltip_Accept"
+		text style "button"
+		action "B3Spell_Menu_SelectSlotArea_Accept_Action()"
+		scaleToClip
 	}
 }

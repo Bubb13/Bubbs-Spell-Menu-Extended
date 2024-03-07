@@ -21,6 +21,8 @@ B3Spell_Tooltip_Cleric_Spells = "%B3Spell_Tooltip_Cleric_Spells%"
 B3Spell_Tooltip_Align_Left = "%B3Spell_Tooltip_Align_Left%"
 B3Spell_Tooltip_Align_Center = "%B3Spell_Tooltip_Align_Center%"
 B3Spell_Tooltip_Overlay_Mode = "%B3Spell_Tooltip_Overlay_Mode%"
+B3Spell_Tooltip_Select_Slots_Area = "%B3Spell_Tooltip_Select_Slots_Area%"
+B3Spell_Tooltip_Accept = "%B3Spell_Tooltip_Accept%"
 
 ---------------------------------
 -- WeiDU-defined Lua Constants --

@@ -110,6 +110,7 @@ B3Spell_InfoModeIcons = {
 }
 
 B3Spell_SlotSizeHardMinimum       = 5
+B3Spell_SlotSizeHardMaximum       = 52
 B3Spell_SlotSizeAlwaysOpenMinimum = 36
 B3Spell_SlotsGapX                 = 1
 B3Spell_SlotsGapY                 = 2
@@ -130,10 +131,30 @@ B3Spell_DisableSearchBar              = Infinity_GetINIValue('Bubbs Spell Menu E
 B3Spell_IgnoreSpecialAbilities        = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Ignore Special Abilities',         0)
 B3Spell_Modal                         = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Modal',                            1)
 B3Spell_ShowKeyBindings               = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Show Key Bindings',                1)
+B3Spell_SlotsAreaX                    = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Slots Area X',                    -1)
+B3Spell_SlotsAreaY                    = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Slots Area Y',                    -1)
+B3Spell_SlotsAreaW                    = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Slots Area W',                    -1)
+B3Spell_SlotsAreaH                    = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Slots Area H',                    -1)
 
 function B3Spell_SetAlignCenter(newVal)
 	B3Spell_AlignCenter = newVal
 	Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Align Center', B3Spell_AlignCenter)
+end
+
+function B3Spell_SetSlotsArea(x, y, w, h)
+	B3Spell_SlotsAreaX = x
+	B3Spell_SlotsAreaY = y
+	B3Spell_SlotsAreaW = w
+	B3Spell_SlotsAreaH = h
+	Infinity_SetINIValue("Bubbs Spell Menu Extended", "Slots Area X", B3Spell_SlotsAreaX)
+	Infinity_SetINIValue("Bubbs Spell Menu Extended", "Slots Area Y", B3Spell_SlotsAreaY)
+	Infinity_SetINIValue("Bubbs Spell Menu Extended", "Slots Area W", B3Spell_SlotsAreaW)
+	Infinity_SetINIValue("Bubbs Spell Menu Extended", "Slots Area H", B3Spell_SlotsAreaH)
+end
+
+if B3Spell_SlotsAreaX == -1 or B3Spell_SlotsAreaY == -1 or B3Spell_SlotsAreaW == -1 or B3Spell_SlotsAreaH == -1 then
+	local screenW, screenH = Infinity_GetScreenSize()
+	B3Spell_SetSlotsArea(0, 0, screenW, screenH)
 end
 
 -----------
@@ -161,11 +182,19 @@ B3Spell_SlotRowInfo           = {}
 B3Spell_QuickSpellData        = nil
 
 B3Spell_SlotSizeMinimum = B3Spell_AlwaysOpen == 1 and B3Spell_SlotSizeAlwaysOpenMinimum or B3Spell_SlotSizeHardMinimum
+B3Spell_SlotSizeMaximum = 52
 B3Spell_SlotSize        = 52
 B3Spell_SlotSizeSlider  = B3Spell_SlotSize - B3Spell_SlotSizeMinimum
 
 function B3Spell_SetSlotSizeMinimum(newVal)
 	B3Spell_SlotSizeMinimum = math.max(B3Spell_SlotSizeHardMinimum, newVal)
+	B3Spell_SlotSize = math.max(B3Spell_SlotSizeMinimum, B3Spell_SlotSize)
+	B3Spell_SlotSizeSlider = B3Spell_SlotSize - B3Spell_SlotSizeMinimum
+end
+
+function B3Spell_SetSlotSizeMaximum(newVal)
+	B3Spell_SlotSizeMaximum = math.min(newVal, B3Spell_SlotSizeHardMaximum)
+	B3Spell_SlotSize = math.min(B3Spell_SlotSize, B3Spell_SlotSizeMaximum)
 	B3Spell_SlotSizeSlider = B3Spell_SlotSize - B3Spell_SlotSizeMinimum
 end
 
@@ -193,7 +222,7 @@ function B3Spell_LaunchSpellMenu(mode, spriteID)
 		B3Spell_RefreshMenu()
 	else
 
-		if Infinity_IsMenuOnStack("B3Spell_Menu_Options") then
+		if Infinity_IsMenuOnStack("B3Spell_Menu_Options") or Infinity_IsMenuOnStack("B3Spell_Menu_SelectSlotArea") then
 			-- Don't allow the spell menu to open while the options panel is being displayed...
 			return
 		end
@@ -343,6 +372,11 @@ end
 
 function B3Spell_InitializeSlots()
 
+	-- Recalculate the maximum slot size that can fit at least 1 line per line type.
+	-- This is needed to prevent smaller-than-normal slot areas from allowing slot
+	-- sizes that cause the slots to go off-screen.
+	B3Spell_CalculateMaxSlotSize()
+
 	if B3Spell_AutomaticallyOptimizeSlotSize == 1 then
 		-- Shrink B3Spell_SlotSize down from 52 until all spells fit on the screen,
 		-- (calls B3Spell_CalculateLines() internally)
@@ -363,9 +397,9 @@ function B3Spell_InitializeSlots()
 		local longestCount = B3Spell_GetLongestSlotCount()
 		local horizontalAreaUsed = longestCount * (B3Spell_SlotSize + B3Spell_SlotsGapX) - B3Spell_SlotsGapX
 		local horizontalMarginSpace = horizontalAvailableSpace - horizontalAreaUsed
-		slotsRenderXOffset = B3Spell_SidebarWidth + (horizontalMarginSpace / 2)
+		slotsRenderXOffset = B3Spell_SlotsAreaX + (horizontalMarginSpace / 2)
 	else
-		slotsRenderXOffset = B3Spell_SidebarWidth
+		slotsRenderXOffset = B3Spell_SlotsAreaX
 	end
 
 	-- Calculate currentYOffset
@@ -434,22 +468,22 @@ function B3Spell_InitializeSlots()
 
 			B3Spell_CreateNamedSlotBamButton("B3Spell_Menu_MoveSlotsRight", "GUIBTACT", 66, B3Spell_Tooltip_Align_Center, B3Spell_Menu_MoveSlotsRight_Action, 0, 0, 52, 52)
 
-			Infinity_SetArea('B3Spell_Menu_FilterSlotsMage',        B3Spell_SidebarWidth,       nil, nil, nil)
-			Infinity_SetArea('B3Spell_Menu_FilterSlotsMage_Slot',   B3Spell_SidebarWidth,       nil, nil, nil)
-			Infinity_SetArea('B3Spell_Menu_FilterSlotsAll',         B3Spell_SidebarWidth + 52,  nil, nil, nil)
-			Infinity_SetArea('B3Spell_Menu_FilterSlotsAll_Slot',    B3Spell_SidebarWidth + 52,  nil, nil, nil)
-			Infinity_SetArea('B3Spell_Menu_FilterSlotsCleric',      B3Spell_SidebarWidth + 104, nil, nil, nil)
-			Infinity_SetArea('B3Spell_Menu_FilterSlotsCleric_Slot', B3Spell_SidebarWidth + 104, nil, nil, nil)
-			Infinity_SetArea('B3Spell_Menu_MoveSlotsRight',         B3Spell_SidebarWidth + 156, nil, nil, nil)
-			Infinity_SetArea('B3Spell_Menu_MoveSlotsRight_Slot',    B3Spell_SidebarWidth + 156, nil, nil, nil)
+			Infinity_SetArea('B3Spell_Menu_FilterSlotsMage',        B3Spell_SlotsAreaX,       nil, nil, nil)
+			Infinity_SetArea('B3Spell_Menu_FilterSlotsMage_Slot',   B3Spell_SlotsAreaX,       nil, nil, nil)
+			Infinity_SetArea('B3Spell_Menu_FilterSlotsAll',         B3Spell_SlotsAreaX + 52,  nil, nil, nil)
+			Infinity_SetArea('B3Spell_Menu_FilterSlotsAll_Slot',    B3Spell_SlotsAreaX + 52,  nil, nil, nil)
+			Infinity_SetArea('B3Spell_Menu_FilterSlotsCleric',      B3Spell_SlotsAreaX + 104, nil, nil, nil)
+			Infinity_SetArea('B3Spell_Menu_FilterSlotsCleric_Slot', B3Spell_SlotsAreaX + 104, nil, nil, nil)
+			Infinity_SetArea('B3Spell_Menu_MoveSlotsRight',         B3Spell_SlotsAreaX + 156, nil, nil, nil)
+			Infinity_SetArea('B3Spell_Menu_MoveSlotsRight_Slot',    B3Spell_SlotsAreaX + 156, nil, nil, nil)
 
-			Infinity_SetArea('B3Spell_Menu_SlotSizeSlider',    B3Spell_SidebarWidth + 208,                                      B3Spell_Menu_SlotSizeSlider_Y,   B3Spell_Menu_SlotSizeSlider_W,   B3Spell_Menu_SlotSizeSlider_H)
-			Infinity_SetArea('B3Spell_Menu_OptimizeSlotSize',  B3Spell_SidebarWidth + B3Spell_Menu_OptimizeSlotSize_AlignmentX, B3Spell_Menu_OptimizeSlotSize_Y, B3Spell_Menu_OptimizeSlotSize_W, B3Spell_Menu_OptimizeSlotSize_H)
+			Infinity_SetArea('B3Spell_Menu_SlotSizeSlider',    B3Spell_SlotsAreaX + 208,                                      B3Spell_Menu_SlotSizeSlider_Y,   B3Spell_Menu_SlotSizeSlider_W,   B3Spell_Menu_SlotSizeSlider_H)
+			Infinity_SetArea('B3Spell_Menu_OptimizeSlotSize',  B3Spell_SlotsAreaX + B3Spell_Menu_OptimizeSlotSize_AlignmentX, B3Spell_Menu_OptimizeSlotSize_Y, B3Spell_Menu_OptimizeSlotSize_W, B3Spell_Menu_OptimizeSlotSize_H)
 		end
 
 		local searchBackgroundTop = B3Spell_DisableControlBar == 0 and 57 or (55 - B3Spell_Menu_SearchBackground_H) / 2
-		Infinity_SetArea('B3Spell_Menu_SearchBackground', B3Spell_SidebarWidth, searchBackgroundTop,                               B3Spell_Menu_SearchBackground_W, B3Spell_Menu_SearchBackground_H)
-		Infinity_SetArea('B3Spell_Menu_Search',           B3Spell_SidebarWidth, searchBackgroundTop + B3Spell_Menu_Search_YOffset, B3Spell_Menu_SearchBackground_W, nil)
+		Infinity_SetArea('B3Spell_Menu_SearchBackground', B3Spell_SlotsAreaX, searchBackgroundTop,                               B3Spell_Menu_SearchBackground_W, B3Spell_Menu_SearchBackground_H)
+		Infinity_SetArea('B3Spell_Menu_Search',           B3Spell_SlotsAreaX, searchBackgroundTop + B3Spell_Menu_Search_YOffset, B3Spell_Menu_SearchBackground_W, nil)
 	end
 
 	B3Spell_QuickSpellData = nil
@@ -561,6 +595,15 @@ end
 -- Slot Area Calculation --
 ---------------------------
 
+-- Fills:
+--     B3Spell_SlotSizeMaximum
+--     B3Spell_SlotSize
+--     B3Spell_SlotSizeSlider
+function B3Spell_CalculateMaxSlotSize()
+	local maxSlotSize = math.floor((B3Spell_GetAvailableVerticalSpace() + B3Spell_SlotsGapY) / #B3Spell_FilteredSpellListInfo - B3Spell_SlotsGapY)
+	B3Spell_SetSlotSizeMaximum(maxSlotSize)
+end
+
 -- Fills (via proxy of B3Spell_CalculateLines()):
 --     B3Spell_SlotsAvailable
 --     B3Spell_LinesAvailable
@@ -568,7 +611,7 @@ end
 function B3Spell_OptimizeSlotSize()
 
 	if B3Spell_AlwaysOpen == 0 then
-		for tempSlotSize = 52, B3Spell_SlotSizeMinimum, -1 do
+		for tempSlotSize = B3Spell_SlotSizeMaximum, B3Spell_SlotSizeMinimum, -1 do
 			B3Spell_SlotSize = tempSlotSize
 			if B3Spell_CalculateLines() then break end
 		end
@@ -582,7 +625,7 @@ function B3Spell_OptimizeSlotSize()
 
 		local desiredUsedVerticalSpace = B3Spell_GetAvailableVerticalSpace() / 2
 
-		for tempSlotSize = 52, B3Spell_SlotSizeMinimum, -1 do
+		for tempSlotSize = B3Spell_SlotSizeMaximum, B3Spell_SlotSizeMinimum, -1 do
 			B3Spell_SlotSize = tempSlotSize
 			if B3Spell_CalculateLines() and B3Spell_UsedVerticalSpace <= desiredUsedVerticalSpace then
 				break
@@ -634,8 +677,7 @@ function B3Spell_CalculateLines()
 
 	-- Calculate the number of slots that I can fit horizontally across the screen
 	local horizontalAvailableSpace = B3Spell_GetAvailableHorizontalSpace()
-	B3Spell_SlotsAvailable = math.floor(horizontalAvailableSpace / (B3Spell_SlotSize + B3Spell_SlotsGapX))
-	B3Spell_SlotsAvailable = B3Spell_SlotsAvailable + math.floor(B3Spell_SlotsGapX / B3Spell_SlotSize)
+	B3Spell_SlotsAvailable = math.floor((horizontalAvailableSpace + B3Spell_SlotsGapX) / (B3Spell_SlotSize + B3Spell_SlotsGapX))
 
 	for i = 1, #B3Spell_FilteredSpellListInfo, 1 do
 
@@ -671,25 +713,23 @@ function B3Spell_CalculateLines()
 end
 
 function B3Spell_GetMinY()
-	local total = 0
-	if B3Spell_DisableControlBar == 0 then total = total + 52 + 5 end
-	if B3Spell_DisableSearchBar == 0 then total = total + B3Spell_Menu_SearchBackground_H + 5 end
-	if B3Spell_AlwaysOpen == 0 and total < 55 then total = 55 end
-	return total
+	local minY = 0
+	if B3Spell_DisableControlBar == 0 then minY = minY + 52 + 5 end
+	if B3Spell_DisableSearchBar == 0 then minY = minY + B3Spell_Menu_SearchBackground_H + 5 end
+	return math.max(minY, B3Spell_SlotsAreaY)
 end
 
 function B3Spell_GetAvailableHorizontalSpace()
-	local screenWidth, _ = Infinity_GetScreenSize()
-	local horizontalAvailableSpace = screenWidth - (B3Spell_SidebarWidth * 2)
-	if B3Spell_AlwaysOpen == 1 then
-		local messagesX = select(1, EEex_Menu_GetArea("WORLD_MESSAGES"))
-		horizontalAvailableSpace = horizontalAvailableSpace - (screenWidth - messagesX - B3Spell_SidebarWidth)
-	end
-	return horizontalAvailableSpace
+	return B3Spell_SlotsAreaW
 end
 
 function B3Spell_GetAvailableVerticalSpace()
-	return select(2, Infinity_GetScreenSize()) - B3Spell_GetMinY()
+	local diff = B3Spell_GetMinY() - B3Spell_SlotsAreaY
+	if diff > 0 then
+		return B3Spell_SlotsAreaH - diff
+	else
+		return B3Spell_SlotsAreaH
+	end
 end
 
 -------------------------------------------------------------------
@@ -1300,8 +1340,12 @@ function B3Spell_Menu_SlotSizeSlider_Tooltip()
 end
 
 function B3Spell_Menu_SlotSizeSlider_Action()
-	B3Spell_SlotSize = B3Spell_SlotSizeSlider + B3Spell_SlotSizeMinimum
+	B3Spell_SlotSize = B3Spell_SlotSizeMinimum + B3Spell_SlotSizeSlider
 	B3Spell_SliderChangeQueued = true
+end
+
+function B3Spell_Menu_SlotSizeSlider_Settings()
+	return B3Spell_SlotSizeMaximum - B3Spell_SlotSizeMinimum + 1
 end
 
 -----------------------------------
@@ -1498,6 +1542,9 @@ end
 -- General Code --
 ------------------
 
+B3Spell_Menu_Options_SuppressOnOpenReset = false
+B3Spell_Menu_Options_SuppressOnClose = false
+
 B3Spell_Options = {
 	{"AutoPause", B3Spell_Tooltip_Auto_Pause,
 		["set"] = function(newVal) B3Spell_AutoPause = newVal end,
@@ -1583,6 +1630,13 @@ B3Spell_Options = {
 				{"Modal", 0},
 			},
 		},
+		["specialHeight"] = function()
+			return B3Spell_Menu_OptimizeSlotSize_H
+		end,
+		["doSpecialLayout"] = function(innerX, currentY, innerWidth)
+			local centeredX = innerX + (innerWidth / 2 - B3Spell_Menu_OptimizeSlotSize_W / 2)
+			Infinity_SetArea("B3Spell_Menu_Options_SelectSlotArea", centeredX, currentY, B3Spell_Menu_OptimizeSlotSize_W, B3Spell_Menu_OptimizeSlotSize_H)
+		end,
 		["onChange"] = function(self)
 			if self.get() == 0 then
 				B3Spell_SetSlotSizeMinimum(B3Spell_SlotSizeHardMinimum)
@@ -1637,57 +1691,80 @@ end
 
 function B3Spell_Menu_Options_OnOpen()
 
-	for _, option in ipairs(B3Spell_Options) do
-		option.old = option.get()
+	if not B3Spell_Menu_Options_SuppressOnOpenReset then
+		for _, option in ipairs(B3Spell_Options) do
+			option.old = option.get()
+		end
 	end
 
-	B3Spell_DestroyInstances('B3Spell_Menu_Options')
+	B3Spell_DestroyInstances("B3Spell_Menu_Options")
 
 	local screenW, screenH = Infinity_GetScreenSize()
-	Infinity_SetArea('B3Spell_Menu_Options_ExitBackground', nil, nil, screenW, screenH)
-	Infinity_SetArea('B3Spell_Menu_Options_ExitBackgroundDark', nil, nil, screenW + 4, screenH + 4)
+	Infinity_SetArea("B3Spell_Menu_Options_ExitBackground", nil, nil, screenW, screenH)
+	Infinity_SetArea("B3Spell_Menu_Options_ExitBackgroundDark", nil, nil, screenW + 4, screenH + 4)
 
 	local font = styles["normal"].font
 	local fontPoint = styles["normal"].point
+	local oneLineHeight = Infinity_GetContentHeight(font, 0, "", fontPoint, 0)
 
-	local oneLineHeight = Infinity_GetContentHeight(font, 0, '', fontPoint, 0)
-	local textData = {}
+	local toggleYOffset = oneLineHeight / 2 - 16
+	local innerYOffset = 16 + 10 - toggleYOffset
 
-	local currentY = 8
+	local textDatas = {}
 	local maxWidth = 0
+
+	local currentY = innerYOffset
 
 	for _, option in ipairs(B3Spell_Options) do
 		local textW, textH = B3Spell_GetTextWidthHeight(font, fontPoint, option[2])
 		if textW > maxWidth then maxWidth = textW end
-		table.insert(textData, {['text'] = option[2], ['yOffset'] = currentY, ['w'] = textW, ['h'] = textH})
+		table.insert(textDatas, {["text"] = option[2], ["w"] = textW, ["h"] = textH})
 		currentY = currentY + textH + 20
+		if option.specialHeight then
+			currentY = currentY + option.specialHeight()
+		end
 	end
 
-	local backgroundWidth = maxWidth + 87
-	local backgroundHeight = (oneLineHeight + 20) * #B3Spell_Options + 37
+	local innerXOffset = 16
+	local innerTextOffset = innerXOffset + 10
+	local innerToggleOffset = innerTextOffset + maxWidth + 10
 
+	local backgroundWidth = innerToggleOffset + 32 + 10 + 16
+	local backgroundHeight = innerYOffset + currentY
 	local startingX = (screenW - backgroundWidth) / 2
 	local startingY = (screenH - backgroundHeight) / 2
 
-	Infinity_SetArea('B3Spell_Menu_Options_OptionsBackground', startingX, startingY, backgroundWidth, backgroundHeight)
+	Infinity_SetArea("B3Spell_Menu_Options_OptionsBackground", startingX, startingY, backgroundWidth, backgroundHeight)
 
-	local innerOffsetX = 23
-	local innerOffsetY = 22
+	local innerX = startingX + innerXOffset
+	local innerXText = startingX + innerTextOffset
+	local innerXToggle = startingX + innerToggleOffset
+	local innerWidth = backgroundWidth - 32
 
-	for i, data in ipairs(textData) do
-		B3Spell_CreateText(data.text, startingX + innerOffsetX, startingY + data.yOffset + innerOffsetY, data.w, data.h)
+	currentY = startingY + innerYOffset
+
+	for i, option in ipairs(B3Spell_Options) do
+
+		local textData = textDatas[i]
+		B3Spell_CreateText(textData.text, innerXText, currentY, textData.w, textData.h)
+
+		B3Spell_CreateToggle(option, innerXToggle, currentY + toggleYOffset, 32, 32)
+		currentY = currentY + oneLineHeight
+
+		if option.doSpecialLayout then
+			currentY = currentY + 20
+			option.doSpecialLayout(innerX, currentY, innerWidth)
+			currentY = currentY + option.specialHeight()
+		end
+		currentY = currentY + 20
 	end
-
-	currentY = startingY + innerOffsetY
-	local toggleX = startingX + maxWidth + 10 + innerOffsetX
-	for _, option in ipairs(B3Spell_Options) do
-		B3Spell_CreateToggle(option, toggleX, currentY, 32, 32)
-		currentY = currentY + oneLineHeight + 20
-	end
-
 end
 
 function B3Spell_Menu_Options_OnClose()
+
+	if B3Spell_Menu_Options_SuppressOnClose then
+		return
+	end
 
 	for _, option in ipairs(B3Spell_Options) do
 		option.write()
@@ -1765,4 +1842,184 @@ function B3Spell_Menu_Options_TEMPLATE_Toggle_Action()
 	end
 
 	optionData.set(newVal)
+end
+
+-----------------------------------------
+-- B3Spell_Menu_Options_SelectSlotArea --
+-----------------------------------------
+
+function B3Spell_Menu_Options_SelectSlotArea_Action()
+	B3Spell_Menu_Options_SuppressOnClose = true
+	Infinity_PopMenu("B3Spell_Menu_Options")
+	B3Spell_Menu_Options_SuppressOnClose = false
+	Infinity_PushMenu("B3Spell_Menu_SelectSlotArea")
+end
+
+---------------------------------------
+-- START B3Spell_Menu_SelectSlotArea --
+---------------------------------------
+
+------------------
+-- General Code --
+------------------
+
+B3Spell_TempSlotAreaX = nil
+B3Spell_TempSlotAreaY = nil
+B3Spell_TempSlotAreaW = nil
+B3Spell_TempSlotAreaH = nil
+
+function B3Spell_Menu_SelectSlotArea_Recalculate(deltaX, deltaY, deltaW, deltaH)
+
+	local minWidth = B3Spell_SlotSizeAlwaysOpenMinimum * 4 + B3Spell_SlotsGapX * 3
+	local minHeight = B3Spell_SlotSizeAlwaysOpenMinimum * 12 + B3Spell_SlotsGapY * 11
+
+	B3Spell_TempSlotAreaX = B3Spell_TempSlotAreaX + deltaX
+	B3Spell_TempSlotAreaY = B3Spell_TempSlotAreaY + deltaY
+	B3Spell_TempSlotAreaW = B3Spell_TempSlotAreaW + deltaW
+	B3Spell_TempSlotAreaH = B3Spell_TempSlotAreaH + deltaH
+
+	local screenW, screenH = Infinity_GetScreenSize()
+
+	if B3Spell_TempSlotAreaX < 0 then
+		B3Spell_TempSlotAreaX = 0
+	end
+
+	if B3Spell_TempSlotAreaY < 0 then
+		B3Spell_TempSlotAreaY = 0
+	end
+
+	if B3Spell_TempSlotAreaW < minWidth then
+		B3Spell_TempSlotAreaW = minWidth
+	end
+
+	if B3Spell_TempSlotAreaX + B3Spell_TempSlotAreaW > screenW then
+		B3Spell_TempSlotAreaW = screenW - B3Spell_TempSlotAreaX
+	end
+
+	if B3Spell_TempSlotAreaW < minWidth then
+		local diff = minWidth - B3Spell_TempSlotAreaW
+		B3Spell_TempSlotAreaX = B3Spell_TempSlotAreaX - diff
+		B3Spell_TempSlotAreaW = B3Spell_TempSlotAreaW + diff
+	end
+
+	if B3Spell_TempSlotAreaH < minHeight then
+		B3Spell_TempSlotAreaH = minHeight
+	end
+
+	if B3Spell_TempSlotAreaY + B3Spell_TempSlotAreaH > screenH then
+		B3Spell_TempSlotAreaH = screenH - B3Spell_TempSlotAreaY
+	end
+
+	if B3Spell_TempSlotAreaH < minHeight then
+		local diff = minHeight - B3Spell_TempSlotAreaH
+		B3Spell_TempSlotAreaY = B3Spell_TempSlotAreaY - diff
+		B3Spell_TempSlotAreaH = B3Spell_TempSlotAreaH + diff
+	end
+
+	Infinity_SetArea("B3Spell_Menu_SelectSlotArea_Rect",
+		B3Spell_TempSlotAreaX,
+		B3Spell_TempSlotAreaY,
+		B3Spell_TempSlotAreaW,
+		B3Spell_TempSlotAreaH
+	)
+
+	Infinity_SetArea("B3Spell_Menu_SelectSlotArea_TopHandle",
+		B3Spell_TempSlotAreaX,
+		B3Spell_TempSlotAreaY,
+		B3Spell_TempSlotAreaW,
+		16
+	)
+
+	Infinity_SetArea("B3Spell_Menu_SelectSlotArea_RightHandle",
+		B3Spell_TempSlotAreaX + B3Spell_TempSlotAreaW - 16,
+		B3Spell_TempSlotAreaY,
+		16,
+		B3Spell_TempSlotAreaH
+	)
+
+	Infinity_SetArea("B3Spell_Menu_SelectSlotArea_BottomHandle",
+		B3Spell_TempSlotAreaX,
+		B3Spell_TempSlotAreaY + B3Spell_TempSlotAreaH - 16,
+		B3Spell_TempSlotAreaW,
+		16
+	)
+
+	Infinity_SetArea("B3Spell_Menu_SelectSlotArea_LeftHandle",
+		B3Spell_TempSlotAreaX,
+		B3Spell_TempSlotAreaY,
+		16,
+		B3Spell_TempSlotAreaH
+	)
+
+	local acceptW = math.min(B3Spell_TempSlotAreaW - 16 - 16 - 10 - 10, B3Spell_Menu_OptimizeSlotSize_W)
+	local acceptH = math.min(B3Spell_TempSlotAreaH - 16 - 16 - 10 - 10, B3Spell_Menu_OptimizeSlotSize_H)
+	Infinity_SetArea("B3Spell_Menu_SelectSlotArea_Accept",
+		B3Spell_TempSlotAreaX + (B3Spell_TempSlotAreaW / 2 - acceptW / 2),
+		B3Spell_TempSlotAreaY + (B3Spell_TempSlotAreaH / 2 - acceptH / 2),
+		acceptW,
+		acceptH
+	)
+end
+
+------------------
+-- UI Functions --
+------------------
+
+---------------------------------
+-- B3Spell_Menu_SelectSlotArea --
+---------------------------------
+
+function B3Spell_Menu_SelectSlotArea_OnOpen()
+	B3Spell_TempSlotAreaX = B3Spell_SlotsAreaX
+	B3Spell_TempSlotAreaY = B3Spell_SlotsAreaY
+	B3Spell_TempSlotAreaW = B3Spell_SlotsAreaW
+	B3Spell_TempSlotAreaH = B3Spell_SlotsAreaH
+	B3Spell_Menu_SelectSlotArea_Recalculate(0, 0, 0, 0)
+end
+
+function B3Spell_Menu_SelectSlotArea_OnClose()
+	B3Spell_Menu_Options_SuppressOnOpenReset = true
+	Infinity_PushMenu("B3Spell_Menu_Options")
+	B3Spell_Menu_Options_SuppressOnOpenReset = false
+end
+
+-------------------------------------------
+-- B3Spell_Menu_SelectSlotArea_TopHandle --
+-------------------------------------------
+
+function B3Spell_Menu_SelectSlotArea_TopHandle_ActionDrag()
+	B3Spell_Menu_SelectSlotArea_Recalculate(0, motionY, 0, 0)
+end
+
+---------------------------------------------
+-- B3Spell_Menu_SelectSlotArea_RightHandle --
+---------------------------------------------
+
+function B3Spell_Menu_SelectSlotArea_RightHandle_ActionDrag()
+	B3Spell_Menu_SelectSlotArea_Recalculate(0, 0, motionX, 0)
+end
+
+----------------------------------------------
+-- B3Spell_Menu_SelectSlotArea_BottomHandle --
+----------------------------------------------
+
+function B3Spell_Menu_SelectSlotArea_BottomHandle_ActionDrag()
+	B3Spell_Menu_SelectSlotArea_Recalculate(0, 0, 0, motionY)
+end
+
+--------------------------------------------
+-- B3Spell_Menu_SelectSlotArea_LeftHandle --
+--------------------------------------------
+
+function B3Spell_Menu_SelectSlotArea_LeftHandle_ActionDrag()
+	B3Spell_Menu_SelectSlotArea_Recalculate(motionX, 0, 0, 0)
+end
+
+-----------------------------------------------
+-- B3Spell_Menu_SelectSlotArea_Accept_Action --
+-----------------------------------------------
+
+function B3Spell_Menu_SelectSlotArea_Accept_Action()
+	Infinity_PopMenu("B3Spell_Menu_SelectSlotArea")
+	B3Spell_SetSlotsArea(B3Spell_TempSlotAreaX, B3Spell_TempSlotAreaY, B3Spell_TempSlotAreaW, B3Spell_TempSlotAreaH)
 end

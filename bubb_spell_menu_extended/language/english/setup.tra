@@ -19,7 +19,9 @@
 @8 = ~Ignore Special Abilities: ~         // %B3Spell_Tooltip_Ignore_Special_Abilities%
 @9 = ~Modal: ~                            // %B3Spell_Tooltip_Modal%
 @10 = ~Show Key Bindings: ~               // %B3Spell_Tooltip_Show_Key_Bindings%
-@18 = ~Overlay Mode (Keep Open)~          // %B3Spell_Tooltip_Keep_Open%
+@18 = ~Overlay Mode (Keep Open): ~        // %B3Spell_Tooltip_Overlay_Mode%
+@19 = ~Select Slots Area~                 // %B3Spell_Tooltip_Select_Slots_Area%
+@20 = ~Accept~                            // %B3Spell_Tooltip_Accept%
 
 //////////////////
 // B3Spell.menu //

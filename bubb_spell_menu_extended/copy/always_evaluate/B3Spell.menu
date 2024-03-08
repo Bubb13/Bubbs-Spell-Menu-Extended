@@ -254,6 +254,7 @@ menu
 		text lua "B3Spell_Tooltip_Select_Slots_Area"
 		text style "button"
 		action "B3Spell_Menu_Options_SelectSlotArea_Action()"
+		scaleToClip
 	}
 }
 

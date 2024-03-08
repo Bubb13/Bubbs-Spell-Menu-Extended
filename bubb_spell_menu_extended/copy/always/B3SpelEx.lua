@@ -242,6 +242,11 @@ end
 -- Hook Menu --
 ---------------
 
+function B3Spell_OnWindowSizeChanged(screenW, screenH)
+	B3Spell_ValidateSlotsArea(screenW, screenH)
+end
+EEex_Menu_AddWindowSizeChangedListener(B3Spell_OnWindowSizeChanged)
+
 function B3Spell_DrawSelectSlotsAreaRect(item)
 	EEex.DrawSlicedRect("B3Spell_SelectSlotsAreaRect", {item:getArea()})
 end

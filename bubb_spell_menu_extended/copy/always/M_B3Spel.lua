@@ -115,6 +115,8 @@ B3Spell_SlotSizeAlwaysOpenMinimum = 36
 B3Spell_SlotsGapX                 = 1
 B3Spell_SlotsGapY                 = 2
 B3Spell_SlotsGapYFlowover         = 1
+B3Spell_SlotsAreaWidthMinimum     = B3Spell_SlotSizeAlwaysOpenMinimum * 4 + B3Spell_SlotsGapX * 3
+B3Spell_SlotsAreaHeightMinimum    = B3Spell_SlotSizeAlwaysOpenMinimum * 12 + B3Spell_SlotsGapY * 11
 
 -------------
 -- Options --
@@ -151,9 +153,16 @@ function B3Spell_SetSlotsArea(x, y, w, h)
 	Infinity_SetINIValue("Bubbs Spell Menu Extended", "Slots Area H", B3Spell_SlotsAreaH)
 end
 
-if B3Spell_SlotsAreaX == -1 or B3Spell_SlotsAreaY == -1 or B3Spell_SlotsAreaW == -1 or B3Spell_SlotsAreaH == -1 then
-	local screenW, screenH = Infinity_GetScreenSize()
-	B3Spell_SetSlotsArea(0, 0, screenW, screenH)
+function B3Spell_ValidateSlotsArea(screenW, screenH)
+	if B3Spell_SlotsAreaX < 0
+		or B3Spell_SlotsAreaY < 0
+		or B3Spell_SlotsAreaW < B3Spell_SlotsAreaWidthMinimum
+		or B3Spell_SlotsAreaH < B3Spell_SlotsAreaHeightMinimum
+		or B3Spell_SlotsAreaX + B3Spell_SlotsAreaW > screenW
+		or B3Spell_SlotsAreaY + B3Spell_SlotsAreaH > screenH
+	then
+		B3Spell_SetSlotsArea(B3Spell_SidebarWidth, 0, screenW - 2 * B3Spell_SidebarWidth, screenH)
+	end
 end
 
 -----------
@@ -2116,9 +2125,6 @@ B3Spell_TempSlotAreaH = nil
 
 function B3Spell_Menu_SelectSlotArea_Recalculate(deltaX, deltaY, deltaW, deltaH)
 
-	local minWidth = B3Spell_SlotSizeAlwaysOpenMinimum * 4 + B3Spell_SlotsGapX * 3
-	local minHeight = B3Spell_SlotSizeAlwaysOpenMinimum * 12 + B3Spell_SlotsGapY * 11
-
 	B3Spell_TempSlotAreaX = B3Spell_TempSlotAreaX + deltaX
 	B3Spell_TempSlotAreaY = B3Spell_TempSlotAreaY + deltaY
 	B3Spell_TempSlotAreaW = B3Spell_TempSlotAreaW + deltaW
@@ -2134,30 +2140,30 @@ function B3Spell_Menu_SelectSlotArea_Recalculate(deltaX, deltaY, deltaW, deltaH)
 		B3Spell_TempSlotAreaY = 0
 	end
 
-	if B3Spell_TempSlotAreaW < minWidth then
-		B3Spell_TempSlotAreaW = minWidth
+	if B3Spell_TempSlotAreaW < B3Spell_SlotsAreaWidthMinimum then
+		B3Spell_TempSlotAreaW = B3Spell_SlotsAreaWidthMinimum
 	end
 
 	if B3Spell_TempSlotAreaX + B3Spell_TempSlotAreaW > screenW then
 		B3Spell_TempSlotAreaW = screenW - B3Spell_TempSlotAreaX
 	end
 
-	if B3Spell_TempSlotAreaW < minWidth then
-		local diff = minWidth - B3Spell_TempSlotAreaW
+	if B3Spell_TempSlotAreaW < B3Spell_SlotsAreaWidthMinimum then
+		local diff = B3Spell_SlotsAreaWidthMinimum - B3Spell_TempSlotAreaW
 		B3Spell_TempSlotAreaX = B3Spell_TempSlotAreaX - diff
 		B3Spell_TempSlotAreaW = B3Spell_TempSlotAreaW + diff
 	end
 
-	if B3Spell_TempSlotAreaH < minHeight then
-		B3Spell_TempSlotAreaH = minHeight
+	if B3Spell_TempSlotAreaH < B3Spell_SlotsAreaHeightMinimum then
+		B3Spell_TempSlotAreaH = B3Spell_SlotsAreaHeightMinimum
 	end
 
 	if B3Spell_TempSlotAreaY + B3Spell_TempSlotAreaH > screenH then
 		B3Spell_TempSlotAreaH = screenH - B3Spell_TempSlotAreaY
 	end
 
-	if B3Spell_TempSlotAreaH < minHeight then
-		local diff = minHeight - B3Spell_TempSlotAreaH
+	if B3Spell_TempSlotAreaH < B3Spell_SlotsAreaHeightMinimum then
+		local diff = B3Spell_SlotsAreaHeightMinimum - B3Spell_TempSlotAreaH
 		B3Spell_TempSlotAreaY = B3Spell_TempSlotAreaY - diff
 		B3Spell_TempSlotAreaH = B3Spell_TempSlotAreaH + diff
 	end

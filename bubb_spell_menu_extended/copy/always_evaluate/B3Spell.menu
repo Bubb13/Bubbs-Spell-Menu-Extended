@@ -91,14 +91,17 @@ menu
 		-- X, Y, W, H set via Infinity_SetArea
 	}
 
-	button
+	template
 	{
-		name   "B3Spell_Menu_OptionsButton"
-		action "B3Spell_Menu_OptionsButton_Action()"
-		tooltip lua "B3Spell_Tooltip_Bubbs_Spell_Menu_Options"
-		bam "GUILS10"
-		area 0 0 72 55 -- X set via Infinity_SetArea
-		sequence 7
+		button
+		{
+			action "B3Spell_Menu_TEMPLATE_OptionsButton_Action()"
+			tooltip lua "B3Spell_Tooltip_Bubbs_Spell_Menu_Options"
+			bam "GUILS10"
+			area 0 0 72 55 -- X set via Infinity_SetArea
+			sequence 7
+		}
+		name "B3Spell_Menu_TEMPLATE_OptionsButton"
 	}
 
 	template

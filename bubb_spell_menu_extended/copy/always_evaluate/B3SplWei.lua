@@ -23,6 +23,14 @@ B3Spell_Tooltip_Align_Center = "%B3Spell_Tooltip_Align_Center%"
 B3Spell_Tooltip_Overlay_Mode = "%B3Spell_Tooltip_Overlay_Mode%"
 B3Spell_Tooltip_Select_Slots_Area = "%B3Spell_Tooltip_Select_Slots_Area%"
 B3Spell_Tooltip_Accept = "%B3Spell_Tooltip_Accept%"
+B3Spell_Tooltip_HorizontalSlotsAlignment = "%B3Spell_Tooltip_HorizontalSlotsAlignment%"
+B3Spell_Tooltip_Left = "%B3Spell_Tooltip_Left%"
+B3Spell_Tooltip_Center = "%B3Spell_Tooltip_Center%"
+B3Spell_Tooltip_Right = "%B3Spell_Tooltip_Right%"
+B3Spell_Tooltip_VerticalSlotsAlignment = "%B3Spell_Tooltip_VerticalSlotsAlignment%"
+B3Spell_Tooltip_Top = "%B3Spell_Tooltip_Top%"
+B3Spell_Tooltip_Bottom = "%B3Spell_Tooltip_Bottom%"
+B3Spell_Tooltip_MoveSlotHeadersToTheRight = "%B3Spell_Tooltip_MoveSlotHeadersToTheRight%"
 
 ---------------------------------
 -- WeiDU-defined Lua Constants --

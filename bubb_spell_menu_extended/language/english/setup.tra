@@ -22,6 +22,14 @@
 @18 = ~Overlay Mode (Keep Open): ~        // %B3Spell_Tooltip_Overlay_Mode%
 @19 = ~Select Slots Area~                 // %B3Spell_Tooltip_Select_Slots_Area%
 @20 = ~Accept~                            // %B3Spell_Tooltip_Accept%
+@21 = ~Horizontal Slots Alignment: ~      // %B3Spell_Tooltip_HorizontalSlotsAlignment%
+@22 = ~Left: ~                            // %B3Spell_Tooltip_Left%
+@23 = ~Center: ~                          // %B3Spell_Tooltip_Center%
+@24 = ~Right: ~                           // %B3Spell_Tooltip_Right%
+@25 = ~Vertical Slots Alignment: ~        // %B3Spell_Tooltip_VerticalSlotsAlignment%
+@26 = ~Top: ~                             // %B3Spell_Tooltip_Top%
+@27 = ~Bottom: ~                          // %B3Spell_Tooltip_Bottom%
+@28 = ~Move Slot Headers To The Right: ~  // %B3Spell_Tooltip_MoveSlotHeadersToTheRight%
 
 //////////////////
 // B3Spell.menu //

@@ -216,6 +216,14 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 	SPRINT B3Spell_Tooltip_Overlay_Mode @18
 	SPRINT B3Spell_Tooltip_Select_Slots_Area @19
 	SPRINT B3Spell_Tooltip_Accept @20
+	SPRINT B3Spell_Tooltip_HorizontalSlotsAlignment @21
+	SPRINT B3Spell_Tooltip_Left @22
+	SPRINT B3Spell_Tooltip_Center @23
+	SPRINT B3Spell_Tooltip_Right @24
+	SPRINT B3Spell_Tooltip_VerticalSlotsAlignment @25
+	SPRINT B3Spell_Tooltip_Top @26
+	SPRINT B3Spell_Tooltip_Bottom @27
+	SPRINT B3Spell_Tooltip_MoveSlotHeadersToTheRight @28
 	COPY ~bubb_spell_menu_extended/copy/always_evaluate~ ~override~ EVALUATE_BUFFER
 
 	COPY ~%bam_folder%~ ~override~

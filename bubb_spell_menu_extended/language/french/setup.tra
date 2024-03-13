@@ -9,28 +9,40 @@
 // M_B3Spel.lua //
 //////////////////
 
-@1 = ~Taille des emplacements des sorts : ~                            // %B3Spell_Tooltip_Slot_Size%
-@2 = ~Pause automatique : ~                                            // %B3Spell_Tooltip_Auto_Pause%
-@3 = ~Adapter automatiquement la barre de recherche : ~                // %B3Spell_Tooltip_Automatically_Focus_Search_Bar%
-@4 = ~Adapter automatiquement la taille des emplacements des sorts : ~ // %B3Spell_Tooltip_Automatically_Optimize_Slot_Size%
-@5 = ~Obscurcir le second plan : ~                                     // %B3Spell_Tooltip_Darken_Background%
-@6 = ~Désactiver la barre de contrôle : ~                              // %B3Spell_Tooltip_Disable_Control_Bar%
-@7 = ~Désactiver la barre de recherche : ~                             // %B3Spell_Tooltip_Disable_Search_Bar%
-@8 = ~Ignorer les capacités spéciales : ~                              // %B3Spell_Tooltip_Ignore_Special_Abilities%
-@9 = ~Fenêtre modale : ~                                               // %B3Spell_Tooltip_Modal%
-@10 = ~Afficher les raccourcis clavier : ~                             // %B3Spell_Tooltip_Show_Key_Bindings%
+@1 = ~Taille des emplacements de sorts : ~                                 // %B3Spell_Tooltip_Slot_Size%
+@2 = ~Pause automatique : ~                                                // %B3Spell_Tooltip_Auto_Pause%
+@3 = ~Adapter automatiquement la barre de recherche : ~                    // %B3Spell_Tooltip_Automatically_Focus_Search_Bar%
+@4 = ~Adapter automatiquement la taille des emplacements de sorts : ~      // %B3Spell_Tooltip_Automatically_Optimize_Slot_Size%
+@5 = ~Obscurcir le second plan : ~                                         // %B3Spell_Tooltip_Darken_Background%
+@6 = ~Désactiver la barre de contrôle : ~                                  // %B3Spell_Tooltip_Disable_Control_Bar%
+@7 = ~Désactiver la barre de recherche : ~                                 // %B3Spell_Tooltip_Disable_Search_Bar%
+@8 = ~Ignorer les capacités spéciales : ~                                  // %B3Spell_Tooltip_Ignore_Special_Abilities%
+@9 = ~Fenêtre modale : ~                                                   // %B3Spell_Tooltip_Modal%
+@10 = ~Afficher les raccourcis clavier : ~                                 // %B3Spell_Tooltip_Show_Key_Bindings%
+
+@18 = ~Mode Overlay (Toujours visible) : ~                                 // %B3Spell_Tooltip_Overlay_Mode%              
+@19 = ~Sélectionner la position des emplacements de sorts : ~              // %B3Spell_Tooltip_Select_Slots_Area%         
+@20 = ~Accepter~                                                           // %B3Spell_Tooltip_Accept%                    
+@21 = ~Aligner les emplacements de sorts Horizontalement : ~               // %B3Spell_Tooltip_HorizontalSlotsAlignment%  
+@22 = ~Vers la Gauche~                                                      // %B3Spell_Tooltip_Left%                      
+@23 = ~Au Centre~                                                          // %B3Spell_Tooltip_Center%                    
+@24 = ~Vers la Droite~                                                      // %B3Spell_Tooltip_Right%                     
+@25 = ~Aligner les emplacements de sorts Verticalement : ~                 // %B3Spell_Tooltip_VerticalSlotsAlignment%    
+@26 = ~Vers le Haut : ~                                                    // %B3Spell_Tooltip_Top%                       
+@27 = ~Vers le Bas : ~                                                     // %B3Spell_Tooltip_Bottom%                    
+@28 = ~Déplacer l'ensemble des emplacements de sorts sur la Droite : ~     // %B3Spell_Tooltip_MoveSlotHeadersToTheRight% 
 
 //////////////////
 // B3Spell.menu //
 //////////////////
 
-@11 = ~Optimiser la taille des emplacements des sorts~ // %B3Spell_Tooltip_Optimize_Slot_Size%
-@12 = ~Options du Bubb's Spell Menu~                   // %B3Spell_Tooltip_Bubbs_Spell_Menu_Options%
-@13 = ~Sorts profanes~                                 // %B3Spell_Tooltip_Mage_Spells%
-@14 = ~Tous les sorts~                                 // %B3Spell_Tooltip_All_Spells%
-@15 = ~Sorts divins~                                   // %B3Spell_Tooltip_Cleric_Spells%
-@16 = ~Ancrer à gauche~                                // %B3Spell_Tooltip_Align_Left%
-@17 = ~Centrer~                                        // %B3Spell_Tooltip_Align_Center%
+@11 = ~Optimiser la taille des emplacements de sorts~                      // %B3Spell_Tooltip_Optimize_Slot_Size%
+@12 = ~Options du Bubb's Spell Menu~                                       // %B3Spell_Tooltip_Bubbs_Spell_Menu_Options%
+@13 = ~Sorts profanes~                                                     // %B3Spell_Tooltip_Mage_Spells%
+@14 = ~Tous les sorts~                                                     // %B3Spell_Tooltip_All_Spells%
+@15 = ~Sorts divins~                                                       // %B3Spell_Tooltip_Cleric_Spells%
+@16 = ~Ancrer à gauche~                                                    // %B3Spell_Tooltip_Align_Left%
+@17 = ~Centrer~                                                            // %B3Spell_Tooltip_Align_Center%
 
 ///////////////////
 // WeiDU Prompts //

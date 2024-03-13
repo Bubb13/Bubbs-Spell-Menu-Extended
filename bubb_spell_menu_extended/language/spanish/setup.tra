@@ -17,8 +17,19 @@
 @6 = ~Deshabilitar la barra deslizante: ~             // %B3Spell_Tooltip_Disable_Control_Bar%
 @7 = ~Deshabilitar la barra de busqueda: ~            // %B3Spell_Tooltip_Disable_Search_Bar%
 @8 = ~Ignorar habilidades especiales: ~               // %B3Spell_Tooltip_Ignore_Special_Abilities%
-@9 = ~Modales: ~                                      // %B3Spell_Tooltip_Modal%
+@9 = ~Modo oscuro: ~                                  // %B3Spell_Tooltip_Modal%
 @10 = ~Mostrar atajos de teclado: ~                   // %B3Spell_Tooltip_Show_Key_Bindings%
+@18 = ~Modo Superposición (Mantener abierto): ~       // %B3Spell_Tooltip_Overlay_Mode%
+@19 = ~Seleccionar ranuras~                           // %B3Spell_Tooltip_Select_Slots_Area%
+@20 = ~Aceptar~                                       // %B3Spell_Tooltip_Accept%
+@21 = ~Alineación de ranuras horizontal: ~            // %B3Spell_Tooltip_HorizontalSlotsAlignment%
+@22 = ~Izquierda: ~                                   // %B3Spell_Tooltip_Left%
+@23 = ~Centro: ~                                      // %B3Spell_Tooltip_Center%
+@24 = ~Derecha: ~                                     // %B3Spell_Tooltip_Right%
+@25 = ~Alineación vertical de ranuras: ~              // %B3Spell_Tooltip_VerticalSlotsAlignment%
+@26 = ~Arriba: ~                                      // %B3Spell_Tooltip_Top%
+@27 = ~Abajo: ~                                       // %B3Spell_Tooltip_Bottom%
+@28 = ~Moverlas cabeceras de ranura a la derecha: ~   // %B3Spell_Tooltip_MoveSlotHeadersToTheRight%
 
 //////////////////
 // B3Spell.menu //

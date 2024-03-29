@@ -1,11 +1,12 @@
 BACKUP ~bubb_spell_menu_extended/backup~
 AUTHOR ~Bubb~
-VERSION ~v5.0.1~
+VERSION ~v5.0.2~
 
 AUTO_TRA ~bubb_spell_menu_extended/language/%s~
 LANGUAGE ~English~ ~english~ ~bubb_spell_menu_extended/language/english/setup.tra~
 LANGUAGE ~Brazilian Portuguese~ ~brazilian_portuguese~ ~bubb_spell_menu_extended/language/english/setup.tra~ ~bubb_spell_menu_extended/language/brazilian_portuguese/setup.tra~
 LANGUAGE ~Francais~ ~french~ ~bubb_spell_menu_extended/language/english/setup.tra~ ~bubb_spell_menu_extended/language/french/setup.tra~
+LANGUAGE ~German~ ~german~ ~bubb_spell_menu_extended/language/english/setup.tra~ ~bubb_spell_menu_extended/language/german/setup.tra~
 LANGUAGE ~Spanish~ ~spanish~ ~bubb_spell_menu_extended/language/english/setup.tra~ ~bubb_spell_menu_extended/language/spanish/setup.tra~
 
 BEGIN @0 LABEL ~B3-BubbsSpellMenuExtended-Main~

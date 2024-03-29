@@ -20,12 +20,12 @@
 @9 = ~Fenêtre modale : ~                                               // %B3Spell_Tooltip_Modal%
 @10 = ~Afficher les raccourcis clavier : ~                             // %B3Spell_Tooltip_Show_Key_Bindings%
 @18 = ~Mode Overlay (Toujours visible) : ~                             // %B3Spell_Tooltip_Overlay_Mode%
-@19 = ~Sélectionner la position des emplacements de sorts : ~          // %B3Spell_Tooltip_Select_Slots_Area%
+@19 = ~Sélectionner la position des emplacements de sorts~             // %B3Spell_Tooltip_Select_Slots_Area%
 @20 = ~Accepter~                                                       // %B3Spell_Tooltip_Accept%
 @21 = ~Aligner les emplacements de sorts Horizontalement : ~           // %B3Spell_Tooltip_HorizontalSlotsAlignment%
-@22 = ~Vers la Gauche~                                                 // %B3Spell_Tooltip_Left%
-@23 = ~Au Centre~                                                      // %B3Spell_Tooltip_Center%
-@24 = ~Vers la Droite~                                                 // %B3Spell_Tooltip_Right%
+@22 = ~Vers la Gauche : ~                                              // %B3Spell_Tooltip_Left%
+@23 = ~Au Centre : ~                                                   // %B3Spell_Tooltip_Center%
+@24 = ~Vers la Droite : ~                                              // %B3Spell_Tooltip_Right%
 @25 = ~Aligner les emplacements de sorts Verticalement : ~             // %B3Spell_Tooltip_VerticalSlotsAlignment%
 @26 = ~Vers le Haut : ~                                                // %B3Spell_Tooltip_Top%
 @27 = ~Vers le Bas : ~                                                 // %B3Spell_Tooltip_Bottom%

@@ -1,0 +1,44 @@
+
+//////////////////////////////////
+// bubb_spell_menu_extended.tp2 //
+//////////////////////////////////
+
+@0 = ~Bubb's Spell Menu Extended~
+
+//////////////////
+// M_B3Spel.lua //
+//////////////////
+
+@1 = ~Slot Größe: ~                            // %B3Spell_Tooltip_Slot_Size%
+@2 = ~Auto-Pause: ~                            // %B3Spell_Tooltip_Auto_Pause%
+@3 = ~Automatisch Suchfeld fokussieren: ~      // %B3Spell_Tooltip_Automatically_Focus_Search_Bar%
+@4 = ~Automatisch Slot Größe optimieren: ~     // %B3Spell_Tooltip_Automatically_Optimize_Slot_Size%
+@5 = ~Hintergrund abdunkeln: ~                 // %B3Spell_Tooltip_Darken_Background%
+@6 = ~Kontrollleiste deaktivieren: ~           // %B3Spell_Tooltip_Disable_Control_Bar%
+@7 = ~Suchfeld deaktivieren: ~                 // %B3Spell_Tooltip_Disable_Search_Bar%
+@8 = ~Ignoriere Spezial Fähigkeiten: ~         // %B3Spell_Tooltip_Ignore_Special_Abilities%
+@9 = ~Modal: ~                                 // %B3Spell_Tooltip_Modal%
+@10 = ~Zeige Tasten Bindung: ~                 // %B3Spell_Tooltip_Show_Key_Bindings%
+@18 = ~Überlagerungsmodus (bleibt geöffnet): ~ // %B3Spell_Tooltip_Overlay_Mode%
+@19 = ~Wähle Slot Fläche/Position~             // %B3Spell_Tooltip_Select_Slots_Area%
+@20 = ~Akzeptieren~                            // %B3Spell_Tooltip_Accept%
+@21 = ~Horizontale Slot Ausrichtung: ~         // %B3Spell_Tooltip_HorizontalSlotsAlignment%
+@22 = ~Links: ~                                // %B3Spell_Tooltip_Left%
+@23 = ~Mitte: ~                                // %B3Spell_Tooltip_Center%
+@24 = ~Rechts: ~                               // %B3Spell_Tooltip_Right%
+@25 = ~Vertikale Slot Ausrichtung: ~           // %B3Spell_Tooltip_VerticalSlotsAlignment%
+@26 = ~Oben: ~                                 // %B3Spell_Tooltip_Top%
+@27 = ~Unten: ~                                // %B3Spell_Tooltip_Bottom%
+@28 = ~Zauberstufen-Header rechts: ~           // %B3Spell_Tooltip_MoveSlotHeadersToTheRight%
+
+//////////////////
+// B3Spell.menu //
+//////////////////
+
+@11 = ~Optimiere Slot Größe~       // %B3Spell_Tooltip_Optimize_Slot_Size%
+@12 = ~Bubb's Spell Menu Optionen~ // %B3Spell_Tooltip_Bubbs_Spell_Menu_Options%
+@13 = ~Magier Sprüche~             // %B3Spell_Tooltip_Mage_Spells%
+@14 = ~Alle Sprüche~               // %B3Spell_Tooltip_All_Spells%
+@15 = ~Kleriker Sprüche~           // %B3Spell_Tooltip_Cleric_Spells%
+@16 = ~Links Ausrichten~           // %B3Spell_Tooltip_Align_Left%
+@17 = ~Mittig Ausrichten~          // %B3Spell_Tooltip_Align_Center%

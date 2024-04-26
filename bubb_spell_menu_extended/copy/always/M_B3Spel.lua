@@ -1809,6 +1809,13 @@ EEex_Utility_NewScope(function()
 end)
 
 function B3Spell_GetTextWidthHeight(font, pointSize, text)
+
+	local effectivePoint = math.floor(EngineGlobals.g_pBaldurChitin.cVideo.pCurrentMode.nHeight * pointSize / CVidMode.SCREENHEIGHT)
+	if effectivePoint == 0 then
+		 -- This case causes Infinity_GetContentHeight() to crash (yes, really...)
+		return 0, 0
+	end
+
 	local oneLineHeight = Infinity_GetContentHeight(font, 0, "", pointSize, 0)
 	local currentWidth = 0
 	local currentHeight = nil

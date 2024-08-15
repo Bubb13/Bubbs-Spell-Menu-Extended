@@ -52,3 +52,8 @@ B3Spell_Menu_SlotSizeSlider_W = %B3Spell_Menu_SlotSizeSlider_W%
 B3Spell_Menu_SlotSizeSlider_Y = %B3Spell_Menu_SlotSizeSlider_Y%
 B3Spell_NumberSequence = %B3Spell_NumberSequence%
 B3Spell_SidebarWidth = %B3Spell_SidebarWidth%
+--Infinity UI++ added
+B3Spell_Menu_Options_TEMPLATE_Toggle_Bam = "ROUNDBUT"
+B3Spell_Menu_Options_TEMPLATE_Toggle_Sequence = 0
+B3Spell_Menu_TEMPLATE_OptionsButton_Bam = "GUILS10"
+B3Spell_Menu_TEMPLATE_OptionsButton_Sequence = 7

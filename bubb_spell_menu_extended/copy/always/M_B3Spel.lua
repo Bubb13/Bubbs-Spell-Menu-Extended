@@ -380,6 +380,12 @@ end
 
 function B3Spell_InitializeSlots()
 
+	--Infinity UI++ remember slot size in baldur.lua
+	if RgUISkin and B3Spell_AutomaticallyOptimizeSlotSize == 0 then
+		B3Spell_SlotSizeSlider 	= Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Slot Size Slider',  0)
+		B3Spell_SlotSize = B3Spell_SlotSizeHardMinimum + B3Spell_SlotSizeSlider
+	end
+
 	-- Recalculate the maximum slot size that can fit at least 1 line per category, and, if needed, that can fit arrows.
 	-- This is needed to prevent smaller-than-normal slot areas from allowing slot sizes that cause the slots to go off-screen.
 	B3Spell_CalculateMaxSlotSize()
@@ -437,33 +443,72 @@ function B3Spell_InitializeSlots()
 	end
 
 	if B3Spell_DisableControlBar == 0 then
-
-		B3Spell_CenterItemsX(
-		{
-			{ ['name'] = 'B3Spell_Menu_FilterSlotsMage',        ['x'] = 0  },
-			{ ['name'] = 'B3Spell_Menu_FilterSlotsMage_Slot',   ['x'] = 0  },
-			{ ['name'] = 'B3Spell_Menu_FilterSlotsAll',         ['x'] = 52 },
-			{ ['name'] = 'B3Spell_Menu_FilterSlotsAll_Slot',    ['x'] = 52 },
-			{ ['name'] = 'B3Spell_Menu_FilterSlotsCleric',      ['x'] = 104 },
-			{ ['name'] = 'B3Spell_Menu_FilterSlotsCleric_Slot', ['x'] = 104 },
+		--Infinity UI++ custom elements
+		if not RgUISkin then
+			B3Spell_CenterItemsX(
 			{
-				['name'] = 'B3Spell_Menu_SlotSizeSlider',
-				['x'] = 156,
-				['y'] = B3Spell_Menu_SlotSizeSlider_Y,
-				['width'] = B3Spell_Menu_SlotSizeSlider_W,
-				['height'] = B3Spell_Menu_SlotSizeSlider_H,
-			},
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsMage',        ['x'] = 0  },
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsMage_Slot',   ['x'] = 0  },
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsAll',         ['x'] = 52 },
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsAll_Slot',    ['x'] = 52 },
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsCleric',      ['x'] = 104 },
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsCleric_Slot', ['x'] = 104 },
+				{
+					['name'] = 'B3Spell_Menu_SlotSizeSlider',
+					['x'] = 156,
+					['y'] = B3Spell_Menu_SlotSizeSlider_Y,
+					['width'] = B3Spell_Menu_SlotSizeSlider_W,
+					['height'] = B3Spell_Menu_SlotSizeSlider_H,
+				},
+				{
+					['name'] = 'B3Spell_Menu_OptimizeSlotSize',
+					['x'] = 156 + B3Spell_Menu_SlotSizeSlider_W,
+					['y'] = B3Spell_Menu_OptimizeSlotSize_Y,
+					['width'] = B3Spell_Menu_OptimizeSlotSize_W,
+					['height'] = B3Spell_Menu_OptimizeSlotSize_H,
+				},
+			})
+		else
+			B3Spell_CenterItemsX(
 			{
-				['name'] = 'B3Spell_Menu_OptimizeSlotSize',
-				['x'] = 156 + B3Spell_Menu_SlotSizeSlider_W,
-				['y'] = B3Spell_Menu_OptimizeSlotSize_Y,
-				['width'] = B3Spell_Menu_OptimizeSlotSize_W,
-				['height'] = B3Spell_Menu_OptimizeSlotSize_H,
-			},
-		})
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsMage',        ['x'] = 0  },
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsMage_Slot',   ['x'] = 0  },
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsAll',         ['x'] = 52 },
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsAll_Slot',    ['x'] = 52 },
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsCleric',      ['x'] = 104 },
+				{ ['name'] = 'B3Spell_Menu_FilterSlotsCleric_Slot', ['x'] = 104 },
+				{
+					['name'] = 'Rg_B3Spell_Menu_SlotSizeSlider',
+					['x'] = 156,
+					['y'] = 0,
+					['width'] = 200,
+					['height'] = 52,
+				},
+				{
+					['name'] = 'Rg_B3Spell_Menu_OptimizeSlotSizeBackground',
+					['x'] = 356,
+					['y'] = 0,
+					['width'] = 52,
+					['height'] = 52,
+				},
+				{
+					['name'] = 'Rg_B3Spell_Menu_OptimizeSlotSize',
+					['x'] = 356,
+					['y'] = 0,
+					['width'] = 52,
+					['height'] = 52,
+				},
+			})
+		end
 	end
 
-	local searchBackgroundTop = B3Spell_DisableControlBar == 0 and 57 or (55 - B3Spell_Menu_SearchBackground_H) / 2
+	--Infinity UI++ searchbar adjustment
+	local defaultSeachTop = 57
+	if RgUISkin then
+		defaultSeachTop = 52
+	end
+
+	local searchBackgroundTop = B3Spell_DisableControlBar == 0 and defaultSeachTop or (55 - B3Spell_Menu_SearchBackground_H) / 2
 	B3Spell_CenterItemsX(
 	{
 		{
@@ -500,7 +545,10 @@ function B3Spell_InitializeSlots()
 		local createSlotHeader = function()
 			if not slotRowInfo.isFlowover then
 				if rowInfoMode == B3Spell_InfoModes.Spells then
-					B3Spell_CreateBam("B3NUM", numSequence, rowInfo.spellLevel - 1, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
+					--Infinity UI++ spell level bams
+					local nums = "B3NUM"
+					if RgUISkin then nums = "RGDNUMS" end
+					B3Spell_CreateBam(nums, numSequence, rowInfo.spellLevel - 1, currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
 				else
 					local iconDef = B3Spell_InfoModeIcons[rowInfoMode]
 					B3Spell_CreateSlotBamBam(iconDef[1], 0, iconDef[2], currentXOffset, currentYOffset, B3Spell_SlotSize, B3Spell_SlotSize)
@@ -575,7 +623,28 @@ function B3Spell_InitializeSlots()
 
 	-- Creating the options button as a template so that it renders above the slots. If the user is careless they can cover the options
 	-- button by moving the slots area when the control bar is disabled, (which allows the slots to be placed near the top of the screen).
-	B3Spell_CreateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_OptionsButton", Infinity_GetScreenSize() - B3Spell_SidebarWidth - 74, nil, nil, nil)
+	
+	--Infinity UI++ uses own options button
+	if not RgUISkin then
+		B3Spell_CreateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_OptionsButton", Infinity_GetScreenSize() - B3Spell_SidebarWidth - 74, 0, 72, 55)
+	else
+		local w, h = Infinity_GetScreenSize()
+		if B3Spell_AlwaysOpen == 0 then
+			if RgIsModernHud == 1 then
+				B3Spell_CreateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_OptionsButton", w- 35, 0, 30, 30)
+			else
+				if RgUISkin == 0 then
+					B3Spell_CreateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_OptionsButton", w - 38, h - 34, 20, 20)
+				elseif  RgUISkin == 1 then
+					B3Spell_CreateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_OptionsButton", w - 37, h - 39, 20, 20)
+				elseif  RgUISkin == 2 then
+					B3Spell_CreateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_OptionsButton", w - 35, h - 31, 20, 20)
+				elseif  RgUISkin == 3 then
+					B3Spell_CreateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_OptionsButton", w - 38, h - 26, 20, 20)
+				end
+			end
+		end
+	end
 end
 
 ------------------
@@ -1085,10 +1154,10 @@ function B3Spell_CreateSlotBam(isGreen, x, y, w, h)
 	local slotFrame
 
 	if RgUISkin then
-		-- Infinity UI++
-		slotBam = isGreen and "B3SLOTG" or "rgdslot"
+		-- Infinity UI++ adjustments
+		slotBam = isGreen and "rgdb3slg" or "rgdb3sl"
 		slotSequence = RgUISkin
-		slotFrame = 0
+		slotFrame = 1
 	else
 		slotBam = isGreen and "B3SLOTG" or "B3SLOT"
 		slotSequence = 1
@@ -1201,9 +1270,9 @@ function B3Spell_GetNumSequence()
 	if RgUISkin then
 		-- Infinity UI++
 		return ({
-			[0] = 2, -- BG:EE - Dragonspear
-			[1] = 4, -- IWD:EE
-			[2] = 0, -- BG:EE - Grey Stone
+			[0] = 0, -- BG:EE - Dragonspear
+			[1] = 1, -- IWD:EE
+			[2] = 2, -- BG:EE - Grey Stone
 			[3] = 3, -- BG2:EE
 		})[RgUISkin]
 	else
@@ -1395,6 +1464,11 @@ end
 function B3Spell_Menu_SlotSizeSlider_Action()
 	B3Spell_SlotSize = B3Spell_SlotSizeMinimum + B3Spell_SlotSizeSlider
 	B3Spell_SliderChangeQueued = true
+	
+	--Infinity UI++ save settings to baldur.lua
+	if RgUISkin then
+		Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Slot Size Slider', B3Spell_SlotSizeSlider)
+	end
 end
 
 function B3Spell_Menu_SlotSizeSlider_Settings()
@@ -1941,7 +2015,14 @@ function B3Spell_Menu_Options_OnOpen()
 	local backgroundHeight = 2 * innerYOffset + maxColumnHeight
 	local startingX = (screenW - backgroundWidth) / 2
 	local startingY = (screenH - backgroundHeight) / 2
-	Infinity_SetArea("B3Spell_Menu_Options_OptionsBackground", startingX, startingY, backgroundWidth, backgroundHeight)
+	
+	--Infinity UI++ options background
+	if not RgUISkin then
+		Infinity_SetArea("B3Spell_Menu_Options_OptionsBackground", startingX, startingY, backgroundWidth, backgroundHeight)
+	else
+		Infinity_SetArea("Rg_B3Spell_Menu_Options_OptionsBackground", startingX, startingY, backgroundWidth, backgroundHeight)
+	end
+	
 
 	local curColumnX = startingX + innerXOffset
 
@@ -2085,6 +2166,14 @@ function B3Spell_Menu_Options_TEMPLATE_Toggle_Action()
 	optionData.toggleState = newToggleState
 
 	local forceOthers = optionData.forceOthers
+	
+	--Infinity UI++ overrides force optimize slot size on always open mode, instead displays confirmation prompt
+	--comment: this is not a nice code, if too much punk, scrap it
+	if instanceId == 3 and RgUISkin and B3Spell_AlwaysOpen == 1 and B3Spell_AutomaticallyOptimizeSlotSize == 1 then
+		popup2Button('RG_B3_DISABLE_OPTMIZE', 'NO_BUTTON', function() B3Spell_InstanceIDs['B3Spell_Menu_Options']['TEMPLATE_B3Spell_Menu_Options_Toggle'].instanceData[3].optionData.toggleState = 2; B3Spell_AutomaticallyOptimizeSlotSize = 1 end, 'YES_BUTTON')
+		forceOthers = nil
+	end
+	
 	if forceOthers then
 
 		for _, forceEntry in ipairs(forceOthers[optionData.toggleState] or {}) do

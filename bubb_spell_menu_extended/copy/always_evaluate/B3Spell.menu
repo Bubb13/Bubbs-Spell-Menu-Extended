@@ -90,40 +90,48 @@ menu
 		scaleToClip
 		-- X, Y, W, H set via Infinity_SetArea
 	}
-	
-	--Infinity UI++ elements
+
+	----------------------------------
+	-- START Infinity UI++ elements --
+	----------------------------------
+
 	slider
 	{
-		name        "Rg_B3Spell_Menu_SlotSizeSlider"
-		enabled     "B3Spell_Menu_SlotSizeSlider_Enabled()"
-		position    "B3Spell_SlotSizeSlider"
+		name "Rg_B3Spell_Menu_SlotSizeSlider"
+		enabled "B3Spell_Menu_SlotSizeSlider_Enabled()"
+		position "B3Spell_SlotSizeSlider"
 		tooltip lua "B3Spell_Menu_SlotSizeSlider_Tooltip()"
-		action      "B3Spell_Menu_SlotSizeSlider_Action()"
-		bam     	"RGDSLDRS"
+		action "B3Spell_Menu_SlotSizeSlider_Action()"
+		bam "RGDSLDRS"
 		sequence lua "RgUISkin"
 		frame 1
-		sliderBackground 'RGDSLID2'
+		sliderBackground "RGDSLID2"
 		settings lua "B3Spell_Menu_SlotSizeSlider_Settings()"
 		scaleToClip
 	}
+
 	label
 	{
-		name     "Rg_B3Spell_Menu_OptimizeSlotSizeBackground"
-		enabled  "B3Spell_Menu_OptimizeSlotSize_Enabled()"
-		bam       "rgdslot3"
+		name "Rg_B3Spell_Menu_OptimizeSlotSizeBackground"
+		enabled "B3Spell_Menu_OptimizeSlotSize_Enabled()"
+		bam "rgdslot3"
 		sequence lua "RgUISkin"
 		scaleToClip
 	}
+
 	button
 	{
-		name     "Rg_B3Spell_Menu_OptimizeSlotSize"
-		action   "B3Spell_Menu_OptimizeSlotSize_Action()"
-		enabled  "B3Spell_Menu_OptimizeSlotSize_Enabled()"
+		name "Rg_B3Spell_Menu_OptimizeSlotSize"
+		action "B3Spell_Menu_OptimizeSlotSize_Action()"
+		enabled "B3Spell_Menu_OptimizeSlotSize_Enabled()"
 		tooltip lua "B3Spell_Tooltip_Optimize_Slot_Size"
-		bam       "RGDOPSLT"
+		bam "RGDOPSLT"
 		scaleToClip
 	}
-	
+
+	---------------------------------
+	-- /END Infinity UI++ elements --
+	---------------------------------
 
 	template
 	{
@@ -255,7 +263,8 @@ menu
 		-- X, Y, W, H set via Infinity_SetArea
 		rectangle 4
 	}
-	--Infinity UI++ options background
+
+	-- Infinity UI++ options background
 	label
 	{
 		name "Rg_B3Spell_Menu_Options_OptionsBackground"
@@ -281,7 +290,7 @@ menu
 		{
 			enabled true
 			frame lua "B3Spell_Menu_Options_TEMPLATE_Toggle_Frame()"
-			action    "B3Spell_Menu_Options_TEMPLATE_Toggle_Action()"
+			action "B3Spell_Menu_Options_TEMPLATE_Toggle_Action()"
 			bam lua "B3Spell_Menu_Options_TEMPLATE_Toggle_Bam"
 			sequence lua "B3Spell_Menu_Options_TEMPLATE_Toggle_Sequence"
 			scaleToClip
@@ -296,6 +305,7 @@ menu
 		bam lua "B3Spell_Menu_OptimizeSlotSize_Bam"
 		text lua "B3Spell_Tooltip_Select_Slots_Area"
 		text style "button"
+		pad 15 10 15 10
 		sequence lua "B3Spell_Menu_OptimizeSlotSize_Sequence()"
 		action "B3Spell_Menu_Options_SelectSlotArea_Action()"
 		scaleToClip
@@ -353,6 +363,7 @@ menu
 		bam lua "B3Spell_Menu_OptimizeSlotSize_Bam"
 		text lua "B3Spell_Tooltip_Accept"
 		text style "button"
+		pad 15 10 15 10
 		sequence lua "B3Spell_Menu_OptimizeSlotSize_Sequence()"
 		action "B3Spell_Menu_SelectSlotArea_Accept_Action()"
 		scaleToClip

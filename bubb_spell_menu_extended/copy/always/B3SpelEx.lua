@@ -622,13 +622,13 @@ function B3Spell_UpdateSlotPressedState()
 
 		if not data.didOffset then
 
+			local slotData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Bam"].instanceData[data.pairedSlotID]
+
 			if not RgUISkin then
-				local slotData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Bam"].instanceData[data.pairedSlotID]
 				slotData.bam = data.isGreen and "B3SLOTGD" or "B3SLOTD"
 			else
 				-- Infinity UI++
-				local slotData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Bam"].instanceData[data.pairedSlotID]
-				slotData.bam = data.isGreen and "rgdb3slx" or "rgdb3sld"
+				slotData.bam = data.isGreen and "RGDB3SLX" or "RGDB3SLD"
 			end
 
 			EEex_Menu_StoreTemplateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_Icon", data.pairedIconID, "B3Spell_StoredInstance")
@@ -640,13 +640,13 @@ function B3Spell_UpdateSlotPressedState()
 
 	elseif data.didOffset then
 
+		local slotData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Bam"].instanceData[data.pairedSlotID]
+
 		if not RgUISkin then
-			local slotData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Bam"].instanceData[data.pairedSlotID]
 			slotData.bam = data.isGreen and "B3SLOTG" or "B3SLOT"
 		else
 			-- Infinity UI++
-			local slotData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Bam"].instanceData[data.pairedSlotID]
-			slotData.bam = data.isGreen and "rgdb3slg" or "rgdb3sl"
+			slotData.bam = data.isGreen and "RGDB3SLG" or "RGDB3SL"
 		end
 
 		EEex_Menu_StoreTemplateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_Icon", data.pairedIconID, "B3Spell_StoredInstance")

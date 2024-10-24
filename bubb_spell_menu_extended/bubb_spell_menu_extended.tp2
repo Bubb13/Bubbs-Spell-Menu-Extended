@@ -1,6 +1,6 @@
-BACKUP ~bubb_spell_menu_extended/backup~
+BACKUP ~weidu_external/bubb_spell_menu_extended/backup~
 AUTHOR ~Bubb~
-VERSION ~v5.0.3~
+VERSION ~v5-EEex~
 
 AUTO_TRA ~bubb_spell_menu_extended/language/%s~
 LANGUAGE ~English~ ~english~ ~bubb_spell_menu_extended/language/english/setup.tra~

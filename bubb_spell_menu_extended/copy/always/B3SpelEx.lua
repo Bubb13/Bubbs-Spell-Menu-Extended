@@ -622,10 +622,13 @@ function B3Spell_UpdateSlotPressedState()
 
 		if not data.didOffset then
 
+			local slotData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Bam"].instanceData[data.pairedSlotID]
+
 			if not RgUISkin then
-				-- Infinity UI++ does not have slot-pressed frames
-				local slotData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Bam"].instanceData[data.pairedSlotID]
 				slotData.bam = data.isGreen and "B3SLOTGD" or "B3SLOTD"
+			else
+				-- Infinity UI++
+				slotData.bam = data.isGreen and "RGDB3SLX" or "RGDB3SLD"
 			end
 
 			EEex_Menu_StoreTemplateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_Icon", data.pairedIconID, "B3Spell_StoredInstance")
@@ -637,10 +640,13 @@ function B3Spell_UpdateSlotPressedState()
 
 	elseif data.didOffset then
 
+		local slotData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Bam"].instanceData[data.pairedSlotID]
+
 		if not RgUISkin then
-			-- Infinity UI++ does not have slot-pressed frames
-			local slotData = B3Spell_InstanceIDs["B3Spell_Menu"]["B3Spell_Menu_TEMPLATE_Bam"].instanceData[data.pairedSlotID]
 			slotData.bam = data.isGreen and "B3SLOTG" or "B3SLOT"
+		else
+			-- Infinity UI++
+			slotData.bam = data.isGreen and "RGDB3SLG" or "RGDB3SL"
 		end
 
 		EEex_Menu_StoreTemplateInstance("B3Spell_Menu", "B3Spell_Menu_TEMPLATE_Icon", data.pairedIconID, "B3Spell_StoredInstance")

@@ -9,18 +9,18 @@
 // M_B3Spel.lua //
 //////////////////
 
-@1 = ~Tamaño: ~                                       // %B3Spell_Tooltip_Slot_Size%
+@1 = ~Tamaño de ranura: ~                             // %B3Spell_Tooltip_Slot_Size%
 @2 = ~Auto-Pausa: ~                                   // %B3Spell_Tooltip_Auto_Pause%
 @3 = ~Centrar automáticamente la barra de búsqueda: ~ // %B3Spell_Tooltip_Automatically_Focus_Search_Bar%
-@4 = ~Optimizar automaticamente el tamaño: ~          // %B3Spell_Tooltip_Automatically_Optimize_Slot_Size%
-@5 = ~Fondo oscuro: ~                                 // %B3Spell_Tooltip_Darken_Background%
+@4 = ~Optimizar automáticamente el tamaño: ~          // %B3Spell_Tooltip_Automatically_Optimize_Slot_Size%
+@5 = ~Fondo ligeramente oscurecido: ~                 // %B3Spell_Tooltip_Darken_Background%
 @6 = ~Deshabilitar la barra deslizante: ~             // %B3Spell_Tooltip_Disable_Control_Bar%
-@7 = ~Deshabilitar la barra de busqueda: ~            // %B3Spell_Tooltip_Disable_Search_Bar%
+@7 = ~Deshabilitar la barra de búsqueda: ~            // %B3Spell_Tooltip_Disable_Search_Bar%
 @8 = ~Ignorar habilidades especiales: ~               // %B3Spell_Tooltip_Ignore_Special_Abilities%
-@9 = ~Modo oscuro: ~                                  // %B3Spell_Tooltip_Modal%
+@9 = ~Fondo bastantemente oscurecido: ~               // %B3Spell_Tooltip_Modal%
 @10 = ~Mostrar atajos de teclado: ~                   // %B3Spell_Tooltip_Show_Key_Bindings%
-@18 = ~Modo Superposición (Mantener abierto): ~       // %B3Spell_Tooltip_Overlay_Mode%
-@19 = ~Seleccionar ranuras~                           // %B3Spell_Tooltip_Select_Slots_Area%
+@18 = ~Modo superposición (Mantener abierto): ~       // %B3Spell_Tooltip_Overlay_Mode%
+@19 = ~Área de selección de ranuras~                  // %B3Spell_Tooltip_Select_Slots_Area%
 @20 = ~Aceptar~                                       // %B3Spell_Tooltip_Accept%
 @21 = ~Alineación de ranuras horizontal: ~            // %B3Spell_Tooltip_HorizontalSlotsAlignment%
 @22 = ~Izquierda: ~                                   // %B3Spell_Tooltip_Left%
@@ -29,7 +29,7 @@
 @25 = ~Alineación vertical de ranuras: ~              // %B3Spell_Tooltip_VerticalSlotsAlignment%
 @26 = ~Arriba: ~                                      // %B3Spell_Tooltip_Top%
 @27 = ~Abajo: ~                                       // %B3Spell_Tooltip_Bottom%
-@28 = ~Moverlas cabeceras de ranura a la derecha: ~   // %B3Spell_Tooltip_MoveSlotHeadersToTheRight%
+@28 = ~Mover cabeceras de ranuras a la derecha: ~     // %B3Spell_Tooltip_MoveSlotHeadersToTheRight%
 
 //////////////////
 // B3Spell.menu //
@@ -37,8 +37,8 @@
 
 @11 = ~Optimizar tamaño~              // %B3Spell_Tooltip_Optimize_Slot_Size%
 @12 = ~Opciones de Bubb's Spell Menu~ // %B3Spell_Tooltip_Bubbs_Spell_Menu_Options%
-@13 = ~Magias de mago~                // %B3Spell_Tooltip_Mage_Spells%
-@14 = ~Todas las magias~              // %B3Spell_Tooltip_All_Spells%
-@15 = ~Magias de clérigo~             // %B3Spell_Tooltip_Cleric_Spells%
+@13 = ~Conjuros de mago~              // %B3Spell_Tooltip_Mage_Spells%
+@14 = ~Todos los conjuros~            // %B3Spell_Tooltip_All_Spells%
+@15 = ~Conjuros de clérigo~           // %B3Spell_Tooltip_Cleric_Spells%
 @16 = ~Alinear a la izquierda~        // %B3Spell_Tooltip_Align_Left%
 @17 = ~Alinear al centro~             // %B3Spell_Tooltip_Align_Center%

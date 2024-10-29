@@ -454,14 +454,14 @@ function B3Spell_CastResrefInternal(resref)
 end
 
 -- Used in M_B3Spel.lua
-function B3Spell_SetQuickSlotToResref(resref)
+function B3Spell_SetQuickSlotToResref(resref, quickButtonType)
 
 	if worldScreen == e:GetActiveEngine() then
 
 		local object = EEex_GameObject_GetSelected()
 		if object:isSprite() then
 
-			local m_CGameButtonList = object:GetQuickButtons(2, 0)
+			local m_CGameButtonList = object:GetQuickButtons(quickButtonType, 0)
 
 			EEex_Utility_IterateCPtrList(m_CGameButtonList, function(m_CButtonData)
 				local m_res = m_CButtonData.m_abilityId.m_res:get()
@@ -550,7 +550,7 @@ function B3Spell_FillFromMemorized()
 		end
 	end
 
-	local fillFromQuickButtons = function(quickButtons, actualModeType)
+	local fillFromQuickButtons = function(quickButtons, actualModeType, quickButtonType)
 
 		EEex_Utility_IterateCPtrList(quickButtons, function(m_CButtonData)
 
@@ -611,9 +611,9 @@ function B3Spell_FillFromMemorized()
 					end
 
 					-- if B3Spell_Mode == B3Spell_Modes.Monolithic then
-					-- 	if actualModeType == B3Spell_Modes.Normal then
+					-- 	if quickButtonType == 2 then
 					-- 		levelToFill.hasNormalHeader = true
-					-- 	elseif actualModeType == B3Spell_Modes.Innate then
+					-- 	elseif quickButtonType == 4 then
 					-- 		levelToFill.hasInnateHeader = true
 					-- 	end
 					-- end
@@ -621,28 +621,29 @@ function B3Spell_FillFromMemorized()
 					local slotOrderType = B3Spell_SlotOrderTypes.Group1
 					local key = spellNameToKey[name]
 
-					if B3Spell_Mode == B3Spell_Modes.Monolithic then
+					if B3Spell_Mode == B3Spell_Modes.Monolithic or B3Spell_Mode == B3Spell_Modes.Quick then
 						if B3Spell_MonolithicDisplaySortMode == B3Spell_MonolithicDisplaySortModes.InnatesFirst then
-							slotOrderType = actualModeType == B3Spell_Modes.Innate and B3Spell_SlotOrderTypes.Group1 or B3Spell_SlotOrderTypes.Group2
+							slotOrderType = quickButtonType == 4 and B3Spell_SlotOrderTypes.Group1 or B3Spell_SlotOrderTypes.Group2
 						elseif B3Spell_MonolithicDisplaySortMode == B3Spell_MonolithicDisplaySortModes.SpellsFirst then
-							slotOrderType = actualModeType == B3Spell_Modes.Normal and B3Spell_SlotOrderTypes.Group1 or B3Spell_SlotOrderTypes.Group2
+							slotOrderType = quickButtonType == 2 and B3Spell_SlotOrderTypes.Group1 or B3Spell_SlotOrderTypes.Group2
 						end
 					end
 
 					local spellData = {
-						["slotOrderType"]       = slotOrderType,
-						["spellCastableCount"]  = B3Spell_Mode ~= B3Spell_Modes.Opcode214 and m_CButtonData.m_count or 0,
-						["spellDescription"]    = spellHeader.genericDescription,
-						["spellDisabled"]       = m_CButtonData.m_bDisabled == 1,
-						["spellIcon"]           = m_CButtonData.m_icon:get(),
-						["spellKeyBindingName"] = key and B3Spell_GetKeyBindingKeyName(key) or "",
-						["spellLevel"]          = level,
-						["spellModeType"]       = actualModeType,
-						["spellName"]           = name,
-						["spellNameStrref"]     = nameStrref,
-						["spellRealNameStrref"] = spellHeader.genericName,
-						["spellResref"]         = resref,
-						["spellType"]           = spellHeader.itemType,
+						["slotOrderType"]        = slotOrderType,
+						["spellCastableCount"]   = B3Spell_Mode ~= B3Spell_Modes.Opcode214 and m_CButtonData.m_count or 0,
+						["spellDescription"]     = spellHeader.genericDescription,
+						["spellDisabled"]        = m_CButtonData.m_bDisabled == 1,
+						["spellIcon"]            = m_CButtonData.m_icon:get(),
+						["spellKeyBindingName"]  = key and B3Spell_GetKeyBindingKeyName(key) or "",
+						["spellLevel"]           = level,
+						["spellModeType"]        = actualModeType,
+						["spellName"]            = name,
+						["spellNameStrref"]      = nameStrref,
+						["spellQuickButtonType"] = quickButtonType,
+						["spellRealNameStrref"]  = spellHeader.genericName,
+						["spellResref"]          = resref,
+						["spellType"]            = spellHeader.itemType,
 					}
 
 					table.insert(levelToFill, spellData)
@@ -662,16 +663,29 @@ function B3Spell_FillFromMemorized()
 		end)
 	end
 
-	if B3Spell_Mode == B3Spell_Modes.Opcode214 then
-		fillFromQuickButtons(sprite:GetInternalButtonList(), B3Spell_Modes.Opcode214)
-	elseif B3Spell_Mode == B3Spell_Modes.Innate then
-		fillFromQuickButtons(sprite:GetQuickButtons(4, 0), B3Spell_Modes.Innate)
-	elseif B3Spell_Mode == B3Spell_Modes.Monolithic then
-		fillFromQuickButtons(sprite:GetQuickButtons(2, 0), B3Spell_Modes.Normal)
-		fillFromQuickButtons(sprite:GetQuickButtons(4, 0), B3Spell_Modes.Innate)
-	else
-		fillFromQuickButtons(sprite:GetQuickButtons(2, 0), B3Spell_Mode)
+	local fillFromQuickButtonType = function(quickButtonType, actualModeType)
+		fillFromQuickButtons(sprite:GetQuickButtons(quickButtonType, 0), actualModeType, quickButtonType)
 	end
+
+	({
+		[B3Spell_Modes.Normal] = function()
+			fillFromQuickButtonType(2, B3Spell_Modes.Normal)
+		end,
+		[B3Spell_Modes.Innate] = function()
+			fillFromQuickButtonType(4, B3Spell_Modes.Innate)
+		end,
+		[B3Spell_Modes.Quick] = function()
+			fillFromQuickButtonType(2, B3Spell_Modes.Quick)
+			fillFromQuickButtonType(4, B3Spell_Modes.Quick)
+		end,
+		[B3Spell_Modes.Opcode214] = function()
+			fillFromQuickButtons(sprite:GetInternalButtonList(), B3Spell_Modes.Opcode214)
+		end,
+		[B3Spell_Modes.Monolithic] = function()
+			fillFromQuickButtonType(2, B3Spell_Modes.Normal)
+			fillFromQuickButtonType(4, B3Spell_Modes.Innate)
+		end,
+	})[B3Spell_Mode]()
 
 	-- for _, levelToFill in ipairs(B3Spell_SpellListInfo) do
 	-- 	if levelToFill.hasNormalHeader then

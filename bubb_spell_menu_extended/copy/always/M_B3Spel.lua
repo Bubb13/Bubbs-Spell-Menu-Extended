@@ -1164,10 +1164,8 @@ function B3Spell_CastSpellData(spellData)
 	local spellModeType = spellData.spellModeType
 	local castFunction = (B3Spell_CheatMode and B3Spell_CheatCastFunctions or B3Spell_CastFunctions)[spellModeType]
 
-	if spellModeType == B3Spell_Modes.Normal then
-		castFunction(spellData.spellResref, 2)
-	elseif spellModeType == B3Spell_Modes.Innate then
-		castFunction(spellData.spellResref, 4)
+	if spellModeType == B3Spell_Modes.Normal or spellModeType == B3Spell_Modes.Innate or spellModeType == B3Spell_Modes.Quick then
+		castFunction(spellData.spellResref, spellData.spellQuickButtonType)
 	else
 		castFunction(spellData.spellResref)
 	end
@@ -1256,7 +1254,8 @@ function B3Spell_CreateSlotBamBam(bam, sequence, frame, x, y, w, h)
 end
 
 function B3Spell_ShouldInnateMarkerBeEnabled(spellData)
-	return B3Spell_Mode == B3Spell_Modes.Monolithic and spellData.spellModeType == B3Spell_Modes.Innate
+	return (B3Spell_Mode == B3Spell_Modes.Monolithic or B3Spell_Mode == B3Spell_Modes.Quick)
+		and spellData.spellQuickButtonType == 4
 end
 
 function B3Spell_CreateSpell(data, isGreen, x, y, w, h)

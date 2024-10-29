@@ -1431,6 +1431,13 @@ function B3Spell_Menu_OnClose()
 		worldScreen:TogglePauseGame(true)
 	end
 
+	-- Make sure the quickspell slot being configured is deselected when closing the spell menu.
+	-- Overlay mode maintains the highlight because it only cancels the selection mode when
+	-- the button is deselected manually.
+	if B3Spell_AlwaysOpen == 0 and B3Spell_Mode == B3Spell_Modes.Quick then
+		B3Spell_CheckUnselectQuickSpellButton()
+	end
+
 	B3Spell_ActionbarDisable = false
 end
 
@@ -1452,6 +1459,12 @@ end
 
 -- Used to update slots based on current search field
 function B3Spell_Menu_Tick()
+
+	-- Hack to detect whether the player did something to deselect the quickspell slot that's being configured.
+	-- Treat this as an attempt to cancel setting the quickspell.
+	if B3Spell_AlwaysOpen == 1 and B3Spell_Mode == B3Spell_Modes.Quick then
+		B3Spell_CheckUserCancelledQuickSpellMode()
+	end
 
 	if B3Spell_AutoFocusSearchBar == 1 then
 		B3Spell_Menu_AttemptFocusSearchBar()

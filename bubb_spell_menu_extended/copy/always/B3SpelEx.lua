@@ -71,10 +71,26 @@ EEex_Key_AddPressedListener(B3Spell_KeyPressedListener)
 --------------------
 
 function B3Spell_CheckActionbarButtonHighlightState(mode)
-	if mode == B3Spell_Modes.Quick then
+	if B3Spell_AlwaysOpen == 1 and mode == B3Spell_Modes.Quick then
 		-- If quick-spell selection was resumed, (say, if the sprite was deselected then selected again),
 		-- highlight the corresponding quick spell button again.
 		B3Spell_HighlightQuickSpellButton()
+	end
+end
+
+function B3Spell_CheckUserCancelledQuickSpellMode()
+	local actionbarArray = EEex_Actionbar_GetArray()
+	local expected = EEex_Actionbar_ButtonType.QUICK_SPELL_1 + actionbarArray.m_quickButtonToConfigure
+	if actionbarArray.m_nSelectedButton ~= expected and Infinity_IsMenuOnStack("B3Spell_Menu") then
+		B3Spell_LaunchSpellMenu(B3Spell_PreviousMode, B3Spell_SpriteID)
+	end
+end
+
+function B3Spell_CheckUnselectQuickSpellButton()
+	local actionbarArray = EEex_Actionbar_GetArray()
+	local expected = EEex_Actionbar_ButtonType.QUICK_SPELL_1 + actionbarArray.m_quickButtonToConfigure
+	if actionbarArray.m_nSelectedButton == expected then
+		actionbarArray.m_nSelectedButton = 100
 	end
 end
 

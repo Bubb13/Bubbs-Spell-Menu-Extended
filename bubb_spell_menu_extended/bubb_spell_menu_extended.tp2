@@ -230,6 +230,7 @@ REQUIRE_PREDICATE (MOD_IS_INSTALLED ~EEex.tp2~ ~0~) ~EEex not installed.~
 	SPRINT B3Spell_Tooltip_MonolithicDisplaySortModeInnatesFirst @31
 	SPRINT B3Spell_Tooltip_MonolithicDisplaySortModeSpellsFirst @32
 	SPRINT B3Spell_Tooltip_MonolithicDisplayModePurelyAlphabetical @33
+	SPRINT B3Spell_Tooltip_Clear @34
 	COPY ~bubb_spell_menu_extended/copy/always_evaluate~ ~override~ EVALUATE_BUFFER
 
 	COPY ~%bam_folder%~ ~override~

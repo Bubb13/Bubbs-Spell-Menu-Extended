@@ -36,6 +36,7 @@ B3Spell_Tooltip_MonolithicDisplaySortMode = "%B3Spell_Tooltip_MonolithicDisplayS
 B3Spell_Tooltip_MonolithicDisplaySortModeInnatesFirst = "%B3Spell_Tooltip_MonolithicDisplaySortModeInnatesFirst%"
 B3Spell_Tooltip_MonolithicDisplaySortModeSpellsFirst = "%B3Spell_Tooltip_MonolithicDisplaySortModeSpellsFirst%"
 B3Spell_Tooltip_MonolithicDisplayModePurelyAlphabetical = "%B3Spell_Tooltip_MonolithicDisplayModePurelyAlphabetical%"
+B3Spell_Tooltip_Clear = "%B3Spell_Tooltip_Clear%"
 
 ---------------------------------
 -- WeiDU-defined Lua Constants --

@@ -389,6 +389,15 @@ function B3Spell_SetQuickSlot(m_CButtonData, nButton, nType)
 end
 
 -- Internal to this file
+function B3Spell_ClearQuickSlot(nButton, nType)
+	EEex_RunWithStackManager({
+		{ ["name"] = "emptyButtonData", ["struct"] = "CButtonData" }, },
+		function(manager)
+			EEex_CInfButtonArray.SetQuickSlot(manager:getUD("emptyButtonData"), nButton, nType)
+		end)
+end
+
+-- Internal to this file
 function B3Spell_UseCGameButtonList(m_CGameSprite, m_CGameButtonList, resref, offInternal)
 
 	local found = false
@@ -527,19 +536,19 @@ function B3Spell_FillFromMemorized()
 
 	local spellNameToKey = B3Spell_CacheSpellNameToKeyBindings()
 
-	local buttonType = nil
+	local abilitiesLevel = {
+		["infoMode"] = B3Spell_InfoModes.Abilities,
+	}
+
 	if B3Spell_Mode == B3Spell_Modes.Innate or B3Spell_Mode == B3Spell_Modes.Monolithic then
 
 		-- Cleric-thief abilities row
 		if sprite:getClass() == 15 then
 
 			local thievingTooltip = Infinity_FetchString(0xF000E2)
-			local levelToFill = {
-				["infoMode"] = B3Spell_InfoModes.Abilities,
-			}
 
 			if not B3Spell_IsThievingDisabled() then
-				table.insert(levelToFill, {
+				table.insert(abilitiesLevel, {
 					["bam"] = "GUIBTACT",
 					["frame"] = 26,
 					["disableTint"] = false,
@@ -553,7 +562,7 @@ function B3Spell_FillFromMemorized()
 					end,
 				})
 			else
-				table.insert(levelToFill, {
+				table.insert(abilitiesLevel, {
 					["bam"] = "GUIBTACT",
 					["frame"] = 26,
 					["disableTint"] = true,
@@ -561,9 +570,32 @@ function B3Spell_FillFromMemorized()
 					["func"] = function() end,
 				})
 			end
-
-			table.insert(B3Spell_SpellListInfo, levelToFill)
 		end
+
+	elseif B3Spell_Mode == B3Spell_Modes.Quick then
+
+		-- Button to clear a quickspell
+		table.insert(abilitiesLevel, {
+			["bam"] = "GUIBTACT",
+			["frame"] = 58,
+			["disableTint"] = false,
+			["tooltip"] = B3Spell_Tooltip_Clear,
+			["func"] = function()
+
+				B3Spell_ClearQuickSlot(EEex_Actionbar_GetArray().m_quickButtonToConfigure, 2)
+				B3Spell_CheckUnselectQuickSpellButton()
+
+				if B3Spell_AlwaysOpen == 0 then
+					Infinity_PopMenu("B3Spell_Menu")
+				else
+					B3Spell_LaunchSpellMenu(B3Spell_PreviousMode, B3Spell_SpriteID)
+				end
+			end,
+		})
+	end
+
+	if abilitiesLevel[1] ~= nil then
+		table.insert(B3Spell_SpellListInfo, abilitiesLevel)
 	end
 
 	local fillFromQuickButtons = function(quickButtons, actualModeType, quickButtonType)

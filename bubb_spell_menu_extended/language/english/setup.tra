@@ -35,6 +35,7 @@
 @31 = ~Innates First: ~                   // %B3Spell_Tooltip_MonolithicDisplaySortModeInnatesFirst%
 @32 = ~Spells First: ~                    // %B3Spell_Tooltip_MonolithicDisplaySortModeSpellsFirst%
 @33 = ~Purely Alphabetical: ~             // %B3Spell_Tooltip_MonolithicDisplayModePurelyAlphabetical%
+@34 = ~Clear~                             // %B3Spell_Tooltip_Clear%
 
 //////////////////
 // B3Spell.menu //

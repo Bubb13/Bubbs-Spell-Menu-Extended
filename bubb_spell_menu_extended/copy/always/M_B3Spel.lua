@@ -286,9 +286,10 @@ function B3Spell_RefreshMenu()
 	B3Spell_InitializeSlots(B3Spell_AutomaticallyOptimizeSlotSize)
 end
 
-function B3Spell_GetTransferMode(spriteID)
-	return (spriteID == B3Spell_SpriteID or not B3Spell_ForbiddenTransferModes[B3Spell_Mode])
-		and B3Spell_Mode            -- Opening the previous mode
+function B3Spell_GetTransferMode(spriteID, revert)
+	local mode = not revert and B3Spell_Mode or B3Spell_PreviousMode
+	return (spriteID == B3Spell_SpriteID or not B3Spell_ForbiddenTransferModes[mode])
+		and mode                    -- Opening the previous mode
 		or B3Spell_GetDefaultMode() -- Previous mode was forbidden, fallback to normal...
 end
 

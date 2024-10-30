@@ -119,7 +119,9 @@ function B3Spell_ReactToActionbar(config, state, manualReopen)
 
 	local spriteID = selectedList.m_pNodeHead.data
 
+	-- Select Quick Weapon      = 20, State(s) 101
 	-- Cast Spell               = 21, State(s) 102(Quick) and 103
+	-- Select Quick Item        = 22, State(s) 104
 	-- Special Abilities        = 23, State(s) 106
 	-- Opcode #214              = 28, State(s) 111
 	-- Cast Spell - Cleric/Mage = 30, State(s) 113 and 114(Quick)
@@ -146,7 +148,12 @@ function B3Spell_ReactToActionbar(config, state, manualReopen)
 		else
 			-- Actionbar isn't in a state that opens the spell menu, and yet I'm launching... I must
 			-- be operating under the "Always Open" option - attempt to open the previous mode.
-			toReturn = B3Spell_GetTransferMode(spriteID)
+
+			-- Revert when a quick-weapon or quick-item selection state is opened, since they also
+			-- use CInfButtonArray::m_quickButtonToConfigure, and thus prevent the current quickspell
+			-- selection from operating correctly.
+			local revert = (state == 101 or state == 104) and B3Spell_Mode == B3Spell_Modes.Quick
+			toReturn = B3Spell_GetTransferMode(spriteID, revert)
 		end
 
 		B3Spell_CheckActionbarButtonHighlightState(toReturn)

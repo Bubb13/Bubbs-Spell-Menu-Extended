@@ -1,0 +1,49 @@
+
+//////////////////////////////////
+// bubb_spell_menu_extended.tp2 //
+//////////////////////////////////
+
+@0 = ~Bubb的法术菜单扩展~
+
+//////////////////
+// M_B3Spel.lua //
+//////////////////
+
+@1 = ~槽位大小：~                        // %B3Spell_Tooltip_Slot_Size%
+@2 = ~自动暂停：~                       // %B3Spell_Tooltip_Auto_Pause%
+@3 = ~自动选中搜索栏：~   // %B3Spell_Tooltip_Automatically_Focus_Search_Bar%
+@4 = ~自动优化槽位大小：~ // %B3Spell_Tooltip_Automatically_Optimize_Slot_Size%
+@5 = ~暗化背景：~                // %B3Spell_Tooltip_Darken_Background%
+@6 = ~禁用控制栏：~              // %B3Spell_Tooltip_Disable_Control_Bar%
+@7 = ~禁用搜索栏：~               // %B3Spell_Tooltip_Disable_Search_Bar%
+@8 = ~忽略特殊能力：~         // %B3Spell_Tooltip_Ignore_Special_Abilities%
+@9 = ~样式：~                            // %B3Spell_Tooltip_Modal%
+@10 = ~显示已绑定快捷键：~               // %B3Spell_Tooltip_Show_Key_Bindings%
+@18 = ~覆盖模式（持续开启）：~        // %B3Spell_Tooltip_Overlay_Mode%
+@19 = ~选择槽位区域~                 // %B3Spell_Tooltip_Select_Slots_Area%
+@20 = ~接受~                            // %B3Spell_Tooltip_Accept%
+@21 = ~槽位水平对齐：~      // %B3Spell_Tooltip_HorizontalSlotsAlignment%
+@22 = ~左：~                            // %B3Spell_Tooltip_Left%
+@23 = ~中：~                          // %B3Spell_Tooltip_Center%
+@24 = ~右：~                           // %B3Spell_Tooltip_Right%
+@25 = ~槽位垂直对齐：~        // %B3Spell_Tooltip_VerticalSlotsAlignment%
+@26 = ~上：~                             // %B3Spell_Tooltip_Top%
+@27 = ~下：~                          // %B3Spell_Tooltip_Bottom%
+@28 = ~将标题槽位移至右边~  // %B3Spell_Tooltip_MoveSlotHeadersToTheRight%
+@29 = ~统一显示模式：~         // %B3Spell_Tooltip_MonolithicDisplayMode%
+@30 = ~排序方式：~                       // %B3Spell_Tooltip_MonolithicDisplaySortMode%
+@31 = ~特殊能力优先：~                   // %B3Spell_Tooltip_MonolithicDisplaySortModeInnatesFirst%
+@32 = ~法术优先：~                    // %B3Spell_Tooltip_MonolithicDisplaySortModeSpellsFirst%
+@33 = ~字母顺序：~             // %B3Spell_Tooltip_MonolithicDisplayModePurelyAlphabetical%
+
+//////////////////
+// B3Spell.menu //
+//////////////////
+
+@11 = ~优化槽位大小~        // %B3Spell_Tooltip_Optimize_Slot_Size%
+@12 = ~Bubb的法术菜单设置~ // %B3Spell_Tooltip_Bubbs_Spell_Menu_Options%
+@13 = ~法师法术~               // %B3Spell_Tooltip_Mage_Spells%
+@14 = ~所有法术~                // %B3Spell_Tooltip_All_Spells%
+@15 = ~牧师神术~             // %B3Spell_Tooltip_Cleric_Spells%
+@16 = ~左对齐~                // %B3Spell_Tooltip_Align_Left%
+@17 = ~居中对齐~              // %B3Spell_Tooltip_Align_Center%

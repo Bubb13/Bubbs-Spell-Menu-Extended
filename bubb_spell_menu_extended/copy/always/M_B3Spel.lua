@@ -143,6 +143,7 @@ B3Spell_DisableSearchBar              = Infinity_GetINIValue('Bubbs Spell Menu E
 -- 0 = Left, 1 = Center, 2 = Right
 B3Spell_HorizontalAlignment           = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Horizontal Alignment',                                                           1 )
 B3Spell_IgnoreSpecialAbilities        = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Ignore Special Abilities',                                                       0 )
+B3Spell_KeepPortraitsFunctional       = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Keep Portraits Functional',                                                      1 )
 B3Spell_Modal                         = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Modal',                                                                          1 )
 B3Spell_MonolithicDisplayMode         = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Monolithic Display Mode',                                                        0 )
 B3Spell_MonolithicDisplaySortMode     = Infinity_GetINIValue('Bubbs Spell Menu Extended', 'Monolithic Display Sort Mode',     B3Spell_MonolithicDisplaySortModes.InnatesFirst )
@@ -646,7 +647,7 @@ function B3Spell_InitializeSlots(optimizeSlotSize)
 		end
 	end
 
-	if B3Spell_AlwaysOpen == 0 then
+	if B3Spell_KeepPortraitsFunctional == 1 and B3Spell_AlwaysOpen == 0 then
 		B3Spell_CreatePortraits()
 	end
 
@@ -1845,6 +1846,11 @@ B3Spell_Options = {
 					{"MonolithicDisplayMode", false},
 				},
 			},
+		},
+		{"KeepPortraitsFunctional", B3Spell_Tooltip_Keep_Portraits_Functional,
+			["set"] = function(newVal) B3Spell_KeepPortraitsFunctional = newVal end,
+			["get"] = function() return B3Spell_KeepPortraitsFunctional end,
+			["write"] = function() Infinity_SetINIValue('Bubbs Spell Menu Extended', 'Keep Portraits Functional', B3Spell_KeepPortraitsFunctional) end,
 		},
 		{"Modal", B3Spell_Tooltip_Modal,
 			["set"] = function(newVal) B3Spell_Modal = newVal end,

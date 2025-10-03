@@ -25,22 +25,17 @@ function B3Spell_CreateInstance(menuName, templateName, x, y, w, h)
 	local newID = entry.maxID + 1
 	entry.maxID = newID
 
-	local instanceEntry = {["id"] = newID}
-	entry.instanceData[newID] = instanceEntry
+	local uiItem = EEex_Menu_InjectTemplateInstance(menuName, templateName, newID, x, y, w, h)
 
-	local oldAnimationID = currentAnimationID
-	currentAnimationID = newID
-	Infinity_InstanceAnimation(templateName, nil, x, y, w, h, nil, nil)
-	currentAnimationID = oldAnimationID
+	local instanceEntry = {["id"] = newID, ["uiItem"] = uiItem}
+	entry.instanceData[newID] = instanceEntry
 
 	return instanceEntry
 end
 
 function B3Spell_DestroyInstances(menuName)
+	EEex_Menu_DestroyAllTemplates(menuName)
 	for templateName, entry in pairs(B3Spell_InstanceIDs[menuName] or {}) do
-		for i = 1, entry.maxID, 1 do
-			Infinity_DestroyAnimation(templateName, i)
-		end
 		entry.maxID = 0
 		entry.instanceData = {}
 	end
@@ -649,6 +644,10 @@ function B3Spell_InitializeSlots(optimizeSlotSize)
 		else
 			currentYOffset = currentYOffset + B3Spell_SlotSize + B3Spell_SlotsGapY
 		end
+	end
+
+	if B3Spell_AlwaysOpen == 0 then
+		B3Spell_CreatePortraits()
 	end
 
 	-- Creating the options button as a template so that it renders above the slots. If the user is careless they can cover the options

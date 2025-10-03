@@ -1,5 +1,11 @@
 
+-------------
+-- Globals --
+-------------
+
 B3Spell_DebugDisable = false
+B3Spell_PortraitTemplates = {}
+B3Spell_PortraitTemplatesI = 0
 
 -----------------
 -- Keybindings --
@@ -372,8 +378,35 @@ function B3Spell_InstallActionbarEnabledHook()
 		end
 		item = item.next
 	end
+
+	B3Spell_PortraitTemplates = {}
+	B3Spell_PortraitTemplatesI = 0
+
+	local item = EEex_Menu_Find("RIGHT_SIDEBAR").items
+	while item do
+		if item.button.portrait then
+
+			B3Spell_PortraitTemplatesI = B3Spell_PortraitTemplatesI + 1
+			local templateName = "B3Spell_PortraitTemplate"..B3Spell_PortraitTemplatesI
+
+			B3Spell_PortraitTemplates[B3Spell_PortraitTemplatesI] = {
+				["uiItem"] = item,
+				["templateName"] = templateName,
+			}
+
+			EEex_Menu_CreateTemplateFromCopy("B3Spell_Menu", templateName, item)
+		end
+		item = item.next
+	end
 end
 EEex_Menu_AddMainFileLoadedListener(B3Spell_InstallActionbarEnabledHook)
+
+function B3Spell_CreatePortraits()
+	for _, portraitEntry in ipairs(B3Spell_PortraitTemplates) do
+		local x, y, w, h = portraitEntry.uiItem:getArea()
+		B3Spell_CreateInstance("B3Spell_Menu", portraitEntry.templateName, x, y, w, h)
+	end
+end
 
 ---------------------------------
 -- Softcoded Actionbar Actions --

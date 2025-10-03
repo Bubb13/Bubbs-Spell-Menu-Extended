@@ -317,6 +317,11 @@ function B3Spell_IsSearchBarCaptured()
 	return captured ~= nil and EEex_UDToLightUD(captured) == nameToItem["B3Spell_Menu_Search"]
 end
 
+function B3Spell_TogglePause()
+	-- byte visualPause, byte bSendMessage, int idPlayerPause, byte bLogPause, byte bRequireHostUnpause
+	EngineGlobals.g_pBaldurChitin.m_pEngineWorld:TogglePauseGame(true, true, 0, false, false)
+end
+
 ---------------
 -- Hook Menu --
 ---------------

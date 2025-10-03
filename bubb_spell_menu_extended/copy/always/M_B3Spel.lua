@@ -1399,7 +1399,7 @@ function B3Spell_Menu_OnOpen()
 		if not worldScreen:CheckIfPaused() then
 			B3Spell_PausedOnOpen = false
 			if B3Spell_AutoPause == 1 then
-				worldScreen:TogglePauseGame(true)
+				B3Spell_TogglePause()
 			end
 		else
 			B3Spell_PausedOnOpen = true
@@ -1428,7 +1428,7 @@ function B3Spell_Menu_OnClose()
 	end
 
 	if B3Spell_AutoPause == 1 and not B3Spell_PausedOnOpen and worldScreen:CheckIfPaused() then
-		worldScreen:TogglePauseGame(true)
+		B3Spell_TogglePause()
 	end
 
 	-- Make sure the quickspell slot being configured is deselected when closing the spell menu.

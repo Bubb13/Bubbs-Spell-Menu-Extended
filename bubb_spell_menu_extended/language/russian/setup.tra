@@ -1,0 +1,49 @@
+
+//////////////////////////////////
+// bubb_spell_menu_extended.tp2 //
+//////////////////////////////////
+
+@0 = ~Bubb's Spell Menu Extended~
+
+//////////////////
+// M_B3Spel.lua //
+//////////////////
+
+@1 = ~Размер ячейки: ~                        // %B3Spell_Tooltip_Slot_Size%
+@2 = ~Ставить игру на паузу~                       // %B3Spell_Tooltip_Auto_Pause%
+@3 = ~Фокус на панели поиска~   // %B3Spell_Tooltip_Automatically_Focus_Search_Bar%
+@4 = ~Всегда подбирать размер автоматически~ // %B3Spell_Tooltip_Automatically_Optimize_Slot_Size%
+@5 = ~Затемнять фон v1~                // %B3Spell_Tooltip_Darken_Background%
+@6 = ~Скрыть панель управления~              // %B3Spell_Tooltip_Disable_Control_Bar%
+@7 = ~Скрыть панель поиска~               // %B3Spell_Tooltip_Disable_Search_Bar%
+@8 = ~Скрывать особые способности~         // %B3Spell_Tooltip_Ignore_Special_Abilities%
+@9 = ~Затемнять фон v2~                            // %B3Spell_Tooltip_Modal%
+@10 = ~Показывать комбинации клавиш~               // %B3Spell_Tooltip_Show_Key_Bindings%
+@18 = ~Режим наложения (всегда видимо)~        // %B3Spell_Tooltip_Overlay_Mode%
+@19 = ~Настроить рабочую область~                 // %B3Spell_Tooltip_Select_Slots_Area%
+@20 = ~Принять~                            // %B3Spell_Tooltip_Accept%
+@21 = ~Выравнивание по горизонтали: ~      // %B3Spell_Tooltip_HorizontalSlotsAlignment%
+@22 = ~Слева ~                            // %B3Spell_Tooltip_Left%
+@23 = ~По центру~                          // %B3Spell_Tooltip_Center%
+@24 = ~Справа ~                           // %B3Spell_Tooltip_Right%
+@25 = ~Выравнивание по вертикали: ~        // %B3Spell_Tooltip_VerticalSlotsAlignment%
+@26 = ~Сверху ~                             // %B3Spell_Tooltip_Top%
+@27 = ~Снизу ~                          // %B3Spell_Tooltip_Bottom%
+@28 = ~Номера рядов справа~  // %B3Spell_Tooltip_MoveSlotHeadersToTheRight%
+@29 = ~Заклинания + врождённые способности~         // %B3Spell_Tooltip_MonolithicDisplayMode%
+@30 = ~Режим сортировки~                       // %B3Spell_Tooltip_MonolithicDisplaySortMode%
+@31 = ~Сначала врождённые~                   // %B3Spell_Tooltip_MonolithicDisplaySortModeInnatesFirst%
+@32 = ~Сначала заклинания~                    // %B3Spell_Tooltip_MonolithicDisplaySortModeSpellsFirst%
+@33 = ~Сортировка по алфавиту~             // %B3Spell_Tooltip_MonolithicDisplayModePurelyAlphabetical%
+
+//////////////////
+// B3Spell.menu //
+//////////////////
+
+@11 = ~Подобрать размер автоматически~        // %B3Spell_Tooltip_Optimize_Slot_Size%
+@12 = ~Настройки Bubb's Spell Menu~ // %B3Spell_Tooltip_Bubbs_Spell_Menu_Options%
+@13 = ~Заклинания волшебника~               // %B3Spell_Tooltip_Mage_Spells%
+@14 = ~Все заклинания~                // %B3Spell_Tooltip_All_Spells%
+@15 = ~Заклинания жреца~             // %B3Spell_Tooltip_Cleric_Spells%
+@16 = ~Выровнять по левому краю~                // %B3Spell_Tooltip_Align_Left%
+@17 = ~Выровнять по центру~              // %B3Spell_Tooltip_Align_Center%

@@ -298,7 +298,7 @@ function B3Spell_GetKeyBindingName(category, keybinding)
 	local toReturn = ""
 	local name = keybinding[4]
 	if category < 5 then
-		toReturn = t(name)
+		toReturn = getUiString(name)
 		if toReturn == name then
 			toReturn = Infinity_FetchString(name)
 		end
@@ -309,7 +309,7 @@ function B3Spell_GetKeyBindingName(category, keybinding)
 end
 
 function B3Spell_GetKeyBindingKeyName(key)
-	return key >= 33 and key <= 126 and string.format("%c", key) or t("SDL_"..key)
+	return key >= 33 and key <= 126 and string.format("%c", key) or getUiString("SDL_"..key)
 end
 
 function B3Spell_CacheSpellNameToKeyBindings()
